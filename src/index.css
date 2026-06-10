@@ -1,113 +1,245 @@
 @import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
 
+/* ═══════════════════════════════════════════════════════════════
+   SEMANTIC DESIGN TOKENS  (light/dark-responsive CSS variables)
+═══════════════════════════════════════════════════════════════ */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  /* Canvas — background layers */
+  --canvas:          hsl(0 0% 100%);
+  --canvas-subtle:   hsl(220 14% 97%);
+  --canvas-inset:    hsl(220 13% 94%);
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  /* Ink — text hierarchy */
+  --ink-primary:     hsl(222 47% 11%);
+  --ink-secondary:   hsl(220 9% 46%);
+  --ink-tertiary:    hsl(220 9% 64%);
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  /* Line — borders */
+  --line:            hsl(220 13% 91%);
+  --line-subtle:     hsl(220 14% 96%);
+  --line-strong:     hsl(220 13% 82%);
+
+  /* Accent — brand blue */
+  --accent:          hsl(221 83% 53%);
+  --accent-hover:    hsl(221 83% 46%);
+  --accent-faint:    hsl(221 83% 96%);
+  --accent-border:   hsl(221 83% 85%);
+  --accent-ink:      hsl(221 83% 42%);
+
+  /* Danger */
+  --danger:          hsl(0 84% 60%);
+  --danger-faint:    hsl(0 84% 96%);
+  --danger-border:   hsl(0 84% 88%);
+  --danger-ink:      hsl(0 84% 44%);
+}
+
+.dark {
+  --canvas:          hsl(224 71% 4%);
+  --canvas-subtle:   hsl(222 47% 8%);
+  --canvas-inset:    hsl(222 47% 6%);
+
+  --ink-primary:     hsl(213 31% 91%);
+  --ink-secondary:   hsl(215 20% 65%);
+  --ink-tertiary:    hsl(217 19% 45%);
+
+  --line:            hsl(217 33% 17%);
+  --line-subtle:     hsl(222 47% 11%);
+  --line-strong:     hsl(217 33% 26%);
+
+  --accent-faint:    hsl(221 83% 11%);
+  --accent-border:   hsl(221 83% 22%);
+  --accent-ink:      hsl(221 83% 68%);
+
+  --danger-faint:    hsl(0 84% 12%);
+  --danger-border:   hsl(0 84% 22%);
+  --danger-ink:      hsl(0 84% 70%);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   STATIC COLOUR PALETTE  (Tailwind @theme → generates bg-*, text-*,
+   border-* utility classes for every token below)
+═══════════════════════════════════════════════════════════════ */
+@theme {
+  /* ── HTTP Method colours ── */
+  --color-get:            hsl(152 56% 40%);
+  --color-get-wash:       hsl(152 56% 95%);
+  --color-get-wash-dark:  hsl(152 56% 11%);
+
+  --color-post:           hsl(221 83% 53%);
+  --color-post-wash:      hsl(221 83% 96%);
+  --color-post-wash-dark: hsl(221 83% 11%);
+
+  --color-put:            hsl(38 92% 50%);
+  --color-put-wash:       hsl(38 92% 95%);
+  --color-put-wash-dark:  hsl(38 92% 12%);
+
+  --color-patch:            hsl(270 76% 55%);
+  --color-patch-wash:       hsl(270 76% 96%);
+  --color-patch-wash-dark:  hsl(270 76% 11%);
+
+  --color-destroy:            hsl(0 84% 60%);
+  --color-destroy-wash:       hsl(0 84% 96%);
+  --color-destroy-wash-dark:  hsl(0 84% 11%);
+
+  /* ── Pitch — always-dark panel palette ── */
+  --color-pitch-950: hsl(224 71% 3%);
+  --color-pitch-900: hsl(224 71% 5%);
+  --color-pitch-800: hsl(222 47% 8%);
+  --color-pitch-700: hsl(222 47% 12%);
+  --color-pitch-600: hsl(217 33% 17%);
+  --color-pitch-500: hsl(217 33% 27%);
+  --color-pitch-400: hsl(215 20% 45%);
+  --color-pitch-300: hsl(215 20% 60%);
+  --color-pitch-200: hsl(213 31% 78%);
+  --color-pitch-100: hsl(213 31% 94%);
+
+  /* ── Syntax highlighting (rendered on Pitch backgrounds) ── */
+  --color-syn-string:  hsl(152 56% 62%);
+  --color-syn-number:  hsl(221 83% 72%);
+  --color-syn-boolean: hsl(38 92% 66%);
+  --color-syn-key:     hsl(270 76% 76%);
+  --color-syn-null:    hsl(215 20% 50%);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SEMANTIC UTILITY CLASSES  (reference CSS variables so they
+   automatically adapt to light/dark mode)
+═══════════════════════════════════════════════════════════════ */
+@layer utilities {
+  /* Canvas */
+  .bg-canvas        { background-color: var(--canvas); }
+  .bg-canvas-subtle { background-color: var(--canvas-subtle); }
+  .bg-canvas-inset  { background-color: var(--canvas-inset); }
+
+  /* Ink */
+  .text-ink-primary   { color: var(--ink-primary); }
+  .text-ink-secondary { color: var(--ink-secondary); }
+  .text-ink-tertiary  { color: var(--ink-tertiary); }
+
+  /* Line */
+  .border-line        { border-color: var(--line); }
+  .border-line-subtle { border-color: var(--line-subtle); }
+  .border-line-strong { border-color: var(--line-strong); }
+
+  /* Accent */
+  .text-accent         { color: var(--accent); }
+  .text-accent-ink     { color: var(--accent-ink); }
+  .bg-accent           { background-color: var(--accent); }
+  .bg-accent-faint     { background-color: var(--accent-faint); }
+  .border-accent       { border-color: var(--accent); }
+  .border-accent-muted { border-color: var(--accent-border); }
+
+  /* Danger */
+  .text-danger         { color: var(--danger); }
+  .text-danger-ink     { color: var(--danger-ink); }
+  .bg-danger-faint     { background-color: var(--danger-faint); }
+  .border-danger-muted { border-color: var(--danger-border); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TYPOGRAPHY SCALE
+═══════════════════════════════════════════════════════════════ */
+@layer components {
+  /* Page titles */
+  .t-display {
+    font-size: 1.875rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--ink-primary);
+  }
+  .t-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    color: var(--ink-primary);
+  }
+
+  /* Section headings */
+  .t-heading {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--ink-primary);
+  }
+  .t-subheading {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--ink-primary);
+  }
+
+  /* Body copy */
+  .t-body {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--ink-secondary);
+  }
+  .t-body-sm {
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    color: var(--ink-secondary);
+  }
+
+  /* Labels / eyebrows */
+  .t-caption {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-tertiary);
+  }
+
+  /* Inline code (light-surface context) */
+  .t-code {
+    font-family: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+    font-size: 0.82em;
+    background-color: var(--canvas-subtle);
+    border: 1px solid var(--line);
+    padding: 0.1em 0.45em;
+    border-radius: 4px;
+    color: var(--ink-primary);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE / RESET
+═══════════════════════════════════════════════════════════════ */
+* { box-sizing: border-box; }
+
+html {
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--canvas);
+  color: var(--ink-primary);
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+code, pre {
+  font-family: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
+/* Scrollbar */
+::-webkit-scrollbar          { width: 5px; height: 5px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: var(--line-strong); border-radius: 999px; }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
+/* Anchor offset for smooth scroll targets */
+section:target { scroll-margin-top: 1.5rem; }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+/* Right-panel fade-in on endpoint change */
+@keyframes panel-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-panel-fade-in {
+  animation: panel-fade-in 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }

@@ -1,122 +1,82 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useRouter } from "./utils/use-router";
+import { useApiConfig } from "./hooks/use-api-config";
+import { useEndpointExplorer } from "./hooks/use-endpoint-explorer";
+import { Layout } from "./components/Layout";
+import { ApiKeyBanner } from "./components/ApiKeyBanner";
+import { HomePage } from "./pages/HomePage";
+import { AuthPage } from "./pages/AuthPage";
+import { ErrorsPage } from "./pages/ErrorsPage";
+import { ConstantsPage } from "./pages/ConstantsPage";
+import { RightPanelContent } from "./pages/ResourcePage";
+import { ResourcePageContent } from "./pages/ResourcePageContent";
+import { getResource } from "./data/resources";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const { path, navigate } = useRouter();
+  const { apiKey, baseUrl, handleSaveConfig } = useApiConfig();
+  const explorer = useEndpointExplorer(path);
+
+  const pathSegment = path.replace(/^\//, "").split("/")[0];
+  const isSpecialPage = ["", "authentication", "errors", "constants"].includes(
+    pathSegment,
+  );
+  const resource =
+    !isSpecialPage && pathSegment ? getResource(pathSegment) : null;
+
+  const rightPanel = explorer.activeEndpoint ? (
+    <RightPanelContent
+      endpoint={explorer.activeEndpoint}
+      apiKey={apiKey}
+      baseUrl={baseUrl}
+      showExplorer={explorer.showExplorer}
+      setShowExplorer={explorer.setShowExplorer}
+      pathValues={explorer.pathValues}
+      queryValues={explorer.queryValues}
+      bodyValues={explorer.bodyValues}
+      onPathChange={explorer.onPathChange}
+      onQueryChange={explorer.onQueryChange}
+      onBodyChange={explorer.onBodyChange}
+    />
+  ) : undefined;
+
+  const renderPage = () => {
+    if (!pathSegment || pathSegment === "") return <HomePage />;
+    if (pathSegment === "authentication") return <AuthPage />;
+    if (pathSegment === "errors") return <ErrorsPage />;
+    if (pathSegment === "constants") return <ConstantsPage />;
+    if (resource) {
+      return (
+        <ResourcePageContent
+          key={resource.id}
+          resource={resource}
+          onEndpointFocus={explorer.handleEndpointFocus}
+        />
+      );
+    }
+    return (
+      <div className="text-center py-20">
+        <p className="text-5xl font-bold text-ink-tertiary mb-4">404</p>
+        <p className="t-body-sm mb-4">Page not found.</p>
+        <button
+          onClick={() => navigate("/")}
+          className="text-accent-ink hover:underline text-sm"
+        >
+          Back to home →
+        </button>
+      </div>
+    );
+  };
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      <Layout currentPath={path} rightPanel={rightPanel} navigate={navigate}>
+        {renderPage()}
+      </Layout>
+      <ApiKeyBanner
+        apiKey={apiKey}
+        baseUrl={baseUrl}
+        onSave={handleSaveConfig}
+      />
     </>
-  )
+  );
 }
-
-export default App
