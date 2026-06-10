@@ -13,7 +13,7 @@ export function HomePage() {
         <p className="t-body max-w-2xl">
           The FlowPOS API lets you programmatically manage customers, orders,
           products, payments, and every other part of your FlowPOS account. It's
-          organised around REST principles — all requests use standard HTTP
+          organised around REST principles, all requests use standard HTTP
           verbs, return JSON, and use predictable resource-oriented URLs.
         </p>
       </div>
