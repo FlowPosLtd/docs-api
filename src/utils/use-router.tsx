@@ -1,23 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
+import { useNavigate, useLocation, Link as RRLink } from 'react-router-dom';
 
 export function useRouter() {
-  const getPath = () => {
-    const hash = window.location.hash.slice(1);
-    return hash || "/";
+  const location = useLocation();
+  const rrNavigate = useNavigate();
+
+  const path = location.pathname || '/';
+
+  const navigate = (to: string) => {
+    rrNavigate(to);
   };
-
-  const [path, setPath] = useState(getPath);
-
-  useEffect(() => {
-    const handler = () => setPath(getPath());
-    window.addEventListener("hashchange", handler);
-    return () => window.removeEventListener("hashchange", handler);
-  }, []);
-
-  const navigate = useCallback((to: string) => {
-    window.location.hash = to;
-    setPath(to);
-  }, []);
 
   return { path, navigate };
 }
@@ -33,14 +24,9 @@ export function Link({
   className?: string;
   onClick?: () => void;
 }) {
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    window.location.hash = href;
-    onClick?.();
-  };
   return (
-    <a href={`#${href}`} className={className} onClick={handleClick}>
+    <RRLink to={href} className={className} onClick={onClick}>
       {children}
-    </a>
+    </RRLink>
   );
 }

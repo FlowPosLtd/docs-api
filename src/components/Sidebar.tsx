@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "../utils/use-router";
 import { MethodBadge } from "./MethodBadge";
 import { resources } from "../data/resources";
@@ -65,6 +66,7 @@ const resourceGroups = [
 ];
 
 export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
+  const navigate = useNavigate();
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
     resources.forEach((r) => {
@@ -115,7 +117,7 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
                   <button
                     onClick={() => {
                       toggle(resource.id);
-                      window.location.hash = `/${resource.id}`;
+                      navigate(`/${resource.id}`);
                       onNavigate();
                     }}
                     className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md text-sm transition-colors text-left ${
@@ -148,15 +150,13 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
                           href={`#/${resource.id}`}
                           onClick={(e) => {
                             e.preventDefault();
-                            window.location.hash = `/${resource.id}`;
+                            navigate(`/${resource.id}`);
                             onNavigate();
                             setTimeout(() => {
-                              document
-                                .getElementById(ep.id)
-                                ?.scrollIntoView({
-                                  behavior: "smooth",
-                                  block: "start",
-                                });
+                              document.getElementById(ep.id)?.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start",
+                              });
                             }, 50);
                           }}
                           className="flex items-center gap-2 px-2 py-1 rounded text-xs text-ink-tertiary hover:text-ink-primary hover:bg-canvas-subtle transition-colors"
