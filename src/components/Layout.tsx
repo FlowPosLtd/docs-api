@@ -313,7 +313,7 @@ export function Layout({
 
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto scroll-smooth">
-            <div className="max-w-3xl px-6 py-10 mx-auto lg:mx-0 xl:px-10">
+            <div className={`py-10 ${rightPanel ? 'px-8 xl:px-10' : 'max-w-3xl px-6 xl:px-10 mx-auto'}`}>
               {children}
             </div>
           </main>
