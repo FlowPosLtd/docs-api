@@ -14,11 +14,8 @@ export function ResourcePageContent({
 }: ResourcePageContentProps) {
   const [activeId, setActiveId] = useState(resource.endpoints[0]?.id ?? "");
 
-  // Keep a ref so the observer callback always reads the latest active id
   const activeIdRef = useRef(resource.endpoints[0]?.id ?? "");
-  // Map of id → wrapper div element for each section
   const sectionRefs = useRef<Map<string, HTMLDivElement>>(new Map());
-  // Currently intersecting entries (updated by the observer)
   const visibleMap = useRef<Map<string, DOMRectReadOnly>>(new Map());
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
@@ -35,25 +32,18 @@ export function ResourcePageContent({
     [resource.id, onEndpointFocus],
   );
 
-  // Seed first endpoint on resource change
   useEffect(() => {
     if (resource.endpoints.length > 0) {
       handleFocus(resource.endpoints[0].id);
     }
   }, [resource.id]);
 
-  // One shared IntersectionObserver for all sections in this resource page.
-  // Collects all visibility changes, debounces 60ms, then picks the topmost
-  // visible section — preventing rapid-fire switching between short endpoints.
   useEffect(() => {
     visibleMap.current.clear();
 
     const decide = () => {
       if (visibleMap.current.size === 0) return;
 
-      // Prefer the section whose top edge is closest to (but below) the
-      // top rootMargin boundary (~60px). If nothing has a positive top,
-      // fall back to the one with the smallest absolute top offset.
       let bestId: string | null = null;
       let bestScore = Infinity;
 
@@ -77,16 +67,13 @@ export function ResourcePageContent({
               entry.boundingClientRect,
             );
           } else {
-            visibleMap.current.delete(
-              entry.target.getAttribute("data-ep-id")!,
-            );
+            visibleMap.current.delete(entry.target.getAttribute("data-ep-id")!);
           }
         });
 
         clearTimeout(debounceTimer.current);
         debounceTimer.current = setTimeout(decide, 60);
       },
-      // Active zone: from 60px below the top (header) to 35% above the bottom
       { threshold: 0, rootMargin: "-60px 0px -35% 0px" },
     );
 
@@ -111,7 +98,6 @@ export function ResourcePageContent({
         <p className="t-body">{resource.description}</p>
       </div>
 
-      {/* Quick-jump nav */}
       <div className="flex flex-wrap gap-2 mb-8">
         {resource.endpoints.map((ep) => (
           <button
@@ -138,13 +124,8 @@ export function ResourcePageContent({
         ))}
       </div>
 
-      {/* Endpoint sections — each wrapper is observed by the shared observer */}
       {resource.endpoints.map((ep, i) => (
-        <div
-          key={ep.id}
-          ref={setRef(ep.id)}
-          data-ep-id={ep.id}
-        >
+        <div key={ep.id} ref={setRef(ep.id)} data-ep-id={ep.id}>
           {i > 0 && <hr className="border-line mb-12" />}
           <EndpointSection
             endpoint={ep}

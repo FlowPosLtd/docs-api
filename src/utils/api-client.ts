@@ -46,9 +46,9 @@ apiClient.interceptors.response.use(
       const message = (error.response?.data as any)?.message || error.message;
 
       if (status === 401) {
-        console.warn("[API] 401 Unauthorized — check your API key.");
+        console.warn("[API] 401 Unauthorized check your API key.");
       } else if (status === 429) {
-        console.warn("[API] 429 Too Many Requests — slow down.");
+        console.warn("[API] 429 Too Many Requests slow down.");
       } else if (status && status >= 500) {
         console.error("[API] Server error:", message);
       }

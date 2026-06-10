@@ -14,11 +14,11 @@ Your API key carries all the privileges you grant it. Never expose it in client-
 
 ## Sending the API key
 
-Include your API key in the `x-api-key` header on **every** API request. There is no session or token exchange — each request is independently authenticated.
+Include your API key in the `x-api-key` header on **every** API request. There is no session or token exchange each request is independently authenticated.
 
 {% code-panel language="curl" label="Example request" %}
 curl -X GET 'https://api.flowpos.co.uk/v1/customers' \
-  -H 'x-api-key: your_api_key_here'
+ -H 'x-api-key: your_api_key_here'
 {% /code-panel %}
 
 ## Generating an API key
@@ -29,7 +29,7 @@ curl -X GET 'https://api.flowpos.co.uk/v1/customers' \
 4. Give your key a name that describes its purpose (e.g. "Shopify integration").
 5. Select the permissions this key should have.
 6. Optionally set an expiry date.
-7. Click **Create** — copy the key token immediately. It will not be shown again.
+7. Click **Create** copy the key token immediately. It will not be shown again.
 
 ## Authentication errors
 
@@ -37,10 +37,10 @@ If your API key is missing, invalid, or expired, the API returns a `401 Unauthor
 
 {% code-panel language="json" label="401 Unauthorized" %}
 {
-  "message": "Unauthenticated."
+"message": "Unauthenticated."
 }
 {% /code-panel %}
 
 ## Tenant scoping
 
-Every API key belongs to exactly one tenant account. All resources created or fetched via the API are automatically scoped to that tenant — you cannot access another tenant's data with your key. This isolation is enforced at the server level on every request.
+Every API key belongs to exactly one tenant account. All resources created or fetched via the API are automatically scoped to that tenant you cannot access another tenant's data with your key. This isolation is enforced at the server level on every request.

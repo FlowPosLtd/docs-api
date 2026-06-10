@@ -260,7 +260,7 @@ export const developerResources: Resource[] = [
           },
         },
         responseDescription:
-          "Returns the new secret. Store it immediately — it cannot be retrieved again.",
+          "Returns the new secret. Store it immediately it cannot be retrieved again.",
         notes: [
           "The new webhook secret is shown only once. Copy it immediately; it cannot be retrieved again.",
         ],
@@ -475,7 +475,7 @@ export const developerResources: Resource[] = [
           },
         },
         responseDescription:
-          "Returns the created key. The `token` value is shown only once — store it securely.",
+          "Returns the created key. The `token` value is shown only once store it securely.",
         notes: [
           "The API key token is shown only once in the response. Copy it immediately; it cannot be retrieved again.",
         ],
@@ -606,7 +606,7 @@ export const developerResources: Resource[] = [
           },
         },
         responseDescription:
-          "Returns the API key with the new token. Store it immediately — it cannot be retrieved again.",
+          "Returns the API key with the new token. Store it immediately it cannot be retrieved again.",
         notes: [
           "The new token is shown only once. Copy it immediately; it cannot be retrieved again.",
         ],
@@ -890,7 +890,7 @@ export const developerResources: Resource[] = [
         id: "auth-mfa-step1",
         method: "POST",
         path: "/auth/mfa/step1",
-        title: "MFA Step 1 — Verify Credentials",
+        title: "MFA Step 1 Verify Credentials",
         description:
           "First step of MFA login. Validates credentials and sends an MFA code to the user.",
         bodyParams: [
@@ -920,7 +920,7 @@ export const developerResources: Resource[] = [
         id: "auth-mfa-step2",
         method: "POST",
         path: "/auth/mfa/step2",
-        title: "MFA Step 2 — Verify Code",
+        title: "MFA Step 2 Verify Code",
         description:
           "Second step of MFA login. Verifies the OTP code and returns a session token.",
         bodyParams: [

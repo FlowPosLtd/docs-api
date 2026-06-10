@@ -144,7 +144,7 @@ export function ApiExplorer({
         <span className="text-gray-400 truncate font-mono">
           {effectiveKey
             ? effectiveBase
-            : "No API key — click the key icon to set one"}
+            : "No API key click the key icon to set one"}
         </span>
       </div>
 

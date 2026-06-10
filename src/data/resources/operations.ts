@@ -1143,7 +1143,7 @@ export const operationResources: Resource[] = [
     id: "addon-groups",
     name: "Addon Groups",
     description:
-      "Addon Groups (also called modifier groups) define optional add-ons for products — such as toppings, sauces, or extras. Each group has min/max selection constraints.",
+      "Addon Groups (also called modifier groups) define optional add-ons for products such as toppings, sauces, or extras. Each group has min/max selection constraints.",
     endpoints: [
       {
         id: "list-addon-groups",
