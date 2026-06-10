@@ -60,8 +60,6 @@ function JsonValue({ value }: { value: unknown }) {
 }
 
 export function ResponseShape({ data, description }: ResponseShapeProps) {
-  const envelope = { message: "Success", data };
-
   return (
     <div className="mb-6">
       <h4 className="t-caption mb-3">Response</h4>
@@ -72,7 +70,7 @@ export function ResponseShape({ data, description }: ResponseShapeProps) {
           <span className="text-xs text-pitch-300 font-mono">200 OK</span>
         </div>
         <pre className="p-4 text-sm font-mono overflow-x-auto text-pitch-200 leading-6">
-          <JsonValue value={envelope} />
+          <JsonValue value={{ data }} />
         </pre>
       </div>
     </div>
