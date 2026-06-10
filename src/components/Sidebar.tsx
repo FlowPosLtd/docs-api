@@ -23,7 +23,15 @@ const resourceGroups = [
   },
   {
     label: "PAYMENTS",
-    ids: ["payments", "payment-links", "discounts", "subscriptions"],
+    ids: [
+      "payments",
+      "payment-links",
+      "discounts",
+      "subscriptions",
+      "payouts",
+      "payment-account",
+      "payment-settings",
+    ],
   },
   {
     label: "OPERATIONS",
@@ -31,20 +39,28 @@ const resourceGroups = [
       "inventory",
       "employees",
       "locations",
+      "sections",
       "terminal-readers",
       "shipping-rates",
+      "addon-groups",
+      "attachments",
     ],
   },
   {
+    label: "ANALYTICS",
+    ids: ["analytics"],
+  },
+  {
+    label: "TEAM & ACCESS",
+    ids: ["team", "roles"],
+  },
+  {
+    label: "SETTINGS",
+    ids: ["business-settings", "online-store", "domains"],
+  },
+  {
     label: "DEVELOPER",
-    ids: [
-      "webhooks",
-      "api-keys",
-      "online-store",
-      "domains",
-      "addon-groups",
-      "affiliates",
-    ],
+    ids: ["webhooks", "api-keys", "affiliates", "auth-endpoints"],
   },
 ];
 

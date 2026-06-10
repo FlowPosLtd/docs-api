@@ -1200,6 +1200,78 @@ export const resources: Resource[] = [
         response: { message: "Variant updated successfully." },
         responseDescription: "Returns a confirmation message.",
       },
+      {
+        id: "bulk-upload-products",
+        method: "POST",
+        path: "/products/bulk-upload",
+        title: "Bulk upload products",
+        description:
+          "Imports products in bulk from a CSV file. The CSV must include columns: name, price, sku, category.",
+        bodyParams: [
+          {
+            name: "file",
+            type: "file",
+            required: true,
+            description: "CSV file with product data (multipart/form-data).",
+            example: "products.csv",
+          },
+        ],
+        response: {
+          message: "Bulk upload queued.",
+          total_rows: 45,
+          import_id: "imp_a1b2c3d4",
+        },
+        responseDescription:
+          "Returns a confirmation with the number of rows queued for import.",
+        notes: ["Upload must be multipart/form-data. Max file size is 10 MB."],
+      },
+      {
+        id: "list-product-variants",
+        method: "GET",
+        path: "/product-variants",
+        title: "List all product variants",
+        description:
+          "Returns a paginated list of all product variants across all products.",
+        queryParams: [
+          {
+            name: "page",
+            type: "integer",
+            required: false,
+            description: "Page number.",
+            default: "1",
+            example: "1",
+          },
+          {
+            name: "search",
+            type: "string",
+            required: false,
+            description: "Search by variant name or SKU.",
+            example: "BURG-001",
+          },
+        ],
+        response: {
+          data: [
+            {
+              id: 3,
+              price: 1200,
+              sku: "BURG-001-REG",
+              is_available: true,
+              is_default_variant: true,
+              product: {
+                id: 1,
+                name: "Classic Burger",
+                slug: "classic-burger",
+              },
+            },
+          ],
+          current_page: 1,
+          last_page: 3,
+          total: 42,
+          per_page: 15,
+        },
+        responseDescription:
+          "Returns a paginated list of product variant objects.",
+      },
     ],
   },
 
@@ -1649,6 +1721,148 @@ export const resources: Resource[] = [
         },
         responseDescription: "Returns analytics summary.",
       },
+      {
+        id: "delete-payment",
+        method: "DELETE",
+        path: "/payments/{id}",
+        title: "Delete a payment",
+        description: "Permanently deletes a payment record.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the payment.",
+            example: "5",
+          },
+        ],
+        response: { message: "Payment deleted." },
+        responseDescription: "Returns a confirmation message.",
+      },
+      {
+        id: "mail-payment",
+        method: "POST",
+        path: "/payments/{id}/mail",
+        title: "Send payment receipt",
+        description: "Sends a payment receipt to the specified email address.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the payment.",
+            example: "5",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "email",
+            type: "string",
+            required: true,
+            description: "Email address to send the receipt to.",
+            example: "customer@example.com",
+          },
+        ],
+        response: { message: "Receipt sent successfully." },
+        responseDescription: "Returns a confirmation message.",
+      },
+      {
+        id: "capture-payment",
+        method: "POST",
+        path: "/payments/{id}/capture",
+        title: "Capture a payment",
+        description:
+          "Captures a previously authorised payment. Use this to finalise an authorised hold.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the payment.",
+            example: "5",
+          },
+        ],
+        response: {
+          payment: {
+            id: 5,
+            status: "paid",
+            amount: 4250,
+            captured_at: "2024-06-10T12:05:00Z",
+          },
+        },
+        responseDescription: "Returns the updated payment with `paid` status.",
+      },
+      {
+        id: "release-payment",
+        method: "POST",
+        path: "/payments/{id}/release",
+        title: "Release a payment",
+        description:
+          "Releases (cancels) an authorised payment hold without capturing funds.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the payment.",
+            example: "5",
+          },
+        ],
+        response: {
+          payment: {
+            id: 5,
+            status: "released",
+            amount: 4250,
+            released_at: "2024-06-10T12:05:00Z",
+          },
+        },
+        responseDescription:
+          "Returns the updated payment with `released` status.",
+      },
+      {
+        id: "export-payments",
+        method: "POST",
+        path: "/payments/export",
+        title: "Export payments to CSV",
+        description:
+          "Exports payment records to a CSV file. Optionally filter by date range and status.",
+        bodyParams: [
+          {
+            name: "start_date",
+            type: "string",
+            required: false,
+            description: "Start of date range (ISO 8601).",
+            example: "2024-01-01",
+          },
+          {
+            name: "end_date",
+            type: "string",
+            required: false,
+            description: "End of date range (ISO 8601).",
+            example: "2024-06-30",
+          },
+          {
+            name: "status",
+            type: "string",
+            required: false,
+            description: "Filter by payment status.",
+            enum: [
+              "pending",
+              "authorised",
+              "paid",
+              "partially_refunded",
+              "refunded",
+              "released",
+            ],
+            example: "paid",
+          },
+        ],
+        response: {
+          message: "Export queued. You will receive an email when ready.",
+          export_id: "exp_a1b2c3d4",
+        },
+        responseDescription: "Returns a confirmation with an export ID.",
+      },
     ],
   },
 
@@ -1832,6 +2046,102 @@ export const resources: Resource[] = [
         ],
         response: { message: "Payment link deleted successfully." },
         responseDescription: "Returns a confirmation message.",
+      },
+      {
+        id: "update-payment-link",
+        method: "PUT",
+        path: "/payment-links/{id}",
+        title: "Update a payment link",
+        description: "Updates an existing payment link.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the payment link.",
+            example: "1",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "type",
+            type: "string",
+            required: false,
+            description: "The type of payment link.",
+            enum: ["fixed_amount", "open_amount"],
+            example: "fixed_amount",
+          },
+          {
+            name: "name",
+            type: "string",
+            required: false,
+            description: "Internal name for the link.",
+            example: "Event Ticket",
+          },
+          {
+            name: "button_label",
+            type: "string",
+            required: false,
+            description: "Text displayed on the pay button.",
+            example: "Buy Now",
+          },
+          {
+            name: "description",
+            type: "string",
+            required: false,
+            description: "Description shown to the customer.",
+            example: "Annual gala dinner ticket.",
+          },
+          {
+            name: "amount",
+            type: "integer",
+            required: false,
+            description:
+              "For `fixed_amount` links: price in smallest currency unit.",
+            example: "2500",
+          },
+          {
+            name: "minimum_amount",
+            type: "integer",
+            required: false,
+            description: "For `open_amount` links: minimum allowed amount.",
+            example: "500",
+          },
+          {
+            name: "maximum_amount",
+            type: "integer",
+            required: false,
+            description: "For `open_amount` links: maximum allowed amount.",
+            example: "100000",
+          },
+          {
+            name: "preset_amount",
+            type: "integer",
+            required: false,
+            description:
+              "For `open_amount` links: pre-filled suggested amount.",
+            example: "5000",
+          },
+          {
+            name: "active",
+            type: "boolean",
+            required: false,
+            description: "Whether the link is active.",
+            example: "true",
+          },
+        ],
+        response: {
+          id: 1,
+          name: "Event Ticket",
+          type: "fixed_amount",
+          button_label: "Buy Now",
+          amount: 2500,
+          currency: "GBP",
+          active: true,
+          url: "https://pay.flowpos.io/pl_a1b2c3d4",
+          updated_at: "2024-06-10T13:00:00Z",
+        },
+        responseDescription: "Returns the updated payment link.",
       },
       {
         id: "get-payment-link-analytics",
@@ -2236,6 +2546,124 @@ export const resources: Resource[] = [
         response: { message: "Subscription deleted." },
         responseDescription: "Returns a confirmation message.",
       },
+      {
+        id: "update-subscription",
+        method: "PUT",
+        path: "/subscriptions/{id}",
+        title: "Update a subscription plan",
+        description: "Updates an existing subscription plan.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the subscription.",
+            example: "1",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "name",
+            type: "string",
+            required: false,
+            description: "Plan name.",
+            example: "Premium Monthly",
+          },
+          {
+            name: "description",
+            type: "string",
+            required: false,
+            description: "Plan description shown to customers.",
+            example: "Access to all premium features.",
+          },
+          {
+            name: "frequency",
+            type: "string",
+            required: false,
+            description: "Billing frequency.",
+            enum: ["weekly", "monthly", "yearly"],
+            example: "monthly",
+          },
+          {
+            name: "price",
+            type: "integer",
+            required: false,
+            description: "Subscription price in smallest currency unit.",
+            example: "999",
+          },
+          {
+            name: "bill_upfront",
+            type: "boolean",
+            required: false,
+            description: "Whether to charge the first period immediately.",
+            example: "true",
+          },
+          {
+            name: "term_months",
+            type: "integer",
+            required: false,
+            description: "Minimum term in months. Null for open-ended.",
+            example: "12",
+          },
+        ],
+        response: {
+          id: 1,
+          name: "Premium Monthly",
+          frequency: "monthly",
+          price: 999,
+          currency: "GBP",
+          is_active: true,
+          updated_at: "2024-06-10T13:00:00Z",
+        },
+        responseDescription: "Returns the updated subscription plan.",
+      },
+      {
+        id: "subscription-analytics",
+        method: "GET",
+        path: "/subscriptions/analytics",
+        title: "Subscription analytics",
+        description: "Returns aggregated analytics for all subscription plans.",
+        response: {
+          analytics: {
+            total_plans: 3,
+            total_active_subscribers: 72,
+            monthly_recurring_revenue: 71928,
+            churn_rate: 3.2,
+          },
+        },
+        responseDescription: "Returns subscription analytics summary.",
+      },
+      {
+        id: "customer-subscription-payments",
+        method: "GET",
+        path: "/subscriptions/{customerId}/payments",
+        title: "List customer subscription payments",
+        description:
+          "Returns all subscription payments made by a specific customer.",
+        pathParams: [
+          {
+            name: "customerId",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the customer.",
+            example: "1",
+          },
+        ],
+        response: {
+          payments: [
+            {
+              id: 10,
+              amount: 999,
+              currency: "GBP",
+              status: "paid",
+              subscription: { id: 1, name: "Premium Monthly" },
+              paid_at: "2024-05-01T10:00:00Z",
+            },
+          ],
+        },
+        responseDescription:
+          "Returns an array of subscription payment objects for the customer.",
+      },
     ],
   },
 
@@ -2378,6 +2806,152 @@ export const resources: Resource[] = [
           ],
         },
         responseDescription: "Returns an array of adjustment history records.",
+      },
+      {
+        id: "get-inventory-item",
+        method: "GET",
+        path: "/inventory/{id}",
+        title: "Retrieve an inventory item",
+        description: "Returns full details of a single inventory record.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the inventory record.",
+            example: "1",
+          },
+        ],
+        response: {
+          inventory: {
+            id: 1,
+            variant_id: 3,
+            location_id: 1,
+            stock_count: 45,
+            stock_reserved: "0",
+            variant: {
+              id: 3,
+              price: 1200,
+              sku: "BURG-001",
+              is_available: true,
+              product: {
+                id: 1,
+                name: "Classic Burger",
+                slug: "classic-burger",
+              },
+            },
+            location: { id: 1, name: "Main Store" },
+            created_at: "2024-01-15T09:00:00Z",
+            updated_at: "2024-06-01T08:00:00Z",
+          },
+        },
+        responseDescription:
+          "Returns the inventory record with variant and location details.",
+      },
+      {
+        id: "create-inventory",
+        method: "POST",
+        path: "/inventory",
+        title: "Create an inventory item",
+        description:
+          "Creates a new inventory record for a variant at a location.",
+        bodyParams: [
+          {
+            name: "variant_id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the product variant.",
+            example: "3",
+          },
+          {
+            name: "location_id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the location.",
+            example: "1",
+          },
+          {
+            name: "stock_count",
+            type: "integer",
+            required: false,
+            description: "Initial stock count.",
+            default: "0",
+            example: "50",
+          },
+        ],
+        response: {
+          inventory: {
+            id: 5,
+            variant_id: 3,
+            location_id: 1,
+            stock_count: 50,
+            stock_reserved: "0",
+            created_at: "2024-06-10T12:00:00Z",
+          },
+        },
+        responseDescription: "Returns the created inventory record.",
+      },
+      {
+        id: "delete-inventory-item",
+        method: "DELETE",
+        path: "/inventory/{id}",
+        title: "Delete an inventory item",
+        description: "Permanently deletes an inventory record.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the inventory record.",
+            example: "1",
+          },
+        ],
+        response: { message: "Inventory item deleted." },
+        responseDescription: "Returns a confirmation message.",
+      },
+      {
+        id: "get-inventory-settings",
+        method: "GET",
+        path: "/inventory/settings",
+        title: "Get inventory settings",
+        description: "Returns the global inventory settings for your tenant.",
+        response: {
+          settings: {
+            low_stock_threshold: 10,
+            track_inventory: true,
+          },
+        },
+        responseDescription: "Returns the inventory settings object.",
+      },
+      {
+        id: "update-inventory-settings",
+        method: "PUT",
+        path: "/inventory/settings",
+        title: "Update inventory settings",
+        description: "Updates the global inventory settings.",
+        bodyParams: [
+          {
+            name: "low_stock_threshold",
+            type: "integer",
+            required: false,
+            description: "Stock count at which low-stock alerts are triggered.",
+            example: "10",
+          },
+          {
+            name: "track_inventory",
+            type: "boolean",
+            required: false,
+            description: "Whether to enable inventory tracking globally.",
+            example: "true",
+          },
+        ],
+        response: {
+          settings: {
+            low_stock_threshold: 10,
+            track_inventory: true,
+          },
+        },
+        responseDescription: "Returns the updated inventory settings.",
       },
     ],
   },
@@ -2535,6 +3109,116 @@ export const resources: Resource[] = [
         response: { message: "Employee deleted." },
         responseDescription: "Returns a confirmation message.",
       },
+      {
+        id: "update-employee",
+        method: "PUT",
+        path: "/employees/{id}",
+        title: "Update an employee",
+        description: "Updates an existing employee's details.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the employee.",
+            example: "2",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "first_name",
+            type: "string",
+            required: false,
+            description: "First name.",
+            example: "Alice",
+          },
+          {
+            name: "last_name",
+            type: "string",
+            required: false,
+            description: "Last name.",
+            example: "Walters",
+          },
+          {
+            name: "email",
+            type: "string",
+            required: false,
+            description: "Work email address.",
+            example: "alice@yourbusiness.com",
+          },
+          {
+            name: "phone",
+            type: "string",
+            required: false,
+            description: "Phone number.",
+            example: "+44 7700 900010",
+          },
+          {
+            name: "pin_code",
+            type: "string",
+            required: false,
+            description: "4-digit EPOS PIN code.",
+            example: "5678",
+          },
+          {
+            name: "is_active",
+            type: "integer",
+            required: false,
+            description: "Active status (`1` = active, `0` = inactive).",
+            enum: ["0", "1"],
+            example: "1",
+          },
+          {
+            name: "is_manager",
+            type: "integer",
+            required: false,
+            description: "Manager flag.",
+            enum: ["0", "1"],
+            example: "0",
+          },
+          {
+            name: "can_do_refund",
+            type: "integer",
+            required: false,
+            description: "Whether this employee can issue refunds.",
+            enum: ["0", "1"],
+            example: "1",
+          },
+        ],
+        response: {
+          employee: {
+            id: 2,
+            first_name: "Alice",
+            last_name: "Walters",
+            email: "alice@yourbusiness.com",
+            pin_code: 5678,
+            is_active: true,
+            is_manager: false,
+            can_do_refund: true,
+            updated_at: "2024-06-10T13:00:00Z",
+          },
+        },
+        responseDescription: "Returns the updated employee.",
+      },
+      {
+        id: "rotate-employee-pin",
+        method: "POST",
+        path: "/employees/{id}/rotate-pin",
+        title: "Rotate employee PIN",
+        description:
+          "Generates a new random PIN for the employee. Use this if a PIN has been compromised.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the employee.",
+            example: "2",
+          },
+        ],
+        response: { employee: { id: 2, pin_rotated: true } },
+        responseDescription: "Returns a confirmation that the PIN was rotated.",
+      },
     ],
   },
 
@@ -2642,6 +3326,61 @@ export const resources: Resource[] = [
         response: { message: "Location deleted." },
         responseDescription: "Returns a confirmation message.",
       },
+      {
+        id: "update-location",
+        method: "PUT",
+        path: "/locations/{id}",
+        title: "Update a location",
+        description: "Updates an existing location's details.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the location.",
+            example: "1",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "name",
+            type: "string",
+            required: false,
+            description: "Location name.",
+            example: "Main Store",
+          },
+          {
+            name: "type",
+            type: "string",
+            required: false,
+            description: "Location type.",
+            example: "retail",
+          },
+          {
+            name: "address",
+            type: "object",
+            required: false,
+            description:
+              "Address object with `address_line_1`, `city`, `state`, `post_code`, `country`.",
+            example:
+              '{"address_line_1":"10 Market Street","city":"Manchester","post_code":"M1 1AA","country":"GB"}',
+          },
+        ],
+        response: {
+          location: {
+            id: 1,
+            name: "Main Store",
+            type: "retail",
+            address: {
+              address_line_1: "10 Market Street",
+              city: "Manchester",
+              post_code: "M1 1AA",
+            },
+            updated_at: "2024-06-10T13:00:00Z",
+          },
+        },
+        responseDescription: "Returns the updated location.",
+      },
     ],
   },
 
@@ -2732,6 +3471,69 @@ export const resources: Resource[] = [
           },
         ],
         response: { message: "Terminal deleted." },
+        responseDescription: "Returns a confirmation message.",
+      },
+      {
+        id: "update-terminal",
+        method: "PUT",
+        path: "/terminal-readers/{id}",
+        title: "Update a terminal",
+        description:
+          "Updates the label or location assignment of a terminal reader.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the terminal reader.",
+            example: "1",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "label",
+            type: "string",
+            required: false,
+            description: "Friendly name for the terminal.",
+            example: "Counter 2",
+          },
+          {
+            name: "location",
+            type: "integer",
+            required: false,
+            description: "Location ID to reassign this terminal to.",
+            example: "2",
+          },
+        ],
+        response: {
+          terminalReader: {
+            id: 1,
+            label: "Counter 2",
+            stripe_id: "tmr_FDTsF9F8h1A0rM",
+            app_logged_in: true,
+            location: { id: 2, name: "Branch 2" },
+            updated_at: "2024-06-10T13:00:00Z",
+          },
+        },
+        responseDescription: "Returns the updated terminal reader.",
+      },
+      {
+        id: "revoke-terminal",
+        method: "POST",
+        path: "/terminal-readers/{id}/revoke",
+        title: "Revoke terminal access",
+        description:
+          "Logs out the terminal from the FlowPOS app and revokes its session. The device must re-authenticate before accepting payments.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the terminal reader.",
+            example: "1",
+          },
+        ],
+        response: { message: "Terminal access revoked." },
         responseDescription: "Returns a confirmation message.",
       },
     ],
@@ -3009,6 +3811,223 @@ export const resources: Resource[] = [
         response: { webhook_event_id: 15, event_id: "evt_a1b2c3d4" },
         responseDescription: "Returns the event IDs for the retry.",
       },
+      {
+        id: "get-webhook-endpoint",
+        method: "GET",
+        path: "/webhook-endpoints/{id}",
+        title: "Retrieve a webhook endpoint",
+        description: "Returns full details of a single webhook endpoint.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook endpoint.",
+            example: "1",
+          },
+        ],
+        response: {
+          webhook_endpoint: {
+            id: 1,
+            url: "https://yourdomain.com/webhooks",
+            events: ["order.created", "payment.paid"],
+            description: "Production webhook",
+            is_active: true,
+            created_at: "2024-03-01T10:00:00Z",
+            updated_at: "2024-06-01T09:00:00Z",
+          },
+        },
+        responseDescription: "Returns the webhook endpoint object.",
+      },
+      {
+        id: "update-webhook-endpoint",
+        method: "PUT",
+        path: "/webhook-endpoints/{id}",
+        title: "Update a webhook endpoint",
+        description:
+          "Updates the URL, events, or active status of a webhook endpoint.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook endpoint.",
+            example: "1",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "url",
+            type: "string",
+            required: false,
+            description: "HTTPS URL to receive webhook events.",
+            example: "https://yourdomain.com/webhooks/v2",
+          },
+          {
+            name: "events",
+            type: "string[]",
+            required: false,
+            description: "Array of event type strings to subscribe to.",
+            example: '["order.created"]',
+          },
+          {
+            name: "is_active",
+            type: "boolean",
+            required: false,
+            description: "Whether the endpoint is enabled.",
+            example: "true",
+          },
+        ],
+        response: {
+          webhook_endpoint: {
+            id: 1,
+            url: "https://yourdomain.com/webhooks/v2",
+            events: ["order.created"],
+            is_active: true,
+            updated_at: "2024-06-10T13:00:00Z",
+          },
+        },
+        responseDescription: "Returns the updated webhook endpoint.",
+      },
+      {
+        id: "regenerate-webhook-secret",
+        method: "POST",
+        path: "/webhook-endpoints/{id}/secret",
+        title: "Regenerate webhook secret",
+        description:
+          "Generates a new signing secret for the webhook endpoint. The old secret is immediately invalidated.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook endpoint.",
+            example: "1",
+          },
+        ],
+        response: {
+          webhook_endpoint: {
+            id: 1,
+            secret: "whsec_z9y8x7w6v5u4t3s2r1q0",
+          },
+        },
+        responseDescription:
+          "Returns the new secret. Store it immediately — it cannot be retrieved again.",
+        notes: [
+          "The new webhook secret is shown only once. Copy it immediately; it cannot be retrieved again.",
+        ],
+      },
+      {
+        id: "list-webhook-endpoint-events",
+        method: "GET",
+        path: "/webhook-endpoints/{id}/events",
+        title: "List webhook events for endpoint",
+        description:
+          "Returns a paginated list of webhook event deliveries for a specific endpoint.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook endpoint.",
+            example: "1",
+          },
+        ],
+        queryParams: [
+          {
+            name: "page",
+            type: "integer",
+            required: false,
+            description: "Page number.",
+            default: "1",
+            example: "1",
+          },
+          {
+            name: "per_page",
+            type: "integer",
+            required: false,
+            description: "Results per page.",
+            default: "15",
+            example: "15",
+          },
+        ],
+        response: {
+          data: [
+            {
+              id: 1,
+              event_id: "evt_a1b2c3d4",
+              event_type: "order.created",
+              status: "delivered",
+              attempts: 1,
+              response_code: 200,
+              delivered_at: "2024-06-10T12:01:00Z",
+              created_at: "2024-06-10T12:00:00Z",
+            },
+          ],
+          current_page: 1,
+          total: 28,
+        },
+        responseDescription:
+          "Returns a paginated list of webhook event delivery records.",
+      },
+      {
+        id: "get-webhook-endpoint-event",
+        method: "GET",
+        path: "/webhook-endpoints/{id}/events/{eventId}",
+        title: "Retrieve a webhook event",
+        description: "Returns details of a single webhook event delivery.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook endpoint.",
+            example: "1",
+          },
+          {
+            name: "eventId",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook event.",
+            example: "15",
+          },
+        ],
+        response: {
+          event: {
+            id: 15,
+            event_id: "evt_a1b2c3d4",
+            event_type: "order.created",
+            status: "delivered",
+            attempts: 1,
+            response_code: 200,
+            payload: { order_id: 42, total: 4250, status: "pending" },
+            delivered_at: "2024-06-10T12:01:00Z",
+            created_at: "2024-06-10T12:00:00Z",
+          },
+        },
+        responseDescription:
+          "Returns the full webhook event delivery record including payload.",
+      },
+      {
+        id: "bulk-retry-webhook-events",
+        method: "POST",
+        path: "/webhook-endpoints/{id}/bulk-retry",
+        title: "Bulk retry webhook events",
+        description:
+          "Re-dispatches all failed webhook events for a specific endpoint.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook endpoint.",
+            example: "1",
+          },
+        ],
+        response: { message: "Bulk retry queued.", retried_count: 7 },
+        responseDescription:
+          "Returns a confirmation with the number of events queued for retry.",
+      },
     ],
   },
 
@@ -3130,6 +4149,119 @@ export const resources: Resource[] = [
         ],
         response: { message: "API key deleted." },
         responseDescription: "Returns a confirmation message.",
+      },
+      {
+        id: "get-api-key",
+        method: "GET",
+        path: "/api-keys/{id}",
+        title: "Retrieve an API key",
+        description:
+          "Returns details of a single API key. The token is masked.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the API key.",
+            example: "1",
+          },
+        ],
+        response: {
+          apiKey: {
+            id: 1,
+            name: "Production Key",
+            token: null,
+            expires_at: null,
+            last_used_at: "2024-06-09T08:30:00Z",
+            created_at: "2024-01-15T10:00:00Z",
+            permissions: [{ name: "orders:read" }, { name: "customers:read" }],
+          },
+        },
+        responseDescription:
+          "Returns the API key object. The `token` is always `null` after creation.",
+      },
+      {
+        id: "update-api-key",
+        method: "PUT",
+        path: "/api-keys/{id}",
+        title: "Update an API key",
+        description:
+          "Updates the name, permissions, or expiry of an existing API key.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the API key.",
+            example: "1",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "name",
+            type: "string",
+            required: false,
+            description: "Friendly name for this key.",
+            example: "Production Key",
+          },
+          {
+            name: "permissions",
+            type: "string[]",
+            required: false,
+            description: "Array of permission strings granted to this key.",
+            example: '["orders:read","customers:read"]',
+          },
+          {
+            name: "expires_at",
+            type: "string",
+            required: false,
+            description:
+              "Expiry date (ISO 8601). Pass `null` to remove expiry.",
+            example: "2025-12-31",
+          },
+        ],
+        response: {
+          apiKey: {
+            id: 1,
+            name: "Production Key",
+            token: null,
+            expires_at: "2025-12-31T23:59:59Z",
+            last_used_at: "2024-06-09T08:30:00Z",
+            updated_at: "2024-06-10T13:00:00Z",
+            permissions: [{ name: "orders:read" }, { name: "customers:read" }],
+          },
+        },
+        responseDescription: "Returns the updated API key.",
+      },
+      {
+        id: "regenerate-api-key",
+        method: "POST",
+        path: "/api-keys/{id}/regenerate",
+        title: "Regenerate API key secret",
+        description:
+          "Generates a new secret token for an existing API key. The old token is immediately invalidated.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the API key.",
+            example: "1",
+          },
+        ],
+        response: {
+          apiKey: {
+            id: 1,
+            name: "Production Key",
+            token: "tok_live_z9y8x7w6v5u4t3s2r1q0p",
+            expires_at: null,
+          },
+        },
+        responseDescription:
+          "Returns the API key with the new token. Store it immediately — it cannot be retrieved again.",
+        notes: [
+          "The new token is shown only once. Copy it immediately; it cannot be retrieved again.",
+        ],
       },
     ],
   },
@@ -3277,6 +4409,177 @@ export const resources: Resource[] = [
         response: { message: "Addon group deleted." },
         responseDescription: "Returns a confirmation message.",
       },
+      {
+        id: "get-addon-group",
+        method: "GET",
+        path: "/addon-groups/{id}",
+        title: "Retrieve an addon group",
+        description:
+          "Returns full details of a single addon group including its addons.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the addon group.",
+            example: "1",
+          },
+        ],
+        response: {
+          addOnGroup: {
+            id: 1,
+            name: "Extras",
+            is_active: true,
+            min_selection: 0,
+            max_selection: 3,
+            addons: [
+              {
+                id: 3,
+                name: "Extra Cheese",
+                price: 100,
+                is_active: true,
+                max_quantity: null,
+              },
+              {
+                id: 4,
+                name: "Bacon",
+                price: 150,
+                is_active: true,
+                max_quantity: 2,
+              },
+            ],
+            created_at: "2024-02-01T09:00:00Z",
+            updated_at: "2024-06-01T10:00:00Z",
+          },
+        },
+        responseDescription: "Returns the addon group with its addons.",
+      },
+      {
+        id: "update-addon-group",
+        method: "PUT",
+        path: "/addon-groups/{id}",
+        title: "Update an addon group",
+        description: "Updates an existing addon group and its addons.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the addon group.",
+            example: "1",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "name",
+            type: "string",
+            required: false,
+            description: "Group name.",
+            example: "Extras",
+          },
+          {
+            name: "is_active",
+            type: "boolean",
+            required: false,
+            description: "Whether the group is active.",
+            example: "true",
+          },
+          {
+            name: "min_selection",
+            type: "integer",
+            required: false,
+            description: "Minimum number of add-ons the customer must select.",
+            example: "0",
+          },
+          {
+            name: "max_selection",
+            type: "integer",
+            required: false,
+            description: "Maximum number of add-ons the customer can select.",
+            example: "3",
+          },
+          {
+            name: "addons",
+            type: "object[]",
+            required: false,
+            description: "Array of addon objects to replace the current set.",
+          },
+          {
+            name: "addons[].name",
+            type: "string",
+            required: true,
+            description: "Addon name.",
+            example: "Extra Cheese",
+          },
+          {
+            name: "addons[].price",
+            type: "integer",
+            required: true,
+            description: "Addon price in smallest currency unit.",
+            example: "100",
+          },
+          {
+            name: "addons[].is_active",
+            type: "boolean",
+            required: true,
+            description: "Whether this addon is available.",
+            example: "true",
+          },
+          {
+            name: "addons[].max_quantity",
+            type: "integer",
+            required: false,
+            description: "Max quantity per addon. Null for unlimited.",
+            example: "null",
+          },
+        ],
+        response: {
+          addOnGroup: {
+            id: 1,
+            name: "Extras",
+            is_active: true,
+            min_selection: 0,
+            max_selection: 3,
+            addons: [
+              { id: 3, name: "Extra Cheese", price: 100, is_active: true },
+            ],
+            updated_at: "2024-06-10T13:00:00Z",
+          },
+        },
+        responseDescription: "Returns the updated addon group.",
+      },
+      {
+        id: "assign-addon-group",
+        method: "POST",
+        path: "/addon-groups/{id}/assign",
+        title: "Assign addon group to product variants",
+        description:
+          "Assigns this addon group to one or more product variants.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the addon group.",
+            example: "1",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "variants",
+            type: "string[]",
+            required: true,
+            description: "Array of variant IDs to assign this addon group to.",
+            example: "[1,2,3]",
+          },
+        ],
+        response: {
+          message: "Addon group assigned successfully.",
+          assigned_count: 3,
+        },
+        responseDescription:
+          "Returns a confirmation message with the number of variants assigned.",
+      },
     ],
   },
 
@@ -3378,6 +4681,141 @@ export const resources: Resource[] = [
           created_at: "2024-06-10T12:00:00Z",
         },
         responseDescription: "Returns the created affiliate.",
+      },
+      {
+        id: "get-affiliate",
+        method: "GET",
+        path: "/m/affiliates/{id}",
+        title: "Retrieve an affiliate",
+        description: "Returns full details of a single affiliate.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the affiliate.",
+            example: "1",
+          },
+        ],
+        response: {
+          affiliate: {
+            id: 1,
+            name: "Bob Referrer",
+            email: "bob@example.com",
+            phone: "+44 7700 900020",
+            commission_percentage: 10,
+            is_active: true,
+            referral_code: "BOB10",
+            total_referred_orders: 12,
+            total_commission_earned: 4500,
+            created_at: "2024-02-01T09:00:00Z",
+            updated_at: "2024-06-01T10:00:00Z",
+          },
+        },
+        responseDescription: "Returns the affiliate object.",
+      },
+      {
+        id: "update-affiliate",
+        method: "PUT",
+        path: "/m/affiliates/{id}",
+        title: "Update an affiliate",
+        description: "Updates an existing affiliate's details.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the affiliate.",
+            example: "1",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "name",
+            type: "string",
+            required: false,
+            description: "Affiliate full name.",
+            example: "Bob Referrer",
+          },
+          {
+            name: "email",
+            type: "string",
+            required: false,
+            description: "Affiliate email.",
+            example: "bob@example.com",
+          },
+          {
+            name: "commission_rate",
+            type: "number",
+            required: false,
+            description: "Commission percentage (0–100).",
+            example: "12",
+          },
+        ],
+        response: {
+          affiliate: {
+            id: 1,
+            name: "Bob Referrer",
+            email: "bob@example.com",
+            commission_percentage: 12,
+            is_active: true,
+            updated_at: "2024-06-10T13:00:00Z",
+          },
+        },
+        responseDescription: "Returns the updated affiliate.",
+      },
+      {
+        id: "get-affiliate-settings",
+        method: "GET",
+        path: "/m/affiliates-settings",
+        title: "Get affiliate settings",
+        description: "Returns the global affiliate programme settings.",
+        response: {
+          settings: {
+            is_active: true,
+            commission_rate: 10,
+            cookie_days: 30,
+          },
+        },
+        responseDescription: "Returns the affiliate settings object.",
+      },
+      {
+        id: "update-affiliate-settings",
+        method: "PUT",
+        path: "/m/affiliates-settings",
+        title: "Update affiliate settings",
+        description: "Updates the global affiliate programme settings.",
+        bodyParams: [
+          {
+            name: "is_active",
+            type: "boolean",
+            required: false,
+            description: "Whether the affiliate programme is enabled.",
+            example: "true",
+          },
+          {
+            name: "commission_rate",
+            type: "number",
+            required: false,
+            description: "Default commission percentage for new affiliates.",
+            example: "10",
+          },
+          {
+            name: "cookie_days",
+            type: "integer",
+            required: false,
+            description: "Number of days the referral cookie is valid.",
+            example: "30",
+          },
+        ],
+        response: {
+          settings: {
+            is_active: true,
+            commission_rate: 10,
+            cookie_days: 30,
+          },
+        },
+        responseDescription: "Returns the updated affiliate settings.",
       },
     ],
   },
@@ -3575,6 +5013,1285 @@ export const resources: Resource[] = [
           },
         ],
         response: { message: "Domain deleted." },
+        responseDescription: "Returns a confirmation message.",
+      },
+      {
+        id: "update-domain",
+        method: "PUT",
+        path: "/domains/{id}",
+        title: "Update a domain",
+        description: "Updates the domain name.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the domain.",
+            example: "1",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "domain",
+            type: "string",
+            required: true,
+            description: "The new domain name.",
+            example: "store.yourbusiness.com",
+          },
+        ],
+        response: {
+          domain: {
+            id: 1,
+            name: "store.yourbusiness.com",
+            status: "pending_verification",
+            is_default: true,
+            updated_at: "2024-06-10T13:00:00Z",
+          },
+        },
+        responseDescription: "Returns the updated domain.",
+      },
+    ],
+  },
+
+  {
+    id: "auth-endpoints",
+    name: "Authentication",
+    description:
+      "Authentication endpoints for login, registration, profile management, and session handling.",
+    endpoints: [
+      {
+        id: "auth-login",
+        method: "POST",
+        path: "/auth/login",
+        title: "Login",
+        description: "Authenticates a user and returns a bearer token.",
+        bodyParams: [
+          {
+            name: "email",
+            type: "string",
+            required: true,
+            description: "User email address.",
+            example: "ahmad@flowpos.com",
+          },
+          {
+            name: "password",
+            type: "string",
+            required: true,
+            description: "User password.",
+            example: "super_secret_password",
+          },
+        ],
+        response: {
+          token: "tok_a1b2c3d4e5f6g7h8i9j0",
+          user: { id: 1, name: "Ahmad Hamid", email: "ahmad@flowpos.com" },
+        },
+        responseDescription:
+          "Returns a bearer token and the authenticated user.",
+      },
+      {
+        id: "auth-mfa-step1",
+        method: "POST",
+        path: "/auth/mfa/step1",
+        title: "MFA Step 1 — Verify Credentials",
+        description:
+          "First step of MFA login. Validates credentials and sends an MFA code to the user.",
+        bodyParams: [
+          {
+            name: "email",
+            type: "string",
+            required: true,
+            description: "User email address.",
+            example: "ahmad@flowpos.com",
+          },
+          {
+            name: "password",
+            type: "string",
+            required: true,
+            description: "User password.",
+            example: "super_secret_password",
+          },
+        ],
+        response: {
+          mfa_token: "mfa_x9y8z7w6v5",
+          message: "MFA code sent",
+        },
+        responseDescription:
+          "Returns a temporary MFA token. Pass it to step 2.",
+      },
+      {
+        id: "auth-mfa-step2",
+        method: "POST",
+        path: "/auth/mfa/step2",
+        title: "MFA Step 2 — Verify Code",
+        description:
+          "Second step of MFA login. Verifies the OTP code and returns a session token.",
+        bodyParams: [
+          {
+            name: "mfa_token",
+            type: "string",
+            required: true,
+            description: "The MFA token returned from step 1.",
+            example: "mfa_x9y8z7w6v5",
+          },
+          {
+            name: "code",
+            type: "string",
+            required: true,
+            description: "The OTP code sent to the user.",
+            example: "482910",
+          },
+        ],
+        response: {
+          token: "tok_a1b2c3d4e5f6g7h8i9j0",
+          user: { id: 1 },
+        },
+        responseDescription:
+          "Returns a bearer token on successful MFA verification.",
+      },
+      {
+        id: "auth-register",
+        method: "POST",
+        path: "/auth/register",
+        title: "Register",
+        description: "Creates a new user account and tenant.",
+        bodyParams: [
+          {
+            name: "name",
+            type: "string",
+            required: true,
+            description: "Full name of the user.",
+            example: "Ahmad Hamid",
+          },
+          {
+            name: "email",
+            type: "string",
+            required: true,
+            description: "User email address.",
+            example: "ahmad@flowpos.com",
+          },
+          {
+            name: "password",
+            type: "string",
+            required: true,
+            description: "Account password (minimum 8 characters).",
+            example: "super_secret_password",
+          },
+          {
+            name: "business_name",
+            type: "string",
+            required: true,
+            description: "Name of the business.",
+            example: "My Café",
+          },
+        ],
+        response: {
+          user: { id: 1 },
+          token: "tok_a1b2c3d4e5f6g7h8i9j0",
+        },
+        responseDescription: "Returns the new user and a bearer token.",
+      },
+      {
+        id: "auth-me",
+        method: "GET",
+        path: "/auth/me",
+        title: "Get current user",
+        description: "Returns the currently authenticated user.",
+        response: {
+          user: {
+            id: 1,
+            name: "Ahmad Hamid",
+            email: "ahmad@flowpos.com",
+            role: "owner",
+          },
+        },
+        responseDescription: "Returns the authenticated user object.",
+      },
+      {
+        id: "auth-profile",
+        method: "GET",
+        path: "/auth/profile",
+        title: "Get profile",
+        description: "Returns the profile details of the authenticated user.",
+        response: {
+          profile: {
+            id: 1,
+            name: "Ahmad Hamid",
+            email: "ahmad@flowpos.com",
+            phone: "+44 7700 900001",
+          },
+        },
+        responseDescription: "Returns the user profile object.",
+      },
+      {
+        id: "auth-update-profile",
+        method: "PUT",
+        path: "/auth/profile",
+        title: "Update profile",
+        description: "Updates the profile of the authenticated user.",
+        bodyParams: [
+          {
+            name: "name",
+            type: "string",
+            required: false,
+            description: "Full name.",
+            example: "Ahmad Hamid",
+          },
+          {
+            name: "email",
+            type: "string",
+            required: false,
+            description: "Email address.",
+            example: "ahmad@flowpos.com",
+          },
+          {
+            name: "phone",
+            type: "string",
+            required: false,
+            description: "Phone number in international format.",
+            example: "+44 7700 900001",
+          },
+        ],
+        response: {
+          profile: {
+            id: 1,
+            name: "Ahmad Hamid",
+            email: "ahmad@flowpos.com",
+            phone: "+44 7700 900001",
+            updated_at: "2024-06-10T13:00:00Z",
+          },
+        },
+        responseDescription: "Returns the updated profile.",
+      },
+      {
+        id: "auth-change-password",
+        method: "POST",
+        path: "/auth/change-password",
+        title: "Change password",
+        description: "Changes the password for the authenticated user.",
+        bodyParams: [
+          {
+            name: "current_password",
+            type: "string",
+            required: true,
+            description: "The user's current password.",
+            example: "old_password_123",
+          },
+          {
+            name: "new_password",
+            type: "string",
+            required: true,
+            description: "The new password (minimum 8 characters).",
+            example: "new_secure_password",
+          },
+          {
+            name: "new_password_confirmation",
+            type: "string",
+            required: true,
+            description: "Must match `new_password`.",
+            example: "new_secure_password",
+          },
+        ],
+        response: { message: "Password changed successfully." },
+        responseDescription: "Returns a confirmation message.",
+      },
+      {
+        id: "auth-forgot-password",
+        method: "POST",
+        path: "/auth/forgot-password",
+        title: "Forgot password",
+        description:
+          "Sends a password reset link to the specified email address.",
+        bodyParams: [
+          {
+            name: "email",
+            type: "string",
+            required: true,
+            description: "Email address associated with the account.",
+            example: "ahmad@flowpos.com",
+          },
+        ],
+        response: { message: "Password reset link sent." },
+        responseDescription: "Returns a confirmation message.",
+      },
+      {
+        id: "auth-reset-password",
+        method: "POST",
+        path: "/auth/reset-password",
+        title: "Reset password",
+        description:
+          "Resets the user's password using a token from the reset email.",
+        bodyParams: [
+          {
+            name: "token",
+            type: "string",
+            required: true,
+            description: "The password reset token from the email.",
+            example: "rst_a1b2c3d4e5f6",
+          },
+          {
+            name: "email",
+            type: "string",
+            required: true,
+            description: "Email address associated with the account.",
+            example: "ahmad@flowpos.com",
+          },
+          {
+            name: "password",
+            type: "string",
+            required: true,
+            description: "New password.",
+            example: "new_secure_password",
+          },
+          {
+            name: "password_confirmation",
+            type: "string",
+            required: true,
+            description: "Must match `password`.",
+            example: "new_secure_password",
+          },
+        ],
+        response: { message: "Password reset successfully." },
+        responseDescription: "Returns a confirmation message.",
+      },
+      {
+        id: "auth-logout",
+        method: "POST",
+        path: "/auth/logout",
+        title: "Logout",
+        description: "Revokes the current session token.",
+        response: { message: "Logged out successfully." },
+        responseDescription: "Returns a confirmation message.",
+      },
+      {
+        id: "auth-list-tokens",
+        method: "GET",
+        path: "/auth/tokens",
+        title: "List active sessions",
+        description:
+          "Returns all active session tokens for the authenticated user.",
+        response: {
+          tokens: [
+            {
+              id: 1,
+              name: "Chrome on Mac",
+              last_used_at: "2024-06-10T12:00:00Z",
+            },
+          ],
+        },
+        responseDescription:
+          "Returns an array of active session token objects.",
+      },
+      {
+        id: "auth-revoke-token",
+        method: "DELETE",
+        path: "/auth/tokens/{id}",
+        title: "Revoke a session",
+        description:
+          "Revokes a specific session token, logging out that device.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the session token.",
+            example: "1",
+          },
+        ],
+        response: { message: "Session revoked." },
+        responseDescription: "Returns a confirmation message.",
+      },
+    ],
+  },
+
+  {
+    id: "analytics",
+    name: "Analytics",
+    description:
+      "Analytics endpoints for dashboard stats, order trends, product performance, and customer insights.",
+    endpoints: [
+      {
+        id: "analytics-overview",
+        method: "GET",
+        path: "/analytics/v2",
+        title: "Dashboard overview",
+        description: "Returns high-level analytics for the dashboard.",
+        response: {
+          analytics: {
+            total_revenue: 125000,
+            total_orders: 842,
+            total_customers: 310,
+            avg_order_value: 4250,
+          },
+        },
+        responseDescription: "Returns the dashboard analytics summary.",
+      },
+      {
+        id: "analytics-orders",
+        method: "GET",
+        path: "/analytics/orders",
+        title: "Order analytics",
+        description: "Returns order trend data including daily breakdown.",
+        response: {
+          analytics: {
+            daily: [],
+            weekly_total: 4250,
+            monthly_total: 18500,
+          },
+        },
+        responseDescription:
+          "Returns order analytics with daily, weekly, and monthly totals.",
+      },
+      {
+        id: "analytics-products",
+        method: "GET",
+        path: "/analytics/products",
+        title: "Product analytics",
+        description: "Returns performance data for all products.",
+        response: {
+          analytics: [
+            {
+              product_id: 1,
+              name: "Classic Burger",
+              total_sold: 142,
+              revenue: 59640,
+            },
+          ],
+        },
+        responseDescription: "Returns an array of product analytics objects.",
+      },
+      {
+        id: "analytics-customers",
+        method: "GET",
+        path: "/analytics/customers",
+        title: "Customer analytics",
+        description: "Returns customer behaviour and lifetime value data.",
+        response: {
+          analytics: [
+            {
+              customer_id: 1,
+              name: "Jane Smith",
+              total_orders: 5,
+              lifetime_value: 18500,
+            },
+          ],
+        },
+        responseDescription: "Returns an array of customer analytics objects.",
+      },
+    ],
+  },
+
+  {
+    id: "roles",
+    name: "Roles",
+    description:
+      "Manage roles and permissions for your team members. Each role defines what actions a user can perform.",
+    endpoints: [
+      {
+        id: "list-roles",
+        method: "GET",
+        path: "/auth/roles",
+        title: "List all roles",
+        description: "Returns all roles configured for your tenant.",
+        response: {
+          roles: [
+            {
+              id: 1,
+              name: "Manager",
+              permissions: ["orders:read", "orders:write"],
+            },
+          ],
+        },
+        responseDescription: "Returns an array of role objects.",
+      },
+      {
+        id: "get-role",
+        method: "GET",
+        path: "/auth/roles/{id}",
+        title: "Retrieve a role",
+        description:
+          "Returns full details of a single role including its permissions.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the role.",
+            example: "1",
+          },
+        ],
+        response: {
+          role: {
+            id: 1,
+            name: "Manager",
+            permissions: ["orders:read", "orders:write", "customers:read"],
+          },
+        },
+        responseDescription: "Returns the role object.",
+      },
+      {
+        id: "create-role",
+        method: "POST",
+        path: "/auth/roles",
+        title: "Create a role",
+        description: "Creates a new role with specified permissions.",
+        bodyParams: [
+          {
+            name: "name",
+            type: "string",
+            required: true,
+            description: "Role name.",
+            example: "Manager",
+          },
+          {
+            name: "permissions",
+            type: "string[]",
+            required: true,
+            description: "Array of permission strings granted to this role.",
+            example: '["orders:read","customers:read"]',
+          },
+        ],
+        response: {
+          role: {
+            id: 3,
+            name: "Manager",
+            permissions: ["orders:read", "customers:read"],
+            created_at: "2024-06-10T12:00:00Z",
+          },
+        },
+        responseDescription: "Returns the created role.",
+      },
+      {
+        id: "update-role",
+        method: "PUT",
+        path: "/auth/roles/{id}",
+        title: "Update a role",
+        description: "Updates the name and/or permissions of an existing role.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the role.",
+            example: "1",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "name",
+            type: "string",
+            required: false,
+            description: "Role name.",
+            example: "Senior Manager",
+          },
+          {
+            name: "permissions",
+            type: "string[]",
+            required: false,
+            description: "Array of permission strings.",
+            example: '["orders:read","orders:write","customers:read"]',
+          },
+        ],
+        response: {
+          role: {
+            id: 1,
+            name: "Senior Manager",
+            permissions: ["orders:read", "orders:write", "customers:read"],
+            updated_at: "2024-06-10T13:00:00Z",
+          },
+        },
+        responseDescription: "Returns the updated role.",
+      },
+      {
+        id: "delete-role",
+        method: "DELETE",
+        path: "/auth/roles/{id}",
+        title: "Delete a role",
+        description: "Permanently deletes a role.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the role.",
+            example: "1",
+          },
+        ],
+        response: { message: "Role deleted." },
+        responseDescription: "Returns a confirmation message.",
+      },
+    ],
+  },
+
+  {
+    id: "team",
+    name: "Team & Invitations",
+    description:
+      "Manage your team members, send invitations, and control access to your FlowPOS account.",
+    endpoints: [
+      {
+        id: "list-team-members",
+        method: "GET",
+        path: "/users",
+        title: "List team members",
+        description: "Returns all team members for your tenant.",
+        response: {
+          users: [
+            {
+              id: 1,
+              name: "Ahmad Hamid",
+              email: "ahmad@flowpos.com",
+              role: { id: 1, name: "Owner" },
+              is_active: true,
+            },
+          ],
+        },
+        responseDescription: "Returns an array of team member objects.",
+      },
+      {
+        id: "update-team-member",
+        method: "PUT",
+        path: "/users/{id}",
+        title: "Update team member",
+        description: "Updates the role or active status of a team member.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the user.",
+            example: "2",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "role_id",
+            type: "integer",
+            required: false,
+            description: "New role ID to assign.",
+            example: "2",
+          },
+          {
+            name: "is_active",
+            type: "boolean",
+            required: false,
+            description: "Whether the team member is active.",
+            example: "true",
+          },
+        ],
+        response: {
+          user: {
+            id: 2,
+            name: "Jane Smith",
+            email: "jane@flowpos.com",
+            role: { id: 2, name: "Manager" },
+            is_active: true,
+            updated_at: "2024-06-10T13:00:00Z",
+          },
+        },
+        responseDescription: "Returns the updated team member.",
+      },
+      {
+        id: "remove-team-member",
+        method: "DELETE",
+        path: "/users/{id}",
+        title: "Remove team member",
+        description: "Removes a team member from your account.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the user.",
+            example: "2",
+          },
+        ],
+        response: { message: "Team member removed." },
+        responseDescription: "Returns a confirmation message.",
+      },
+      {
+        id: "list-invitations",
+        method: "GET",
+        path: "/invitations",
+        title: "List invitations",
+        description: "Returns all pending and accepted invitations.",
+        queryParams: [
+          {
+            name: "page",
+            type: "integer",
+            required: false,
+            description: "Page number.",
+            default: "1",
+            example: "1",
+          },
+        ],
+        response: {
+          invitations: [
+            {
+              id: 1,
+              email: "newuser@example.com",
+              role: { id: 2, name: "Manager" },
+              status: "pending",
+              invited_at: "2024-06-10T10:00:00Z",
+            },
+          ],
+        },
+        responseDescription: "Returns an array of invitation objects.",
+      },
+      {
+        id: "send-invitation",
+        method: "POST",
+        path: "/invitations",
+        title: "Send an invitation",
+        description: "Sends an email invitation to a new team member.",
+        bodyParams: [
+          {
+            name: "email",
+            type: "string",
+            required: true,
+            description: "Email address of the person to invite.",
+            example: "newuser@example.com",
+          },
+          {
+            name: "role_id",
+            type: "integer",
+            required: true,
+            description: "Role ID to assign on acceptance.",
+            example: "2",
+          },
+        ],
+        response: {
+          invitation: {
+            id: 2,
+            email: "newuser@example.com",
+            role: { id: 2, name: "Manager" },
+            status: "pending",
+            invited_at: "2024-06-10T12:00:00Z",
+          },
+        },
+        responseDescription: "Returns the created invitation.",
+      },
+      {
+        id: "revoke-invitation",
+        method: "DELETE",
+        path: "/invitations/{id}",
+        title: "Revoke an invitation",
+        description: "Cancels a pending invitation.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the invitation.",
+            example: "1",
+          },
+        ],
+        response: { message: "Invitation revoked." },
+        responseDescription: "Returns a confirmation message.",
+      },
+      {
+        id: "resend-invitation",
+        method: "POST",
+        path: "/invitations/{token}/resend",
+        title: "Resend an invitation",
+        description: "Resends the invitation email to the recipient.",
+        pathParams: [
+          {
+            name: "token",
+            type: "string",
+            required: true,
+            description: "The invitation token.",
+            example: "inv_abc123",
+          },
+        ],
+        response: { message: "Invitation resent." },
+        responseDescription: "Returns a confirmation message.",
+      },
+    ],
+  },
+
+  {
+    id: "business-settings",
+    name: "Business Settings",
+    description:
+      "Manage your business profile, branding, and configuration. Update your business name, contact info, logo, and other tenant-level settings.",
+    endpoints: [
+      {
+        id: "get-business-settings",
+        method: "GET",
+        path: "/tenants/{id}",
+        title: "Retrieve business settings",
+        description:
+          "Returns the business profile and configuration for your tenant.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the tenant.",
+            example: "1",
+          },
+        ],
+        response: {
+          tenant: {
+            id: 1,
+            business_name: "My Café",
+            business_email: "hello@mycafe.com",
+            phone: "+44 7700 900000",
+            address: "123 High St",
+            logo_url: "https://cdn.example.com/logo.png",
+          },
+        },
+        responseDescription: "Returns the tenant business settings object.",
+      },
+      {
+        id: "update-business-settings",
+        method: "PUT",
+        path: "/tenants/{id}",
+        title: "Update business settings",
+        description: "Updates your business profile.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the tenant.",
+            example: "1",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "business_name",
+            type: "string",
+            required: false,
+            description: "Business display name.",
+            example: "My Café",
+          },
+          {
+            name: "business_email",
+            type: "string",
+            required: false,
+            description: "Primary business email.",
+            example: "hello@mycafe.com",
+          },
+          {
+            name: "phone",
+            type: "string",
+            required: false,
+            description: "Business phone number.",
+            example: "+44 7700 900000",
+          },
+          {
+            name: "address",
+            type: "string",
+            required: false,
+            description: "Business address.",
+            example: "123 High St, London",
+          },
+        ],
+        response: {
+          tenant: {
+            id: 1,
+            business_name: "My Café",
+            business_email: "hello@mycafe.com",
+            phone: "+44 7700 900000",
+            address: "123 High St, London",
+            updated_at: "2024-06-10T13:00:00Z",
+          },
+        },
+        responseDescription: "Returns the updated tenant settings.",
+      },
+    ],
+  },
+
+  {
+    id: "payment-settings",
+    name: "Payment Settings",
+    description:
+      "Configure your payment processing settings including accepted methods, currencies, and tip options.",
+    endpoints: [
+      {
+        id: "get-payment-settings",
+        method: "GET",
+        path: "/payment-settings",
+        title: "Get payment settings",
+        description: "Returns the current payment processing configuration.",
+        response: {
+          paymentSettings: {
+            currency: "GBP",
+            accept_cash: true,
+            accept_card: true,
+            tips_enabled: false,
+          },
+        },
+        responseDescription: "Returns the payment settings object.",
+      },
+      {
+        id: "update-payment-settings",
+        method: "PUT",
+        path: "/payment-settings",
+        title: "Update payment settings",
+        description: "Updates the payment processing configuration.",
+        bodyParams: [
+          {
+            name: "currency",
+            type: "string",
+            required: false,
+            description: "ISO 4217 currency code.",
+            example: "GBP",
+          },
+          {
+            name: "accept_cash",
+            type: "boolean",
+            required: false,
+            description: "Whether to accept cash payments.",
+            example: "true",
+          },
+          {
+            name: "accept_card",
+            type: "boolean",
+            required: false,
+            description: "Whether to accept card payments.",
+            example: "true",
+          },
+          {
+            name: "tips_enabled",
+            type: "boolean",
+            required: false,
+            description: "Whether to enable tipping at checkout.",
+            example: "false",
+          },
+        ],
+        response: {
+          paymentSettings: {
+            currency: "GBP",
+            accept_cash: true,
+            accept_card: true,
+            tips_enabled: false,
+          },
+        },
+        responseDescription: "Returns the updated payment settings.",
+      },
+    ],
+  },
+
+  {
+    id: "payment-account",
+    name: "Payment Account",
+    description:
+      "Manage your Stripe Connect payment account. Used to configure payouts and card processing.",
+    endpoints: [
+      {
+        id: "get-payment-account",
+        method: "GET",
+        path: "/payment-account",
+        title: "Get payment account",
+        description: "Returns the connected Stripe account details.",
+        response: {
+          account: {
+            id: "acct_1OkT2r2eZvKYlo2C",
+            charges_enabled: true,
+            payouts_enabled: true,
+            country: "GB",
+          },
+        },
+        responseDescription: "Returns the Stripe Connect account object.",
+      },
+      {
+        id: "create-payment-account",
+        method: "POST",
+        path: "/payment-account",
+        title: "Create payment account",
+        description:
+          "Creates a new Stripe Connect account and returns an onboarding URL.",
+        response: {
+          account: {
+            id: "acct_1OkT2r2eZvKYlo2C",
+            onboarding_url: "https://connect.stripe.com/setup/s/abc123",
+          },
+        },
+        responseDescription:
+          "Returns the Stripe account ID and onboarding URL. Redirect the user to complete setup.",
+      },
+      {
+        id: "get-payment-account-session",
+        method: "GET",
+        path: "/payment-account-session",
+        title: "Get account session",
+        description:
+          "Returns a short-lived client secret for embedded Stripe Connect components.",
+        response: {
+          client_secret: "acas_a1b2c3d4e5f6g7h8",
+        },
+        responseDescription:
+          "Returns a client secret for use with Stripe's embedded UI.",
+      },
+    ],
+  },
+
+  {
+    id: "payouts",
+    name: "Payouts",
+    description:
+      "View your payout history and balance transfers to your bank account.",
+    endpoints: [
+      {
+        id: "list-payouts",
+        method: "GET",
+        path: "/payouts",
+        title: "List payouts",
+        description: "Returns a list of payouts to your bank account.",
+        response: {
+          payouts: [
+            {
+              id: "po_1OkT2r2eZvKYlo2C",
+              amount: 50000,
+              currency: "gbp",
+              arrival_date: "2024-06-10",
+              status: "paid",
+            },
+          ],
+        },
+        responseDescription: "Returns an array of payout objects.",
+      },
+    ],
+  },
+
+  {
+    id: "attachments",
+    name: "Attachments",
+    description:
+      "Manage file attachments for products. Upload images and digital files, then link them to product variants.",
+    endpoints: [
+      {
+        id: "list-attachments",
+        method: "GET",
+        path: "/attachments",
+        title: "List attachments",
+        description: "Returns a paginated list of uploaded attachments.",
+        queryParams: [
+          {
+            name: "page",
+            type: "integer",
+            required: false,
+            description: "Page number.",
+            default: "1",
+            example: "1",
+          },
+        ],
+        response: {
+          attachments: {
+            data: [
+              {
+                id: 1,
+                uid: "att_a1b2c3",
+                original_name: "burger.jpg",
+                url: "https://cdn.example.com/burger.jpg",
+                type: "image",
+              },
+            ],
+            total: 12,
+          },
+        },
+        responseDescription: "Returns a paginated list of attachment objects.",
+      },
+      {
+        id: "upload-attachment",
+        method: "POST",
+        path: "/attachments",
+        title: "Upload attachment",
+        description: "Uploads an image or digital file.",
+        bodyParams: [
+          {
+            name: "file",
+            type: "file",
+            required: true,
+            description:
+              "Image or digital file to upload (multipart/form-data).",
+            example: "burger.jpg",
+          },
+        ],
+        response: {
+          attachment: {
+            id: 2,
+            uid: "att_d4e5f6",
+            original_name: "burger.jpg",
+            url: "https://cdn.example.com/burger.jpg",
+            type: "image",
+            created_at: "2024-06-10T12:00:00Z",
+          },
+        },
+        responseDescription: "Returns the uploaded attachment object.",
+        notes: ["Upload must be multipart/form-data."],
+      },
+      {
+        id: "delete-attachment",
+        method: "DELETE",
+        path: "/attachments/{id}",
+        title: "Delete attachment",
+        description:
+          "Permanently deletes an attachment and its associated file.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the attachment.",
+            example: "1",
+          },
+        ],
+        response: { message: "Attachment deleted." },
+        responseDescription: "Returns a confirmation message.",
+      },
+    ],
+  },
+
+  {
+    id: "sections",
+    name: "Sections",
+    description:
+      "Sections are named areas within a location (e.g. 'Main Floor', 'Bar', 'Patio'). Used to organise tables and seating in EPOS mode.",
+    endpoints: [
+      {
+        id: "list-sections",
+        method: "GET",
+        path: "/locations/{locationId}/sections",
+        title: "List sections for a location",
+        description: "Returns all sections for a specific location.",
+        pathParams: [
+          {
+            name: "locationId",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the location.",
+            example: "1",
+          },
+        ],
+        response: {
+          sections: [
+            {
+              id: 1,
+              name: "Main Floor",
+              location_id: 1,
+              tables_count: 8,
+            },
+          ],
+        },
+        responseDescription: "Returns an array of section objects.",
+      },
+      {
+        id: "create-section",
+        method: "POST",
+        path: "/locations/{locationId}/sections",
+        title: "Create a section",
+        description: "Creates a new section within a location.",
+        pathParams: [
+          {
+            name: "locationId",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the location.",
+            example: "1",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "name",
+            type: "string",
+            required: true,
+            description: "Section name.",
+            example: "Bar Area",
+          },
+          {
+            name: "tables_count",
+            type: "integer",
+            required: false,
+            description: "Number of tables in this section.",
+            example: "6",
+          },
+        ],
+        response: {
+          section: {
+            id: 2,
+            name: "Bar Area",
+            location_id: 1,
+            tables_count: 6,
+            created_at: "2024-06-10T12:00:00Z",
+          },
+        },
+        responseDescription: "Returns the created section.",
+      },
+      {
+        id: "update-section",
+        method: "PUT",
+        path: "/locations/{locationId}/sections/{sectionId}",
+        title: "Update a section",
+        description: "Updates an existing section.",
+        pathParams: [
+          {
+            name: "locationId",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the location.",
+            example: "1",
+          },
+          {
+            name: "sectionId",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the section.",
+            example: "2",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "name",
+            type: "string",
+            required: false,
+            description: "Updated section name.",
+            example: "Bar & Lounge",
+          },
+          {
+            name: "tables_count",
+            type: "integer",
+            required: false,
+            description: "Updated number of tables.",
+            example: "8",
+          },
+        ],
+        response: {
+          section: {
+            id: 2,
+            name: "Bar & Lounge",
+            location_id: 1,
+            tables_count: 8,
+            updated_at: "2024-06-10T13:00:00Z",
+          },
+        },
+        responseDescription: "Returns the updated section.",
+      },
+      {
+        id: "delete-section",
+        method: "DELETE",
+        path: "/locations/{locationId}/sections/{sectionId}",
+        title: "Delete a section",
+        description: "Permanently deletes a section from a location.",
+        pathParams: [
+          {
+            name: "locationId",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the location.",
+            example: "1",
+          },
+          {
+            name: "sectionId",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the section.",
+            example: "2",
+          },
+        ],
+        response: { message: "Section deleted." },
         responseDescription: "Returns a confirmation message.",
       },
     ],
