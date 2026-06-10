@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Link } from "../utils/use-router";
 import { resources } from "../data/resources";
@@ -9,7 +10,6 @@ interface LayoutProps {
   currentPath: string;
   children: React.ReactNode;
   rightPanel?: React.ReactNode;
-  navigate: (to: string) => void;
 }
 
 function FlowPOSIcon({ className }: { className?: string }) {
@@ -53,13 +53,8 @@ function FlowPOSIcon({ className }: { className?: string }) {
   );
 }
 
-function SearchModal({
-  onClose,
-  navigate,
-}: {
-  onClose: () => void;
-  navigate: (to: string) => void;
-}) {
+function SearchModal({ onClose }: { onClose: () => void }) {
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
 
   const results =
@@ -158,12 +153,7 @@ function SearchModal({
   );
 }
 
-export function Layout({
-  currentPath,
-  children,
-  rightPanel,
-  navigate,
-}: LayoutProps) {
+export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
   const [dark, setDark] = useState<boolean>(() => {
     const stored = localStorage.getItem("theme");
     if (stored) return stored === "dark";
@@ -326,9 +316,7 @@ export function Layout({
         </div>
       </div>
 
-      {searchOpen && (
-        <SearchModal onClose={() => setSearchOpen(false)} navigate={navigate} />
-      )}
+      {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
     </div>
   );
 }

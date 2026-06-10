@@ -53,7 +53,7 @@ const resourceGroups = [
   },
   {
     label: "TEAM & ACCESS",
-    ids: ["team", "roles"],
+    ids: ["team", "roles", "profile"],
   },
   {
     label: "SETTINGS",
@@ -145,11 +145,9 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
                   {isOpen && (
                     <div className="ml-3 mt-0.5 mb-1 border-l border-line pl-2">
                       {resource.endpoints.map((ep) => (
-                        <a
+                        <button
                           key={ep.id}
-                          href={`#/${resource.id}`}
-                          onClick={(e) => {
-                            e.preventDefault();
+                          onClick={() => {
                             navigate(`/${resource.id}`);
                             onNavigate();
                             setTimeout(() => {
@@ -159,14 +157,14 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
                               });
                             }, 50);
                           }}
-                          className="flex items-center gap-2 px-2 py-1 rounded text-xs text-ink-tertiary hover:text-ink-primary hover:bg-canvas-subtle transition-colors"
+                          className="cursor-pointer w-full flex items-center gap-2 px-2 py-1 rounded text-xs text-ink-tertiary hover:text-ink-primary hover:bg-canvas-subtle transition-colors text-left"
                         >
                           <MethodBadge
                             method={ep.method as HttpMethod}
                             size="sm"
                           />
                           <span className="truncate">{ep.title}</span>
-                        </a>
+                        </button>
                       ))}
                     </div>
                   )}

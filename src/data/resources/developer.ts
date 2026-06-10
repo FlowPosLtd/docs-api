@@ -855,7 +855,7 @@ export const developerResources: Resource[] = [
     id: "auth-endpoints",
     name: "Authentication",
     description:
-      "Authentication endpoints for login, registration, profile management, and session handling.",
+      "Authentication endpoints for login, registration, MFA, password management, and logout.",
     endpoints: [
       {
         id: "auth-login",
@@ -1005,94 +1005,6 @@ export const developerResources: Resource[] = [
         responseDescription: "Returns the authenticated user object.",
       },
       {
-        id: "auth-profile",
-        method: "GET",
-        path: "/auth/profile",
-        title: "Get profile",
-        description: "Returns the profile details of the authenticated user.",
-        response: {
-          profile: {
-            id: 1,
-            name: "Ahmad Hamid",
-            email: "ahmad@flowpos.com",
-            phone: "+44 7700 900001",
-          },
-        },
-        responseDescription: "Returns the user profile object.",
-      },
-      {
-        id: "auth-update-profile",
-        method: "PUT",
-        path: "/auth/profile",
-        title: "Update profile",
-        description: "Updates the profile of the authenticated user.",
-        bodyParams: [
-          {
-            name: "name",
-            type: "string",
-            required: false,
-            description: "Full name.",
-            example: "Ahmad Hamid",
-          },
-          {
-            name: "email",
-            type: "string",
-            required: false,
-            description: "Email address.",
-            example: "ahmad@flowpos.com",
-          },
-          {
-            name: "phone",
-            type: "string",
-            required: false,
-            description: "Phone number in international format.",
-            example: "+44 7700 900001",
-          },
-        ],
-        response: {
-          profile: {
-            id: 1,
-            name: "Ahmad Hamid",
-            email: "ahmad@flowpos.com",
-            phone: "+44 7700 900001",
-            updated_at: "2024-06-10T13:00:00Z",
-          },
-        },
-        responseDescription: "Returns the updated profile.",
-      },
-      {
-        id: "auth-change-password",
-        method: "POST",
-        path: "/auth/change-password",
-        title: "Change password",
-        description: "Changes the password for the authenticated user.",
-        bodyParams: [
-          {
-            name: "current_password",
-            type: "string",
-            required: true,
-            description: "The user's current password.",
-            example: "old_password_123",
-          },
-          {
-            name: "new_password",
-            type: "string",
-            required: true,
-            description: "The new password (minimum 8 characters).",
-            example: "new_secure_password",
-          },
-          {
-            name: "new_password_confirmation",
-            type: "string",
-            required: true,
-            description: "Must match `new_password`.",
-            example: "new_secure_password",
-          },
-        ],
-        response: { message: "Password changed successfully." },
-        responseDescription: "Returns a confirmation message.",
-      },
-      {
         id: "auth-forgot-password",
         method: "POST",
         path: "/auth/forgot-password",
@@ -1158,44 +1070,6 @@ export const developerResources: Resource[] = [
         title: "Logout",
         description: "Revokes the current session token.",
         response: { message: "Logged out successfully." },
-        responseDescription: "Returns a confirmation message.",
-      },
-      {
-        id: "auth-list-tokens",
-        method: "GET",
-        path: "/auth/tokens",
-        title: "List active sessions",
-        description:
-          "Returns all active session tokens for the authenticated user.",
-        response: {
-          tokens: [
-            {
-              id: 1,
-              name: "Chrome on Mac",
-              last_used_at: "2024-06-10T12:00:00Z",
-            },
-          ],
-        },
-        responseDescription:
-          "Returns an array of active session token objects.",
-      },
-      {
-        id: "auth-revoke-token",
-        method: "DELETE",
-        path: "/auth/tokens/{id}",
-        title: "Revoke a session",
-        description:
-          "Revokes a specific session token, logging out that device.",
-        pathParams: [
-          {
-            name: "id",
-            type: "integer",
-            required: true,
-            description: "The numeric ID of the session token.",
-            example: "1",
-          },
-        ],
-        response: { message: "Session revoked." },
         responseDescription: "Returns a confirmation message.",
       },
     ],
