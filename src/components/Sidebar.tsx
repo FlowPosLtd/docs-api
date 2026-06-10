@@ -48,20 +48,16 @@ const resourceGroups = [
     ],
   },
   {
-    label: "ANALYTICS",
-    ids: ["analytics"],
-  },
-  {
     label: "TEAM & ACCESS",
-    ids: ["team", "roles", "profile"],
+    ids: ["roles"],
   },
   {
     label: "SETTINGS",
-    ids: ["business-settings", "online-store", "domains"],
+    ids: ["business-settings", "domains"],
   },
   {
     label: "DEVELOPER",
-    ids: ["webhooks", "api-keys", "affiliates", "auth-endpoints"],
+    ids: ["webhooks", "api-keys"],
   },
 ];
 
