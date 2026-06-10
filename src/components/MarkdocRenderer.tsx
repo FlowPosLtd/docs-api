@@ -59,15 +59,20 @@ function ListItem({ children }: { children: React.ReactNode }) {
 function CodePanel({
   language,
   label,
+  code: codeProp,
   children,
 }: {
   language: string;
   label?: string;
-  children: React.ReactNode;
+  code?: string;
+  children?: React.ReactNode;
 }) {
-  const code = React.Children.toArray(children)
-    .map((c) => (typeof c === "string" ? c : ""))
-    .join("");
+  const code =
+    codeProp !== undefined
+      ? codeProp
+      : React.Children.toArray(children)
+          .map((c) => (typeof c === "string" ? c : ""))
+          .join("");
 
   return (
     <div className="bg-pitch-900 rounded-lg border border-pitch-600 overflow-hidden mb-4">

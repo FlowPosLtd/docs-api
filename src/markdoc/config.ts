@@ -36,15 +36,12 @@ const nodes: Config["nodes"] = {
       language: { type: String },
       label: { type: String },
     },
-    transform(node, config) {
-      return new Markdoc.Tag(
-        "CodePanel",
-        {
-          language: node.attributes.language ?? "text",
-          label: node.attributes.label ?? null,
-        },
-        node.transformChildren(config),
-      );
+    transform(node) {
+      return new Markdoc.Tag("CodePanel", {
+        language: node.attributes.language ?? "text",
+        label: node.attributes.label ?? null,
+        code: node.attributes.content ?? "",
+      }, []);
     },
   },
 
@@ -121,12 +118,25 @@ const tags: Config["tags"] = {
       language: { type: String, default: "text" },
       label: { type: String },
     },
-    transform(node, config) {
-      return new Markdoc.Tag(
-        "CodePanel",
-        { language: node.attributes.language, label: node.attributes.label },
-        node.transformChildren(config),
-      );
+    transform(node) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      function getText(n: any): string {
+        if (n.type === "text") return String(n.attributes?.content ?? "");
+        if (n.type === "softbreak") return "\n";
+        // backslash-newline in markdown becomes a hardbreak — restore it for code
+        if (n.type === "hardbreak") return "\\\n";
+        if (Array.isArray(n.children)) {
+          const s = n.children.map(getText).join("");
+          return n.type === "paragraph" ? s + "\n" : s;
+        }
+        return "";
+      }
+      const code = node.children.map(getText).join("").trim();
+      return new Markdoc.Tag("CodePanel", {
+        language: node.attributes.language ?? "text",
+        label: node.attributes.label,
+        code,
+      }, []);
     },
   },
 };
