@@ -69,6 +69,11 @@ export function ApiExplorer({
     const hasBody = ["POST", "PUT", "PATCH"].includes(endpoint.method);
     const bodyPairs = Object.entries(bodyValues).filter(([, v]) => v !== "");
 
+    const bodyParamTypeMap: Record<string, string> = {};
+    for (const p of endpoint.bodyParams ?? []) {
+      bodyParamTypeMap[p.name] = p.type;
+    }
+
     let data: Record<string, unknown> | undefined;
     if (hasBody && bodyPairs.length) {
       const assembled: Record<string, unknown> = {};
@@ -81,7 +86,17 @@ export function ApiExplorer({
           if (!arrayFields[parent]) arrayFields[parent] = {};
           arrayFields[parent][field] = v;
         } else {
-          assembled[k] = v;
+          const t = bodyParamTypeMap[k] ?? "";
+          if (t.endsWith("[]") || t === "array") {
+            try { assembled[k] = JSON.parse(v); } catch { assembled[k] = v; }
+          } else if (t === "integer" || t === "number") {
+            const n = Number(v);
+            assembled[k] = isNaN(n) ? v : n;
+          } else if (t === "boolean") {
+            assembled[k] = v === "true" ? true : v === "false" ? false : v;
+          } else {
+            assembled[k] = v;
+          }
         }
       }
 
