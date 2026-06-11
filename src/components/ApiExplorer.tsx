@@ -74,8 +74,10 @@ export const ApiExplorer = memo(function ApiExplorer({
     const bodyPairs = Object.entries(bodyValues).filter(([, v]) => v !== "");
 
     const bodyParamTypeMap: Record<string, string> = {};
+    const bodyParamEnumFields = new Set<string>();
     for (const p of endpoint.bodyParams ?? []) {
       bodyParamTypeMap[p.name] = p.type;
+      if (p.enum) bodyParamEnumFields.add(p.name);
     }
 
     let data: Record<string, unknown> | undefined;
@@ -114,7 +116,7 @@ export const ApiExplorer = memo(function ApiExplorer({
           } else if (t === "boolean") {
             assembled[k] = v === "true" ? true : v === "false" ? false : v;
           } else {
-            assembled[k] = v;
+            assembled[k] = bodyParamEnumFields.has(k) ? v.toLowerCase() : v;
           }
         }
       }
