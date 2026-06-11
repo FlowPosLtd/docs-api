@@ -14,13 +14,17 @@ export const teamResources: Resource[] = [
         title: "List all roles",
         description: "Returns all roles configured for your tenant.",
         response: {
-          roles: [
-            {
-              id: 1,
-              name: "Manager",
-              permissions: ["orders:read", "orders:write"],
-            },
-          ],
+          data: {
+            roles: [
+              {
+                id: 1,
+                name: "new role for testing",
+                users_count: 1,
+                permissions_count: 15,
+              },
+            ],
+          },
+          status: true,
         },
         responseDescription: "Returns an array of role objects.",
       },
@@ -41,11 +45,18 @@ export const teamResources: Resource[] = [
           },
         ],
         response: {
-          role: {
-            id: 1,
-            name: "Manager",
-            permissions: ["orders:read", "orders:write", "customers:read"],
+          data: {
+            role: {
+              id: 1,
+              name: "new role for testing",
+              permissions: [
+                {
+                  name: "products.view",
+                },
+              ],
+            },
           },
+          status: true,
         },
         responseDescription: "Returns the role object.",
       },

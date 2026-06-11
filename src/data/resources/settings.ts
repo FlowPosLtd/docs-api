@@ -108,16 +108,21 @@ export const settingsResources: Resource[] = [
         title: "List all domains",
         description: "Returns all domains configured for your tenant.",
         response: {
-          domains: [
-            {
-              id: 1,
-              name: "shop.yourbusiness.com",
-              status: "active",
-              is_default: true,
-              is_active: true,
-              created_at: "2024-03-01T10:00:00Z",
-            },
-          ],
+          data: {
+            domains: [
+              {
+                id: 13,
+                name: "abubakr.flowpos.me",
+                verification_token: "verify_a1b2c3d4",
+                tenant_id: 2,
+                created_at: "2024-01-10T09:00:00.000000Z",
+                updated_at: "2024-01-10T09:00:00.000000Z",
+                status: "active",
+                is_default: true,
+              },
+            ],
+          },
+          status: true,
         },
         responseDescription: "Returns an array of domain objects.",
       },
@@ -145,14 +150,24 @@ export const settingsResources: Resource[] = [
           },
         ],
         response: {
-          domain: {
-            id: 2,
-            name: "shop.yourbusiness.com",
-            status: "pending_verification",
-            is_default: false,
-            verification_token: "verify_a1b2c3d4",
-            created_at: "2024-06-10T12:00:00Z",
+          data: {
+            domain: {
+              tenant_id: 2,
+              name: "shop.yourbusiness.com",
+              status: "pending",
+              is_default: false,
+              verification_token: "verify_a1b2c3d4",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+              created_at: "2024-01-10T09:00:00.000000Z",
+              id: 62,
+            },
+            dns_record: {
+              type: "TXT",
+              name: "_flowpos-verify.shop.yourbusiness.com",
+              value: "18e66365-31a3-4697-b879-826b1b8f5092",
+            },
           },
+          status: true,
         },
         responseDescription:
           "Returns the domain. Use `verification_token` to configure DNS.",
@@ -173,12 +188,19 @@ export const settingsResources: Resource[] = [
           },
         ],
         response: {
-          domain: {
-            id: 2,
-            name: "shop.yourbusiness.com",
-            status: "active",
-            is_active: true,
+          data: {
+            domain: {
+              id: 13,
+              name: "abubakr.flowpos.me",
+              verification_token: "verify_a1b2c3d4",
+              tenant_id: 2,
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+              status: "active",
+              is_default: true,
+            },
           },
+          status: true,
         },
         responseDescription: "Returns the updated domain with its new status.",
       },

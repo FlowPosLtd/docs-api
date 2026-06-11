@@ -127,12 +127,15 @@ export const developerResources: Resource[] = [
         title: "List webhook event types",
         description: "Returns all available event types you can subscribe to.",
         response: {
-          events: [
-            { value: "order.created", label: "Order Created" },
-            { value: "order.status_changed", label: "Order Status Changed" },
-            { value: "payment.paid", label: "Payment Paid" },
-            { value: "payment.refunded", label: "Payment Refunded" },
-          ],
+          data: {
+            events: [
+              {
+                value: "order.placed",
+                label: "Order Placed",
+              },
+            ],
+          },
+          status: true,
         },
         responseDescription: "Returns an array of event type objects.",
       },
@@ -411,24 +414,48 @@ export const developerResources: Resource[] = [
           },
         ],
         response: {
-          apiKeys: {
-            data: [
-              {
-                id: 1,
-                name: "Production Key",
-                token: null,
-                expires_at: null,
-                last_used_at: "2024-06-09T08:30:00Z",
-                created_at: "2024-01-15T10:00:00Z",
-                permissions: [
-                  { name: "orders:read" },
-                  { name: "customers:read" },
-                ],
-              },
-            ],
-            current_page: 1,
-            total: 2,
+          data: {
+            apiKeys: {
+              current_page: 1,
+              data: [
+                {
+                  id: 16,
+                  tenant_id: 2,
+                  created_by: 2,
+                  name: "create order key",
+                  token: "tok_live_a1b2c3d4e5f6",
+                  last_used_at: "2024-01-10T09:00:00.000000Z",
+                  expires_at: null,
+                  created_at: "2024-01-10T09:00:00.000000Z",
+                  updated_at: "2024-01-10T09:00:00.000000Z",
+                  permissions: [
+                    {
+                      name: "addonGroups.create",
+                    },
+                  ],
+                },
+              ],
+              first_page_url: "http://api.flowpos.me/v1/api-keys?page=1",
+              from: 1,
+              last_page: 1,
+              last_page_url: "http://api.flowpos.me/v1/api-keys?page=1",
+              links: [
+                {
+                  url: null,
+                  label: "&laquo; Previous",
+                  page: null,
+                  active: false,
+                },
+              ],
+              next_page_url: null,
+              path: "http://api.flowpos.me/v1/api-keys",
+              per_page: 15,
+              prev_page_url: null,
+              to: 1,
+              total: 1,
+            },
           },
+          status: true,
         },
         responseDescription:
           "Returns a paginated list of API key objects. The `token` is `null` after creation.",
@@ -515,15 +542,25 @@ export const developerResources: Resource[] = [
           },
         ],
         response: {
-          apiKey: {
-            id: 1,
-            name: "Production Key",
-            token: null,
-            expires_at: null,
-            last_used_at: "2024-06-09T08:30:00Z",
-            created_at: "2024-01-15T10:00:00Z",
-            permissions: [{ name: "orders:read" }, { name: "customers:read" }],
+          data: {
+            apiKey: {
+              id: 16,
+              tenant_id: 2,
+              created_by: 2,
+              name: "create order key",
+              token: "tok_live_a1b2c3d4e5f6",
+              last_used_at: "2024-01-10T09:00:00.000000Z",
+              expires_at: null,
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+              permissions: [
+                {
+                  name: "addonGroups.create",
+                },
+              ],
+            },
           },
+          status: true,
         },
         responseDescription:
           "Returns the API key object. The `token` is always `null` after creation.",
@@ -598,12 +635,25 @@ export const developerResources: Resource[] = [
           },
         ],
         response: {
-          apiKey: {
-            id: 1,
-            name: "Production Key",
-            token: "tok_live_z9y8x7w6v5u4t3s2r1q0p",
-            expires_at: null,
+          data: {
+            apiKey: {
+              id: 16,
+              tenant_id: 2,
+              created_by: 2,
+              name: "create order key",
+              token: "tok_live_a1b2c3d4e5f6",
+              last_used_at: "2024-01-10T09:00:00.000000Z",
+              expires_at: null,
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+              permissions: [
+                {
+                  name: "addonGroups.create",
+                },
+              ],
+            },
           },
+          status: true,
         },
         responseDescription:
           "Returns the API key with the new token. Store it immediately it cannot be retrieved again.",

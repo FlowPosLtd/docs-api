@@ -70,7 +70,7 @@ export function ResponseShape({ data, description }: ResponseShapeProps) {
           <span className="text-xs text-pitch-300 font-mono">200 OK</span>
         </div>
         <pre className="p-4 text-sm font-mono overflow-x-auto text-pitch-200 leading-6">
-          <JsonValue value={{ data }} />
+          <JsonValue value={data} />
         </pre>
       </div>
     </div>
