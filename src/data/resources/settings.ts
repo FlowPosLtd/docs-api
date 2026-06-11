@@ -218,7 +218,7 @@ export const settingsResources: Resource[] = [
             description: "The numeric ID of the domain.",
           },
         ],
-        response: { message: "Domain deleted." },
+        response: { data: null, status: true },
         responseDescription: "Returns a confirmation message.",
       },
       {

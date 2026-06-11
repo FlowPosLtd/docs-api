@@ -148,7 +148,7 @@ export const teamResources: Resource[] = [
             example: "1",
           },
         ],
-        response: { message: "Role deleted." },
+        response: { data: null, status: true },
         responseDescription: "Returns a confirmation message.",
       },
     ],

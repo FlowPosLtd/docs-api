@@ -82,13 +82,28 @@ export const ApiExplorer = memo(function ApiExplorer({
     if (hasBody && bodyPairs.length) {
       const assembled: Record<string, unknown> = {};
       const arrayFields: Record<string, Record<string, string>> = {};
+      const nestedFields: Record<string, Record<string, unknown>> = {};
 
       for (const [k, v] of bodyPairs) {
-        const m = k.match(/^([^[]+)\[\]\.(.+)$/);
-        if (m) {
-          const [, parent, field] = m;
+        const arrayMatch = k.match(/^([^[]+)\[\]\.(.+)$/);
+        if (arrayMatch) {
+          const [, parent, field] = arrayMatch;
           if (!arrayFields[parent]) arrayFields[parent] = {};
           arrayFields[parent][field] = v;
+        } else if (k.includes(".")) {
+          const dotIdx = k.indexOf(".");
+          const parent = k.substring(0, dotIdx);
+          const child = k.substring(dotIdx + 1);
+          if (!nestedFields[parent]) nestedFields[parent] = {};
+          const t = bodyParamTypeMap[k] ?? "";
+          if (t === "integer" || t === "number") {
+            const n = Number(v);
+            nestedFields[parent][child] = isNaN(n) ? v : n;
+          } else if (t === "boolean") {
+            nestedFields[parent][child] = v === "true" ? true : v === "false" ? false : v;
+          } else {
+            nestedFields[parent][child] = v;
+          }
         } else {
           const t = bodyParamTypeMap[k] ?? "";
           if (t.endsWith("[]") || t === "array") {
@@ -117,6 +132,10 @@ export const ApiExplorer = memo(function ApiExplorer({
             }),
           ),
         ];
+      }
+
+      for (const [parent, fields] of Object.entries(nestedFields)) {
+        assembled[parent] = fields;
       }
 
       data = Object.keys(assembled).length ? assembled : undefined;
@@ -353,7 +372,7 @@ export const ApiExplorer = memo(function ApiExplorer({
             </span>
             <span className="text-xs text-gray-500">{result.time}ms</span>
           </div>
-          <pre className="p-3 rounded bg-gray-900 text-xs font-mono text-gray-300 overflow-x-auto max-h-72 border border-gray-800 leading-5 whitespace-pre-wrap break-words">
+          <pre className="p-3 pb-6 rounded bg-gray-900 text-xs font-mono text-gray-300 overflow-x-auto max-h-150 border border-gray-800 leading-5 whitespace-pre-wrap wrap-break-word">
             {JSON.stringify(result.data, null, 2)}
           </pre>
         </div>

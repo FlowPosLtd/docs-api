@@ -117,7 +117,7 @@ export const developerResources: Resource[] = [
             description: "The numeric ID of the webhook endpoint.",
           },
         ],
-        response: { message: "Webhook endpoint deleted." },
+        response: { data: null, status: true },
         responseDescription: "Returns a confirmation message.",
       },
       {
@@ -522,7 +522,7 @@ export const developerResources: Resource[] = [
             description: "The numeric ID of the API key.",
           },
         ],
-        response: { message: "API key deleted." },
+        response: { data: null, status: true },
         responseDescription: "Returns a confirmation message.",
       },
       {

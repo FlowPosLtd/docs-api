@@ -227,43 +227,6 @@ export const customerResources: Resource[] = [
         },
         responseDescription: "Returns the updated customer object.",
       },
-      {
-        id: "create-customer-note",
-        method: "POST",
-        path: "/customers/{customerId}/notes",
-        title: "Add a customer note",
-        description:
-          "Adds an internal note to a customer record. Notes are visible only to your team.",
-        pathParams: [
-          {
-            name: "customerId",
-            type: "integer",
-            required: true,
-            description: "The numeric ID of the customer.",
-          },
-        ],
-        bodyParams: [
-          {
-            name: "note",
-            type: "string",
-            required: true,
-            description: "The note text to attach to the customer.",
-            example: "Prefers email contact only.",
-          },
-        ],
-        response: {
-          note: {
-            id: 3,
-            customer_id: 1,
-            note: "Prefers email contact only.",
-            user_id: 2,
-            user: { id: 2, name: "Admin User", full_name: "Admin User" },
-            created_at: "2024-06-10T14:00:00Z",
-            updated_at: "2024-06-10T14:00:00Z",
-          },
-        },
-        responseDescription: "Returns the newly created note object.",
-      },
     ],
   },
 
@@ -421,7 +384,7 @@ export const customerResources: Resource[] = [
             description: "The numeric ID of the group.",
           },
         ],
-        response: { data: [], status: true },
+        response: { data: null, status: true },
         responseDescription: "Returns a confirmation message.",
       },
       {
