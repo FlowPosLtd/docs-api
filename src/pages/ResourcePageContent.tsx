@@ -1,7 +1,38 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, memo } from "react";
 import { EndpointSection } from "../components/EndpointSection";
 import { METHOD_TEXT } from "../utils/method-colors";
 import type { Resource, Endpoint, HttpMethod } from "../types";
+
+const NavButton = memo(function NavButton({
+  ep,
+  isActive,
+  onFocus,
+}: {
+  ep: Endpoint;
+  isActive: boolean;
+  onFocus: (id: string) => void;
+}) {
+  const handleClick = useCallback(() => {
+    onFocus(ep.id);
+    document.getElementById(ep.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [onFocus, ep.id]);
+
+  return (
+    <button
+      onClick={handleClick}
+      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border transition-colors ${
+        isActive
+          ? "border-accent-muted bg-accent-faint text-accent-ink"
+          : "border-line text-ink-tertiary hover:border-line-strong hover:text-ink-secondary"
+      }`}
+    >
+      <span className={`text-[9px] font-bold uppercase font-mono ${METHOD_TEXT[ep.method as HttpMethod]}`}>
+        {ep.method}
+      </span>
+      <span>{ep.title}</span>
+    </button>
+  );
+});
 
 interface ResourcePageContentProps {
   resource: Resource;
@@ -72,7 +103,7 @@ export function ResourcePageContent({
         });
 
         clearTimeout(debounceTimer.current);
-        debounceTimer.current = setTimeout(decide, 60);
+        debounceTimer.current = setTimeout(decide, 120);
       },
       { threshold: 0, rootMargin: "-60px 0px -35% 0px" },
     );
@@ -100,27 +131,12 @@ export function ResourcePageContent({
 
       <div className="flex flex-wrap gap-2 mb-8">
         {resource.endpoints.map((ep) => (
-          <button
+          <NavButton
             key={ep.id}
-            onClick={() => {
-              handleFocus(ep.id);
-              document
-                .getElementById(ep.id)
-                ?.scrollIntoView({ behavior: "smooth", block: "start" });
-            }}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border transition-colors ${
-              activeId === ep.id
-                ? "border-accent-muted bg-accent-faint text-accent-ink"
-                : "border-line text-ink-tertiary hover:border-line-strong hover:text-ink-secondary"
-            }`}
-          >
-            <span
-              className={`text-[9px] font-bold uppercase font-mono ${METHOD_TEXT[ep.method as HttpMethod]}`}
-            >
-              {ep.method}
-            </span>
-            <span>{ep.title}</span>
-          </button>
+            ep={ep}
+            isActive={activeId === ep.id}
+            onFocus={handleFocus}
+          />
         ))}
       </div>
 
@@ -129,8 +145,7 @@ export function ResourcePageContent({
           {i > 0 && <hr className="border-line mb-12" />}
           <EndpointSection
             endpoint={ep}
-            isActive={activeId === ep.id}
-            onFocus={() => handleFocus(ep.id)}
+            onFocus={handleFocus}
           />
         </div>
       ))}

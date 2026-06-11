@@ -105,7 +105,11 @@ export function ApiExplorer({
           Object.fromEntries(
             Object.entries(fields).map(([k, v]) => {
               const n = Number(v);
-              return [k, v !== "" && !isNaN(n) ? n : v];
+              if (v !== "" && !isNaN(n)) return [k, n];
+              if (v.trim().startsWith("[") || v.trim().startsWith("{")) {
+                try { return [k, JSON.parse(v)]; } catch { /* fall through */ }
+              }
+              return [k, v];
             }),
           ),
         ];
