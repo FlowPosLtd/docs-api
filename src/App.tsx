@@ -55,12 +55,6 @@ export default function App() {
       baseUrl={baseUrl}
       showExplorer={explorer.showExplorer}
       setShowExplorer={explorer.setShowExplorer}
-      pathValues={explorer.pathValues}
-      queryValues={explorer.queryValues}
-      bodyValues={explorer.bodyValues}
-      onPathChange={explorer.onPathChange}
-      onQueryChange={explorer.onQueryChange}
-      onBodyChange={explorer.onBodyChange}
     />
   ) : undefined;
 
