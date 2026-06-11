@@ -792,8 +792,7 @@ export const productResources: Resource[] = [
         method: "POST",
         path: "/categories",
         title: "Create a category",
-        description:
-          "Creates a new category. Use `parent_id` to nest it under an existing category.",
+        description: "Creates a new category.",
         bodyParams: [
           {
             name: "name",
@@ -808,13 +807,6 @@ export const productResources: Resource[] = [
             required: false,
             description: "Short description.",
             example: "All burger products.",
-          },
-          {
-            name: "parent_id",
-            type: "integer",
-            required: false,
-            description: "ID of the parent category for nesting.",
-            example: "null",
           },
           {
             name: "is_active",
@@ -833,11 +825,11 @@ export const productResources: Resource[] = [
             example: "false",
           },
           {
-            name: "attach_id",
-            type: "integer",
+            name: "products",
+            type: "integer[]",
             required: false,
-            description: "ID of an uploaded attachment for the thumbnail.",
-            example: "5",
+            description: "Array of product IDs to assign to this category.",
+            example: "[1]",
           },
         ],
         response: {
