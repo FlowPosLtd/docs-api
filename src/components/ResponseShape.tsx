@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 interface ResponseShapeProps {
   data: unknown;
   description?: string;
@@ -59,7 +61,7 @@ function JsonValue({ value }: { value: unknown }) {
   return <span className="text-pitch-200">{String(value)}</span>;
 }
 
-export function ResponseShape({ data, description }: ResponseShapeProps) {
+export const ResponseShape = memo(function ResponseShape({ data, description }: ResponseShapeProps) {
   return (
     <div className="mb-6">
       <h4 className="t-caption mb-3">Response</h4>
@@ -75,4 +77,4 @@ export function ResponseShape({ data, description }: ResponseShapeProps) {
       </div>
     </div>
   );
-}
+});

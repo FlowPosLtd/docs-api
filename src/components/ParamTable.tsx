@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { Param } from "../types";
 
 interface ParamTableProps {
@@ -5,7 +6,7 @@ interface ParamTableProps {
   params: Param[];
 }
 
-export function ParamTable({ title, params }: ParamTableProps) {
+export const ParamTable = memo(function ParamTable({ title, params }: ParamTableProps) {
   if (!params.length) return null;
   return (
     <div className="mb-6">
@@ -70,4 +71,4 @@ export function ParamTable({ title, params }: ParamTableProps) {
       </div>
     </div>
   );
-}
+});

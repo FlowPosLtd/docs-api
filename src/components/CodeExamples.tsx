@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, memo } from "react";
 import { CodeBlock } from "./CodeBlock";
 import { generateCode, LANGUAGE_LABELS } from "../utils/code-gen";
 import type { Endpoint } from "../types";
@@ -16,7 +16,7 @@ interface CodeExamplesProps {
   isTryItOpen?: boolean;
 }
 
-export function CodeExamples({
+export const CodeExamples = memo(function CodeExamples({
   endpoint,
   apiKey,
   pathValues = {},
@@ -27,13 +27,9 @@ export function CodeExamples({
 }: CodeExamplesProps) {
   const [lang, setLang] = useState<Language>("curl");
 
-  const code = generateCode(
-    endpoint,
-    lang,
-    apiKey,
-    pathValues,
-    queryValues,
-    bodyValues,
+  const code = useMemo(
+    () => generateCode(endpoint, lang, apiKey, pathValues, queryValues, bodyValues),
+    [endpoint, lang, apiKey, pathValues, queryValues, bodyValues],
   );
 
   return (
@@ -71,4 +67,4 @@ export function CodeExamples({
       </div>
     </div>
   );
-}
+});

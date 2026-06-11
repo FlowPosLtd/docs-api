@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { useState, memo } from "react";
+
+const inputCls =
+  "w-full px-3 py-1.5 rounded bg-gray-800 border border-gray-700 text-gray-200 text-sm font-mono placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors";
+const labelCls = "block text-xs text-gray-400 mb-1";
 import axios from "axios";
 import {
   apiClient,
@@ -26,7 +30,7 @@ interface ApiResult {
   time: number;
 }
 
-export function ApiExplorer({
+export const ApiExplorer = memo(function ApiExplorer({
   endpoint,
   apiKey,
   baseUrl,
@@ -150,9 +154,7 @@ export function ApiExplorer({
     }
   };
 
-  const inputCls =
-    "w-full px-3 py-1.5 rounded bg-gray-800 border border-gray-700 text-gray-200 text-sm font-mono placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors";
-  const labelCls = "block text-xs text-gray-400 mb-1";
+
 
   return (
     <div className="p-4 flex flex-col gap-4">
@@ -358,4 +360,4 @@ export function ApiExplorer({
       )}
     </div>
   );
-}
+});

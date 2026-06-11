@@ -39,29 +39,30 @@ interface ResourcePageContentProps {
   onEndpointFocus: (ep: Endpoint) => void;
 }
 
-export function ResourcePageContent({
+export const ResourcePageContent = memo(function ResourcePageContent({
   resource,
   onEndpointFocus,
 }: ResourcePageContentProps) {
   const [activeId, setActiveId] = useState(resource.endpoints[0]?.id ?? "");
 
-  const activeIdRef = useRef(resource.endpoints[0]?.id ?? "");
-  const sectionRefs = useRef<Map<string, HTMLDivElement>>(new Map());
-  const visibleMap = useRef<Map<string, DOMRectReadOnly>>(new Map());
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
-  );
+  const activeIdRef  = useRef(resource.endpoints[0]?.id ?? "");
+  const sectionRefs  = useRef<Map<string, HTMLDivElement>>(new Map());
+  const visibleMap   = useRef<Map<string, DOMRectReadOnly>>(new Map());
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  const handleFocus = useCallback(
-    (id: string) => {
-      if (activeIdRef.current === id) return;
-      activeIdRef.current = id;
-      setActiveId(id);
-      const ep = resource.endpoints.find((e) => e.id === id);
-      if (ep) onEndpointFocus(ep);
-    },
-    [resource.id, onEndpointFocus],
-  );
+  // Always up-to-date without being a dep of the IntersectionObserver effect
+  const resourceRef      = useRef(resource);
+  const onEndpointFocusRef = useRef(onEndpointFocus);
+  resourceRef.current      = resource;
+  onEndpointFocusRef.current = onEndpointFocus;
+
+  const handleFocus = useCallback((id: string) => {
+    if (activeIdRef.current === id) return;
+    activeIdRef.current = id;
+    setActiveId(id);
+    const ep = resourceRef.current.endpoints.find((e) => e.id === id);
+    if (ep) onEndpointFocusRef.current(ep);
+  }, []); // stable forever — reads latest values via refs
 
   useEffect(() => {
     if (resource.endpoints.length > 0) {
@@ -74,18 +75,12 @@ export function ResourcePageContent({
 
     const decide = () => {
       if (visibleMap.current.size === 0) return;
-
       let bestId: string | null = null;
       let bestScore = Infinity;
-
       visibleMap.current.forEach((rect, id) => {
         const score = rect.top >= 0 ? rect.top : rect.top + 100_000;
-        if (score < bestScore) {
-          bestScore = score;
-          bestId = id;
-        }
+        if (score < bestScore) { bestScore = score; bestId = id; }
       });
-
       if (bestId) handleFocus(bestId);
     };
 
@@ -93,15 +88,11 @@ export function ResourcePageContent({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            visibleMap.current.set(
-              entry.target.getAttribute("data-ep-id")!,
-              entry.boundingClientRect,
-            );
+            visibleMap.current.set(entry.target.getAttribute("data-ep-id")!, entry.boundingClientRect);
           } else {
             visibleMap.current.delete(entry.target.getAttribute("data-ep-id")!);
           }
         });
-
         clearTimeout(debounceTimer.current);
         debounceTimer.current = setTimeout(decide, 120);
       },
@@ -115,12 +106,13 @@ export function ResourcePageContent({
       clearTimeout(debounceTimer.current);
       visibleMap.current.clear();
     };
-  }, [resource.id, handleFocus]);
+  }, [resource.id]); // only re-runs on resource change, not on every handleFocus recreation
 
-  const setRef = (id: string) => (el: HTMLDivElement | null) => {
-    if (el) sectionRefs.current.set(id, el);
-    else sectionRefs.current.delete(id);
-  };
+  const setRef = useCallback((el: HTMLDivElement | null) => {
+    if (!el) return;
+    const id = el.getAttribute("data-ep-id")!;
+    sectionRefs.current.set(id, el);
+  }, []);
 
   return (
     <div>
@@ -141,7 +133,7 @@ export function ResourcePageContent({
       </div>
 
       {resource.endpoints.map((ep, i) => (
-        <div key={ep.id} ref={setRef(ep.id)} data-ep-id={ep.id}>
+        <div key={ep.id} ref={setRef} data-ep-id={ep.id}>
           {i > 0 && <hr className="border-line mb-12" />}
           <EndpointSection
             endpoint={ep}
@@ -151,4 +143,4 @@ export function ResourcePageContent({
       ))}
     </div>
   );
-}
+});
