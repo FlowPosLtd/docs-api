@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import { stripStatus } from "../utils/strip-status";
 
 interface ResponseShapeProps {
   data: unknown;
@@ -70,7 +71,8 @@ const RESPONSE_PREVIEW_PX = 320;
 
 export const ResponseShape = memo(function ResponseShape({ data, description }: ResponseShapeProps) {
   const [expanded, setExpanded] = useState(false);
-  const jsonText = JSON.stringify(data, null, 2);
+  const cleaned = stripStatus(data);
+  const jsonText = JSON.stringify(cleaned, null, 2);
   const lineCount = jsonText.split("\n").length;
   const needsCollapse = lineCount > 18;
 
@@ -105,7 +107,7 @@ export const ResponseShape = memo(function ResponseShape({ data, description }: 
             ? { maxHeight: RESPONSE_PREVIEW_PX, overflowY: "auto" }
             : undefined}
         >
-          <JsonValue value={data} />
+          <JsonValue value={cleaned} />
         </pre>
       </div>
     </div>
