@@ -6,6 +6,19 @@ export const settingsResources: Resource[] = [
     name: "Business Settings",
     description:
       "Manage your business profile, branding, and configuration. Update your business name, contact info, logo, and other tenant-level settings.",
+    objectName: "tenant",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the tenant." },
+      { name: "slug", type: "string", required: false, description: "URL-safe identifier for the business." },
+      { name: "business_name", type: "string", required: false, description: "Trading name of the business." },
+      { name: "business_email", type: "string", required: false, description: "Primary contact email for the business." },
+      { name: "business_type", type: "string", required: false, description: "Type of business entity.", enum: ["business", "individual"] },
+      { name: "vat_number", type: "string", required: false, nullable: true, description: "VAT registration number (e.g. `GB123456789`)." },
+      { name: "logo", type: "string", required: false, nullable: true, description: "Relative storage path to the business logo." },
+      { name: "logo_url", type: "string", required: false, nullable: true, description: "Fully-qualified public URL to the business logo." },
+      { name: "brand_colour", type: "string", required: false, description: "Primary brand hex colour (e.g. `#3B82F6`)." },
+      { name: "accent_colour", type: "string", required: false, description: "Accent brand hex colour (e.g. `#8B5CF6`)." },
+    ],
     endpoints: [
       {
         id: "get-business-settings",
@@ -128,6 +141,17 @@ export const settingsResources: Resource[] = [
     name: "Domains",
     description:
       "Custom domains let you serve your online store from your own domain (e.g. shop.yourbusiness.com). FlowPOS handles TLS/SSL automatically via Cloudflare.",
+    objectName: "domain",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the domain." },
+      { name: "name", type: "string", required: false, description: "The domain name (e.g. `shop.yourbusiness.com`)." },
+      { name: "status", type: "string", required: false, description: "Current DNS verification state of the domain.", enum: ["pending_verification", "active", "error"] },
+      { name: "is_default", type: "boolean", required: false, description: "Whether this is the default storefront domain." },
+      { name: "verification_token", type: "string", required: false, description: "Token used to verify DNS ownership. Configure as a TXT record." },
+      { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this domain belongs to." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the domain was added." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the domain record was last modified." },
+    ],
     endpoints: [
       {
         id: "list-domains",

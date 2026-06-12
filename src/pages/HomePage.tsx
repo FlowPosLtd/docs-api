@@ -73,9 +73,9 @@ export function HomePage() {
               href: "/errors",
             },
             {
-              title: "Constants & Enums",
-              desc: "Status values, types, and modes",
-              href: "/constants",
+              title: "Pagination",
+              desc: "All list endpoints return cursor-based paginated responses",
+              href: "/orders",
             },
             {
               title: "Pagination",

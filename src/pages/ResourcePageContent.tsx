@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef, memo } from "react";
 import { EndpointSection } from "../components/EndpointSection";
+import { ParamTable } from "../components/ParamTable";
 import { METHOD_TEXT } from "../utils/method-colors";
 import type { Resource, Endpoint, HttpMethod } from "../types";
 
@@ -120,6 +121,15 @@ export const ResourcePageContent = memo(function ResourcePageContent({
         <h1 className="t-title mb-2">{resource.name}</h1>
         <p className="t-body">{resource.description}</p>
       </div>
+
+      {resource.attributes && resource.attributes.length > 0 && (
+        <div className="mb-10 pb-10 border-b border-line">
+          <h2 className="t-subheading text-ink-tertiary uppercase tracking-widest mb-1">
+            The {resource.objectName ?? resource.name.toLowerCase()} object
+          </h2>
+          <ParamTable title="Attributes" params={resource.attributes} showBadges={false} />
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-2 mb-8">
         {resource.endpoints.map((ep) => (

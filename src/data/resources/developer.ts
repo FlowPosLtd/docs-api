@@ -6,6 +6,18 @@ export const developerResources: Resource[] = [
     name: "Webhooks",
     description:
       "Webhooks deliver real-time event notifications to your servers via HTTP POST. You configure endpoint URLs and the events they subscribe to.",
+    objectName: "webhook endpoint",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the webhook endpoint." },
+      { name: "url", type: "string", required: false, description: "HTTPS URL that receives event payloads." },
+      { name: "secret", type: "string", required: false, description: "HMAC signing secret used to verify the authenticity of incoming webhooks. Keep this private." },
+      { name: "events", type: "string[]", required: false, description: "List of event type strings this endpoint is subscribed to." },
+      { name: "is_active", type: "boolean", required: false, description: "Whether this endpoint is enabled and receiving events." },
+      { name: "description", type: "string", required: false, nullable: true, description: "Optional label describing the purpose of this endpoint." },
+      { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this endpoint belongs to." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the webhook endpoint was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the webhook endpoint was last modified." },
+    ],
     endpoints: [
       {
         id: "list-webhook-endpoints",
@@ -511,6 +523,20 @@ export const developerResources: Resource[] = [
     name: "API Keys",
     description:
       "API Keys are credentials used to authenticate requests to the FlowPOS API. Each key has a name, optional expiry, and a set of permissions scoping what it can access.",
+    objectName: "API key",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the API key." },
+      { name: "name", type: "string", required: false, description: "Friendly label for this key." },
+      { name: "token", type: "string", required: false, description: "The API key token used in the `x-api-key` header." },
+      { name: "last_used_at", type: "timestamp", required: false, nullable: true, description: "Time this key was last used to authenticate a request." },
+      { name: "expires_at", type: "timestamp", required: false, nullable: true, description: "Expiry time for this key. Null means no expiry." },
+      { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this key belongs to." },
+      { name: "created_by", type: "integer", required: false, description: "ID of the user who created this key." },
+      { name: "permissions", type: "object[]", required: false, description: "Array of permission objects granted to this key." },
+      { name: "permissions[].name", type: "string", required: false, description: "Permission identifier (e.g. `orders.view`, `products.create`)." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the API key was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the API key was last modified." },
+    ],
     endpoints: [
       {
         id: "list-api-keys",
@@ -600,7 +626,7 @@ export const developerResources: Resource[] = [
             name: "expiry",
             type: "string",
             required: false,
-            description: "Expiry date (ISO 8601). Pass `null` for no expiry.",
+            description: "Expiry date in `YYYY-MM-DD` format. Leave blank for no expiry.",
             example: "2025-12-31T23:59:59Z",
           },
           {
@@ -728,7 +754,7 @@ export const developerResources: Resource[] = [
             type: "string",
             required: false,
             description:
-              "Expiry date (ISO 8601). Pass `null` to remove expiry.",
+              "Expiry date in `YYYY-MM-DD` format. Set to `null` to remove expiry.",
             example: "2025-12-31",
           },
         ],

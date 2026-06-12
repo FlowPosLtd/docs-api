@@ -6,6 +6,15 @@ export const teamResources: Resource[] = [
     name: "Roles",
     description:
       "Manage roles and permissions for your team members. Each role defines what actions a user can perform.",
+    objectName: "role",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the role." },
+      { name: "name", type: "string", required: false, description: "Display name of the role." },
+      { name: "permissions_count", type: "integer", required: false, description: "Number of permissions assigned to this role." },
+      { name: "users_count", type: "integer", required: false, description: "Number of users currently assigned this role." },
+      { name: "permissions", type: "object[]", required: false, description: "Array of permission objects granted to this role." },
+      { name: "permissions[].name", type: "string", required: false, description: "Permission identifier string (e.g. `products.view`, `orders.create`)." },
+    ],
     endpoints: [
       {
         id: "list-roles",
@@ -79,7 +88,7 @@ export const teamResources: Resource[] = [
             type: "string[]",
             required: true,
             description: "Array of permission strings granted to this role.",
-            example: "products.view, orders.view",
+            example: '["products.view","orders.view"]',
           },
         ],
         response: {
@@ -126,7 +135,7 @@ export const teamResources: Resource[] = [
             type: "string[]",
             required: false,
             description: "Array of permission strings.",
-            example: "orders.view, orders.create, customers.view",
+            example: '["orders.view","orders.create","customers.view"]',
           },
         ],
         response: {

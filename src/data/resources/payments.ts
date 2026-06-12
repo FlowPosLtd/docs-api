@@ -5,7 +5,39 @@ export const paymentResources: Resource[] = [
     id: "payments",
     name: "Payments",
     description:
-      "Payment objects represent money collected from customers. Each payment is linked to a transaction and can have a status of pending, authorised, paid, partially_refunded, refunded, or released.",
+      "Payment objects represent money collected from customers. Each payment is linked to a transaction and has a status that tracks its lifecycle from pending through paid, refunded, or released.",
+    objectName: "payment",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the payment." },
+      { name: "uid", type: "string", required: false, description: "URL-safe unique identifier used in hosted payment page URLs." },
+      { name: "amount", type: "integer", required: false, description: "Total amount charged, in pence. e.g. `4250` = £42.50." },
+      { name: "status", type: "string", required: false, description: "Current lifecycle status of the payment.", enum: ["pending", "authorised", "paid", "partially_refunded", "refunded", "released", "failed"] },
+      { name: "type", type: "string", required: false, description: "`regular` payments are charged immediately. `deposit` payments authorise and hold funds — you can capture or release them later.", enum: ["regular", "deposit"] },
+      { name: "currency", type: "string", required: false, description: "Currency code, e.g. `GBP` for British pounds." },
+      { name: "description", type: "string", required: false, nullable: true, description: "Free-text description attached to the payment." },
+      { name: "customer_name", type: "string", required: false, nullable: true, description: "Name of the customer, if provided." },
+      { name: "customer_email", type: "string", required: false, nullable: true, description: "Customer email address used for receipts." },
+      { name: "customer_phone", type: "string", required: false, nullable: true, description: "Customer phone number." },
+      { name: "customer_id", type: "integer", required: false, nullable: true, description: "ID of the linked customer record." },
+      { name: "amount_refunded", type: "integer", required: false, description: "Total amount refunded so far, in pence." },
+      { name: "application_fee_amount", type: "number", required: false, description: "FlowPOS platform fee applied to this payment." },
+      { name: "total", type: "integer", required: false, description: "Final total charged, in pence." },
+      { name: "url", type: "string", required: false, description: "Hosted payment page URL the customer can use to complete payment." },
+      { name: "is_refundable", type: "boolean", required: false, description: "Whether this payment is eligible for a refund." },
+      { name: "is_cash", type: "boolean", required: false, description: "Whether this was a cash payment recorded in EPOS." },
+      { name: "source", type: "string", required: false, description: "Channel through which the payment was created.", enum: ["Standalone", "Order", "Subscription", "PaymentLink"] },
+      { name: "paid_at", type: "timestamp", required: false, nullable: true, description: "Time the payment was successfully captured. Null if not yet paid." },
+      { name: "authorised_at", type: "timestamp", required: false, nullable: true, description: "Time funds were authorised (deposit payments only)." },
+      { name: "captured_at", type: "timestamp", required: false, nullable: true, description: "Time a deposit payment was captured." },
+      { name: "released_at", type: "timestamp", required: false, nullable: true, description: "Time a deposit payment was released without capture." },
+      { name: "failed_at", type: "timestamp", required: false, nullable: true, description: "Time the payment failed, if applicable." },
+      { name: "failed_reason", type: "string", required: false, nullable: true, description: "Reason for payment failure." },
+      { name: "receipt_sent_at", type: "timestamp", required: false, nullable: true, description: "Time the receipt email was dispatched." },
+      { name: "terminal_reader_id", type: "string", required: false, nullable: true, description: "ID of the Stripe Terminal reader used for in-person payments." },
+      { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this payment belongs to." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the payment object was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the payment object was last modified." },
+    ],
     endpoints: [
       {
         id: "list-payments",
@@ -35,6 +67,7 @@ export const paymentResources: Resource[] = [
               "partially_refunded",
               "refunded",
               "released",
+              "failed",
             ],
             example: "paid",
           },
@@ -43,8 +76,8 @@ export const paymentResources: Resource[] = [
             type: "string",
             required: false,
             description: "Filter by payment type.",
-            enum: ["card", "cash", "terminal"],
-            example: "card",
+            enum: ["regular", "deposit"],
+            example: "regular",
           },
           {
             name: "customer_email",
@@ -57,14 +90,14 @@ export const paymentResources: Resource[] = [
             name: "gte",
             type: "string",
             required: false,
-            description: "Start of date range (ISO 8601).",
+            description: "Start date to filter from, in `YYYY-MM-DD` format.",
             example: "2024-01-01T00:00:00Z",
           },
           {
             name: "lte",
             type: "string",
             required: false,
-            description: "End of date range (ISO 8601).",
+            description: "End date to filter to, in `YYYY-MM-DD` format.",
             example: "2024-06-30T23:59:59Z",
           },
         ],
@@ -207,7 +240,7 @@ export const paymentResources: Resource[] = [
             name: "amount",
             type: "integer",
             required: true,
-            description: "Amount in smallest currency unit (pence/cents).",
+            description: "Amount in pence. e.g. `4250` = £42.50.",
             example: "4250",
           },
           {
@@ -221,16 +254,18 @@ export const paymentResources: Resource[] = [
             name: "type",
             type: "string",
             required: false,
-            description: "Payment type.",
-            enum: ["deposit", "card", "cash"],
+            description:
+              "`regular` charges the customer immediately. `deposit` authorises and holds the funds — you can capture or release the payment later.",
+            enum: ["regular", "deposit"],
+            default: "regular",
             example: "deposit",
           },
           {
             name: "customer_email",
             type: "string",
             required: false,
-            description: "Customer email for the receipt.",
-            example: "",
+            description: "Customer email address to send the receipt to.",
+            example: "jane@example.com",
           },
         ],
         response: {
@@ -281,7 +316,7 @@ export const paymentResources: Resource[] = [
             type: "integer",
             required: false,
             description:
-              "Amount to refund in smallest currency unit. Defaults to the full refundable amount.",
+              "Amount to refund in pence. Leave blank to refund the full amount.",
             example: "2000",
           },
           {
@@ -441,14 +476,14 @@ export const paymentResources: Resource[] = [
             name: "start_date",
             type: "string",
             required: false,
-            description: "Start of date range (ISO 8601).",
+            description: "Start date to filter from, in `YYYY-MM-DD` format.",
             example: "2024-01-01",
           },
           {
             name: "end_date",
             type: "string",
             required: false,
-            description: "End of date range (ISO 8601).",
+            description: "End date to filter to, in `YYYY-MM-DD` format.",
             example: "2024-06-30",
           },
           {
@@ -481,6 +516,27 @@ export const paymentResources: Resource[] = [
     name: "Payment Links",
     description:
       "Payment Links are shareable URLs that let customers pay you without writing any code. Links can have a fixed amount or accept any amount within a min/max range.",
+    objectName: "payment link",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the payment link." },
+      { name: "name", type: "string", required: false, description: "Internal name for the link." },
+      { name: "description", type: "string", required: false, nullable: true, description: "Description shown to the customer on the payment page." },
+      { name: "type", type: "string", required: false, description: "Whether the amount is fixed or customer-defined.", enum: ["fixed_amount", "open_amount"] },
+      { name: "amount", type: "integer", required: false, description: "Fixed price for this link in pence. e.g. `2500` = £25.00. Only used for `fixed_amount` links." },
+      { name: "minimum_amount", type: "integer", required: false, description: "Minimum amount the customer can enter. Only relevant for `open_amount` links." },
+      { name: "maximum_amount", type: "integer", required: false, nullable: true, description: "Maximum amount the customer can enter. Null means no upper limit." },
+      { name: "preset_amount", type: "integer", required: false, description: "Pre-filled suggested amount for `open_amount` links." },
+      { name: "button_label", type: "string", required: false, description: "Text displayed on the pay button.", enum: ["Pay", "Donate", "Book", "Contribute", "Support"] },
+      { name: "active", type: "boolean", required: false, description: "Whether the link is accepting payments." },
+      { name: "allow_discount_codes", type: "boolean", required: false, description: "Whether customers can apply discount codes at checkout." },
+      { name: "limit", type: "integer", required: false, nullable: true, description: "Maximum number of payments this link will accept. Null means unlimited." },
+      { name: "currency", type: "string", required: false, description: "Currency code, e.g. `GBP` for British pounds." },
+      { name: "url", type: "string", required: false, description: "Shareable payment page URL." },
+      { name: "payments_count", type: "integer", required: false, description: "Total number of payments collected via this link." },
+      { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this link belongs to." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the link was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the link was last modified." },
+    ],
     endpoints: [
       {
         id: "list-payment-links",
@@ -592,21 +648,21 @@ export const paymentResources: Resource[] = [
             type: "integer",
             required: false,
             description:
-              "For `fixed_amount` links: price in smallest currency unit.",
+              "Fixed price for this link in pence. e.g. `2500` = £25.00.",
             example: "2500",
           },
           {
             name: "minimum_amount",
             type: "integer",
             required: false,
-            description: "For `open_amount` links: minimum allowed amount.",
+            description: "Minimum amount a customer can enter, in pence. Only used for `open_amount` links.",
             example: "500",
           },
           {
             name: "maximum_amount",
             type: "integer",
             required: false,
-            description: "For `open_amount` links: maximum allowed amount.",
+            description: "Maximum amount a customer can enter, in pence. Only used for `open_amount` links.",
             example: "100000",
           },
           {
@@ -614,7 +670,7 @@ export const paymentResources: Resource[] = [
             type: "integer",
             required: false,
             description:
-              "For `open_amount` links: pre-filled suggested amount.",
+              "Amount pre-filled in the payment field to suggest to the customer. Only used for `open_amount` links.",
             example: "5000",
           },
           {
@@ -762,21 +818,21 @@ export const paymentResources: Resource[] = [
             type: "integer",
             required: false,
             description:
-              "For `fixed_amount` links: price in smallest currency unit.",
+              "Fixed price for this link in pence. e.g. `2500` = £25.00.",
             example: "2500",
           },
           {
             name: "minimum_amount",
             type: "integer",
             required: false,
-            description: "For `open_amount` links: minimum allowed amount.",
+            description: "Minimum amount a customer can enter, in pence. Only used for `open_amount` links.",
             example: "500",
           },
           {
             name: "maximum_amount",
             type: "integer",
             required: false,
-            description: "For `open_amount` links: maximum allowed amount.",
+            description: "Maximum amount a customer can enter, in pence. Only used for `open_amount` links.",
             example: "100000",
           },
           {
@@ -784,7 +840,7 @@ export const paymentResources: Resource[] = [
             type: "integer",
             required: false,
             description:
-              "For `open_amount` links: pre-filled suggested amount.",
+              "Amount pre-filled in the payment field to suggest to the customer. Only used for `open_amount` links.",
             example: "5000",
           },
           {
@@ -848,6 +904,25 @@ export const paymentResources: Resource[] = [
     name: "Discounts",
     description:
       "Discounts apply reductions to orders. They can be percentage-based, fixed-amount, or free shipping. Discounts can be automatic or require a code at checkout.",
+    objectName: "discount",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the discount." },
+      { name: "name", type: "string", required: false, description: "Internal name for this discount." },
+      { name: "code", type: "string", required: false, nullable: true, description: "Redemption code customers enter at checkout. Null for automatic discounts." },
+      { name: "discount_type", type: "string", required: false, description: "How the reduction is calculated.", enum: ["amount_off_order", "free_shipping"] },
+      { name: "discount_type_data", type: "object", required: false, description: "Configuration data for the discount type. Fields vary by `discount_type`." },
+      { name: "discount_type_data.percentage_off", type: "number", required: false, nullable: true, description: "Percentage reduction for `amount_off_order` type (e.g. `10` for 10% off)." },
+      { name: "discount_type_data.fixed_amount_off", type: "integer", required: false, nullable: true, description: "Fixed amount taken off the order total, in pence. Used when the discount is a fixed value rather than a percentage." },
+      { name: "discount_type_data.minimum_order", type: "integer", required: false, nullable: true, description: "Minimum order value required before the discount applies." },
+      { name: "active", type: "boolean", required: false, description: "Whether this discount is currently accepting redemptions." },
+      { name: "is_online", type: "boolean", required: false, description: "Whether this discount applies to online orders." },
+      { name: "usage_limit", type: "integer", required: false, nullable: true, description: "Maximum number of times this discount can be redeemed. Null means unlimited." },
+      { name: "start_at", type: "timestamp", required: false, nullable: true, description: "Date and time from which the discount is valid." },
+      { name: "end_at", type: "timestamp", required: false, nullable: true, description: "Date and time after which the discount expires." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the discount was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the discount was last modified." },
+      { name: "deleted_at", type: "timestamp", required: false, nullable: true, description: "Time the discount was soft-deleted. Null for active records." },
+    ],
     endpoints: [
       {
         id: "list-discounts",
@@ -1062,6 +1137,25 @@ export const paymentResources: Resource[] = [
     name: "Subscriptions",
     description:
       "Subscriptions are recurring billing plans. Customers subscribe to a plan and are billed automatically at the specified frequency (weekly, monthly, or yearly).",
+    objectName: "subscription",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the subscription plan." },
+      { name: "name", type: "string", required: false, description: "Plan name shown to customers." },
+      { name: "description", type: "string", required: false, nullable: true, description: "Plan description shown to customers." },
+      { name: "frequency", type: "string", required: false, description: "Billing cycle for this plan.", enum: ["weekly", "monthly", "yearly"] },
+      { name: "price", type: "integer", required: false, description: "Amount charged per billing cycle, in pence. e.g. `999` = £9.99/month." },
+      { name: "currency", type: "string", required: false, description: "Currency code, e.g. `GBP` for British pounds." },
+      { name: "bill_upfront", type: "boolean", required: false, description: "Whether the first billing period is charged immediately on sign-up." },
+      { name: "term_months", type: "integer", required: false, nullable: true, description: "Minimum commitment length in months. Null means open-ended." },
+      { name: "is_term_based", type: "boolean", required: false, description: "Whether a minimum term applies to this plan." },
+      { name: "is_active", type: "boolean", required: false, description: "Whether this plan is accepting new subscribers." },
+      { name: "url", type: "string", required: false, description: "Shareable sign-up page URL for this plan." },
+      { name: "customers_count", type: "integer", required: false, description: "Number of active subscribers on this plan." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the plan was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the plan was last modified." },
+      { name: "customers", type: "object[]", required: false, description: "List of subscribers on this plan. Each entry includes `status` reflecting their current subscription state.", },
+      { name: "customers[].status", type: "string", required: false, description: "Current subscription state for this subscriber.", enum: ["pending", "active", "past_due", "cancelled"] },
+    ],
     endpoints: [
       {
         id: "list-subscriptions",
@@ -1173,7 +1267,7 @@ export const paymentResources: Resource[] = [
             name: "price",
             type: "integer",
             required: true,
-            description: "Subscription price in smallest currency unit.",
+            description: "Subscription price per billing cycle, in pence. e.g. `999` = £9.99.",
             example: "999",
           },
           {
@@ -1325,7 +1419,7 @@ export const paymentResources: Resource[] = [
             name: "price",
             type: "integer",
             required: false,
-            description: "Subscription price in smallest currency unit.",
+            description: "Subscription price per billing cycle, in pence. e.g. `999` = £9.99.",
             example: "20",
           },
           {
@@ -1414,6 +1508,16 @@ export const paymentResources: Resource[] = [
     name: "Payouts",
     description:
       "View your payout history and balance transfers to your bank account.",
+    objectName: "payout",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the payout." },
+      { name: "amount", type: "integer", required: false, description: "Payout amount in pence. e.g. `5000` = £50.00." },
+      { name: "currency", type: "string", required: false, description: "Currency code, e.g. `GBP` for British pounds." },
+      { name: "status", type: "string", required: false, description: "Current status of the payout.", enum: ["pending", "in_transit", "paid", "failed", "cancelled"] },
+      { name: "arrival_date", type: "timestamp", required: false, description: "Expected or actual date the funds arrive in your bank account." },
+      { name: "failure_reason", type: "string", required: false, nullable: true, description: "Reason the payout failed, if applicable." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the payout was initiated." },
+    ],
     endpoints: [
       {
         id: "list-payouts",
@@ -1447,6 +1551,13 @@ export const paymentResources: Resource[] = [
     name: "Payment Account",
     description:
       "Manage your Stripe Connect payment account. Used to configure payouts and card processing.",
+    objectName: "payment account",
+    attributes: [
+      { name: "id", type: "string", required: false, description: "Stripe Connect account ID (e.g. `acct_xxx`)." },
+      { name: "charges_enabled", type: "boolean", required: false, description: "Whether the account can accept card charges." },
+      { name: "payouts_enabled", type: "boolean", required: false, description: "Whether payouts to the bank account are enabled." },
+      { name: "country", type: "string", required: false, description: "Two-letter country code of the connected account." },
+    ],
     endpoints: [
       {
         id: "get-payment-account",
@@ -1501,6 +1612,15 @@ export const paymentResources: Resource[] = [
     name: "Payment Settings",
     description:
       "Configure your payment processing settings including accepted methods, currencies, and tip options.",
+    objectName: "payment settings",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the settings record." },
+      { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant these settings belong to." },
+      { name: "success_redirect_url", type: "string", required: false, nullable: true, description: "URL to redirect customers to after a successful payment." },
+      { name: "send_receipt", type: "boolean", required: false, description: "Whether to automatically email a receipt after payment." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the settings record was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the settings were last modified." },
+    ],
     endpoints: [
       {
         id: "get-payment-settings",
@@ -1534,7 +1654,7 @@ export const paymentResources: Resource[] = [
             name: "currency",
             type: "string",
             required: false,
-            description: "ISO 4217 currency code.",
+            description: "Currency code, e.g. `GBP` for British pounds.",
             example: "GBP",
           },
           {

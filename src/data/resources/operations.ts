@@ -6,6 +6,25 @@ export const operationResources: Resource[] = [
     name: "Inventory",
     description:
       "Inventory tracks stock levels for product variants across locations. You can adjust stock counts, view history, and configure low-stock notifications.",
+    objectName: "inventory",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the inventory record." },
+      { name: "variant_id", type: "integer", required: false, description: "ID of the product variant this inventory row tracks." },
+      { name: "location_id", type: "integer", required: false, description: "ID of the location this stock is held at." },
+      { name: "stock_count", type: "integer", required: false, description: "Current stock level at this location." },
+      { name: "stock_reserved", type: "number", required: false, description: "Stock quantity reserved for pending orders." },
+      { name: "variant", type: "object", required: false, description: "The product variant associated with this record." },
+      { name: "variant.id", type: "integer", required: false, description: "Variant ID." },
+      { name: "variant.price", type: "number", required: false, description: "Selling price of this variant in pence. e.g. `1200` = £12.00." },
+      { name: "variant.sku", type: "string", required: false, nullable: true, description: "Stock keeping unit code." },
+      { name: "variant.barcode", type: "string", required: false, nullable: true, description: "Barcode associated with this variant." },
+      { name: "variant.is_available", type: "boolean", required: false, description: "Whether this variant is available for purchase." },
+      { name: "location", type: "object", required: false, description: "The location this inventory is assigned to." },
+      { name: "location.id", type: "integer", required: false, description: "Location ID." },
+      { name: "location.name", type: "string", required: false, description: "Location name." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the inventory record was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the inventory record was last modified." },
+    ],
     endpoints: [
       {
         id: "list-inventory",
@@ -617,6 +636,22 @@ export const operationResources: Resource[] = [
     name: "Employees",
     description:
       "Employees are staff members who operate the EPOS. Each employee has a PIN code for sign-in, configurable manager permissions, and refund capabilities.",
+    objectName: "employee",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the employee." },
+      { name: "first_name", type: "string", required: false, description: "First name." },
+      { name: "last_name", type: "string", required: false, description: "Last name." },
+      { name: "name", type: "string", required: false, description: "Full name (computed from first_name + last_name)." },
+      { name: "email", type: "string", required: false, description: "Work email address." },
+      { name: "phone", type: "string", required: false, description: "Phone number in international format." },
+      { name: "pin_code", type: "integer", required: false, description: "EPOS PIN code used to sign into the terminal." },
+      { name: "is_active", type: "integer", required: false, description: "Active flag. `1` = active, `0` = inactive.", enum: ["0", "1"] },
+      { name: "is_manager", type: "integer", required: false, description: "Manager flag. Managers have elevated permissions in EPOS.", enum: ["0", "1"] },
+      { name: "can_do_refund", type: "boolean", required: false, description: "Whether this employee is allowed to issue refunds." },
+      { name: "deleted_at", type: "timestamp", required: false, nullable: true, description: "Soft-delete timestamp. Non-null means the employee has been deactivated." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the employee was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the employee record was last modified." },
+    ],
     endpoints: [
       {
         id: "list-employees",
@@ -955,6 +990,21 @@ export const operationResources: Resource[] = [
     name: "Locations",
     description:
       "Locations represent physical stores or sites. Inventory, terminals, and sections are all scoped to a location.",
+    objectName: "location",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the location." },
+      { name: "name", type: "string", required: false, description: "Display name of the location." },
+      { name: "stripe_id", type: "string", required: false, description: "Stripe Terminal location ID linked to this location." },
+      { name: "address", type: "object", required: false, description: "Physical address of this location." },
+      { name: "address.address_line_1", type: "string", required: false, description: "Street address." },
+      { name: "address.address_line_2", type: "string", required: false, nullable: true, description: "Suite, unit, or apartment number." },
+      { name: "address.city", type: "string", required: false, description: "City." },
+      { name: "address.state", type: "string", required: false, description: "State or county." },
+      { name: "address.post_code", type: "string", required: false, description: "Postcode." },
+      { name: "address.country", type: "object", required: false, description: "Country object." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the location was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the location was last modified." },
+    ],
     endpoints: [
       {
         id: "list-locations",
@@ -1051,7 +1101,7 @@ export const operationResources: Resource[] = [
             name: "address.country",
             type: "string",
             required: true,
-            description: "ISO 3166-1 alpha-2 country code.",
+            description: "Two-letter country code (e.g. `GB` for United Kingdom).",
             example: "GB",
           },
         ],
@@ -1158,7 +1208,7 @@ export const operationResources: Resource[] = [
             name: "address.country",
             type: "string",
             required: false,
-            description: "ISO 3166-1 alpha-2 country code.",
+            description: "Two-letter country code (e.g. `GB` for United Kingdom).",
             example: "GB",
           },
         ],
@@ -1194,6 +1244,19 @@ export const operationResources: Resource[] = [
     name: "Sections",
     description:
       "Sections are named areas within a location (e.g. 'Main Floor', 'Bar', 'Patio'). Used to organise tables and seating in EPOS mode.",
+    objectName: "section",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the section." },
+      { name: "name", type: "string", required: false, description: "Section name." },
+      { name: "location_id", type: "integer", required: false, description: "ID of the location this section belongs to." },
+      { name: "tables", type: "object[]", required: false, description: "Array of table objects in this section." },
+      { name: "tables[].id", type: "integer", required: false, description: "Table ID." },
+      { name: "tables[].name", type: "string", required: false, description: "Table name or label." },
+      { name: "tables[].chairs", type: "integer", required: false, description: "Number of chairs at this table." },
+      { name: "tables[].section_id", type: "integer", required: false, description: "ID of the section this table belongs to." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the section was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the section was last modified." },
+    ],
     endpoints: [
       {
         id: "list-sections",
@@ -1443,6 +1506,20 @@ export const operationResources: Resource[] = [
     name: "Terminals",
     description:
       "Terminal readers are physical card readers registered with Stripe. Each reader is linked to a location and uses an app PIN code for secure authentication.",
+    objectName: "terminal reader",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the terminal reader." },
+      { name: "label", type: "string", required: false, description: "Friendly name for the terminal." },
+      { name: "stripe_id", type: "string", required: false, description: "Stripe Terminal reader ID (e.g. `tmr_xxx`)." },
+      { name: "registration_code", type: "string", required: false, description: "The registration code used when the reader was set up." },
+      { name: "ip_address", type: "string", required: false, nullable: true, description: "IP address of the reader on the local network." },
+      { name: "app_logged_in", type: "boolean", required: false, description: "Whether the FlowPOS app is currently authenticated on this reader." },
+      { name: "app_pin_code", type: "string", required: false, nullable: true, description: "App authentication PIN (set after first login)." },
+      { name: "app_pin_code_created_at", type: "timestamp", required: false, nullable: true, description: "When the app PIN was generated." },
+      { name: "location", type: "object", required: false, description: "The location this terminal is assigned to." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the terminal was registered." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the terminal record was last modified." },
+    ],
     endpoints: [
       {
         id: "list-terminals",
@@ -1645,6 +1722,15 @@ export const operationResources: Resource[] = [
     name: "Shipping Rates",
     description:
       "Shipping rates are the delivery charges available at checkout. Each rate has a name and a fixed amount.",
+    objectName: "shipping rate",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the shipping rate." },
+      { name: "name", type: "string", required: false, description: "Display label shown to customers at checkout." },
+      { name: "amount", type: "integer", required: false, description: "Delivery charge in pence. e.g. `699` = £6.99." },
+      { name: "deleted_at", type: "timestamp", required: false, nullable: true, description: "Soft-delete timestamp. Non-null means the rate is archived." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the shipping rate was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the shipping rate was last modified." },
+    ],
     endpoints: [
       {
         id: "list-shipping-rates",
@@ -1687,7 +1773,7 @@ export const operationResources: Resource[] = [
             name: "amount",
             type: "integer",
             required: true,
-            description: "Delivery charge in smallest currency unit.",
+            description: "Delivery charge in pence. e.g. `699` = £6.99.",
             example: "699",
           },
         ],
@@ -1775,6 +1861,25 @@ export const operationResources: Resource[] = [
     name: "Addon Groups",
     description:
       "Addon Groups (also called modifier groups) define optional add-ons for products such as toppings, sauces, or extras. Each group has min/max selection constraints.",
+    objectName: "addon group",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the addon group." },
+      { name: "name", type: "string", required: false, description: "Display name of the addon group." },
+      { name: "is_active", type: "boolean", required: false, description: "Whether the addon group is enabled and shown on orders." },
+      { name: "min_selection", type: "integer", required: false, description: "Minimum number of add-ons a customer must select." },
+      { name: "max_selection", type: "integer", required: false, description: "Maximum number of add-ons a customer can select." },
+      { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this addon group belongs to." },
+      { name: "addons_count", type: "integer", required: false, description: "Total number of addon options in this group." },
+      { name: "variants_count", type: "integer", required: false, description: "Number of product variants this group is assigned to." },
+      { name: "addons", type: "object[]", required: false, description: "Array of individual addon options in this group." },
+      { name: "addons[].id", type: "integer", required: false, description: "Addon ID." },
+      { name: "addons[].name", type: "string", required: false, description: "Addon name." },
+      { name: "addons[].price", type: "integer", required: false, description: "Addon price in pence. e.g. `100` = £1.00." },
+      { name: "addons[].is_active", type: "boolean", required: false, description: "Whether this individual addon is available." },
+      { name: "addons[].max_quantity", type: "integer", required: false, nullable: true, description: "Maximum quantity per selection. Null means unlimited." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the addon group was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the addon group was last modified." },
+    ],
     endpoints: [
       {
         id: "list-addon-groups",
@@ -1886,7 +1991,7 @@ export const operationResources: Resource[] = [
             name: "addons[].price",
             type: "integer",
             required: true,
-            description: "Addon price in smallest currency unit.",
+            description: "Addon price in pence. e.g. `100` = £1.00.",
             example: "100",
           },
           {
@@ -2117,7 +2222,7 @@ export const operationResources: Resource[] = [
             name: "addons[].price",
             type: "integer",
             required: true,
-            description: "Addon price in smallest currency unit.",
+            description: "Addon price in pence. e.g. `100` = £1.00.",
             example: "100",
           },
           {
@@ -2268,6 +2373,15 @@ export const operationResources: Resource[] = [
     name: "Attachments",
     description:
       "Manage file attachments for products. Upload images and digital files, then link them to product variants.",
+    objectName: "attachment",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the attachment." },
+      { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this attachment belongs to." },
+      { name: "type", type: "string", required: false, description: "File extension / MIME type (e.g. `png`, `jpg`, `pdf`)." },
+      { name: "file_name", type: "string", required: false, description: "Original name of the uploaded file." },
+      { name: "path", type: "string", required: false, description: "Storage path relative to the tenant's storage root." },
+      { name: "url", type: "string", required: false, description: "Fully-qualified public URL to access the file." },
+    ],
     endpoints: [
       {
         id: "list-attachments",
