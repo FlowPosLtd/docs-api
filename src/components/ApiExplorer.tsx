@@ -1,14 +1,12 @@
 import { useState, useRef, memo } from "react";
 
 const inputCls =
-  "w-full px-3 py-1.5 rounded bg-gray-800 border border-gray-700 text-gray-200 text-sm font-mono placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors";
-const labelCls = "block text-xs text-gray-400 mb-1";
+  "w-full px-3 py-1.5 rounded bg-code-head border border-code text-code text-sm font-mono placeholder:text-code-dim focus:outline-none focus:border-blue-500 transition-colors";
+const labelCls = "block text-xs text-code-muted mb-1";
+const sectionLabelCls = "text-[11px] font-semibold uppercase tracking-wider text-code-dim mb-2";
+
 import axios from "axios";
-import {
-  apiClient,
-  getStoredApiKey,
-  getStoredBaseUrl,
-} from "../utils/api-client";
+import { apiClient, getStoredApiKey, getStoredBaseUrl } from "../utils/api-client";
 import type { Endpoint } from "../types";
 
 interface ApiExplorerProps {
@@ -52,9 +50,7 @@ export const ApiExplorer = memo(function ApiExplorer({
 
   const execute = async () => {
     if (!effectiveKey) {
-      setError(
-        "No API key set. Click the key icon at the bottom-right to add one.",
-      );
+      setError("No API key set. Click the key icon at the bottom-right to add one.");
       return;
     }
 
@@ -68,9 +64,7 @@ export const ApiExplorer = memo(function ApiExplorer({
     }
 
     const queryPairs = Object.entries(queryValues).filter(([, v]) => v !== "");
-    const params = queryPairs.length
-      ? Object.fromEntries(queryPairs)
-      : undefined;
+    const params = queryPairs.length ? Object.fromEntries(queryPairs) : undefined;
 
     const hasBody = ["POST", "PUT", "PATCH"].includes(endpoint.method);
     const bodyPairs = Object.entries(bodyValues).filter(([, v]) => v !== "");
@@ -86,7 +80,6 @@ export const ApiExplorer = memo(function ApiExplorer({
     let data: Record<string, unknown> | FormData | undefined;
     if (hasBody) {
       if (hasFileParam) {
-        // Build multipart/form-data
         const fd = new FormData();
         for (const [k, files] of Object.entries(fileValues)) {
           if (!files) continue;
@@ -94,7 +87,6 @@ export const ApiExplorer = memo(function ApiExplorer({
           Array.from(files).forEach((f) => fd.append(k, f));
           void isMultiple;
         }
-        // Also append any non-file body values
         for (const [k, v] of bodyPairs) {
           if (bodyParamTypeMap[k] !== "file") fd.append(k, v);
         }
@@ -147,12 +139,8 @@ export const ApiExplorer = memo(function ApiExplorer({
               Object.entries(fields).map(([k, v]) => {
                 const fullKey = `${parent}[].${k}`;
                 const t = bodyParamTypeMap[fullKey] ?? "";
-
                 if (v === "null") return [k, null];
-
-                if (t === "boolean") {
-                  return [k, v === "true" ? true : v === "false" ? false : v];
-                }
+                if (t === "boolean") return [k, v === "true" ? true : v === "false" ? false : v];
                 if (t === "integer" || t === "number") {
                   const n = Number(v);
                   return [k, isNaN(n) ? v : n];
@@ -199,10 +187,7 @@ export const ApiExplorer = memo(function ApiExplorer({
       });
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        setError(
-          err.message ||
-            "Network error. Check CORS and that the API is reachable.",
-        );
+        setError(err.message || "Network error. Check CORS and that the API is reachable.");
       } else {
         setError("Unexpected error. Check the browser console for details.");
       }
@@ -211,32 +196,26 @@ export const ApiExplorer = memo(function ApiExplorer({
     }
   };
 
-
-
   return (
     <div className="p-4 flex flex-col gap-4">
-      <div className="flex items-center gap-2 px-3 py-2 rounded bg-gray-800/60 border border-gray-700 text-xs">
-        <span
-          className={`w-1.5 h-1.5 rounded-full shrink-0 ${effectiveKey ? "bg-emerald-400" : "bg-amber-400 animate-pulse"}`}
-        />
-        <span className="text-gray-400 truncate font-mono">
-          {effectiveKey
-            ? effectiveBase
-            : "No API key click the key icon to set one"}
+      {/* Base URL / key indicator */}
+      <div className="flex items-center gap-2 px-3 py-2 rounded bg-code-head border border-code text-xs">
+        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${effectiveKey ? "bg-emerald-400" : "bg-amber-400 animate-pulse"}`} />
+        <span className="text-code-muted truncate font-mono">
+          {effectiveKey ? effectiveBase : "No API key — click the key icon to set one"}
         </span>
       </div>
 
+      {/* Path params */}
       {(endpoint.pathParams?.length ?? 0) > 0 && (
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2">
-            Path Parameters
-          </p>
+          <p className={sectionLabelCls}>Path Parameters</p>
           <div className="space-y-2">
             {endpoint.pathParams!.map((p) => (
               <div key={p.name}>
                 <label className={labelCls}>
                   <span className="font-mono">{p.name}</span>{" "}
-                  <span className="text-red-400">*</span>
+                  <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
@@ -251,22 +230,17 @@ export const ApiExplorer = memo(function ApiExplorer({
         </div>
       )}
 
+      {/* Query params */}
       {(endpoint.queryParams?.length ?? 0) > 0 && (
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2">
-            Query Parameters
-          </p>
+          <p className={sectionLabelCls}>Query Parameters</p>
           <div className="space-y-2">
             {endpoint.queryParams!.map((p) => (
               <div key={p.name}>
                 <label className={labelCls}>
                   <span className="font-mono">{p.name}</span>
-                  {p.required && <span className="ml-1 text-red-400">*</span>}
-                  {p.default && (
-                    <span className="ml-1 text-gray-500">
-                      default: {p.default}
-                    </span>
-                  )}
+                  {p.required && <span className="ml-1 text-danger">*</span>}
+                  {p.default && <span className="ml-1 text-code-dim">default: {p.default}</span>}
                 </label>
                 {p.enum ? (
                   <select
@@ -275,11 +249,7 @@ export const ApiExplorer = memo(function ApiExplorer({
                     className={inputCls + " appearance-none"}
                   >
                     <option value="">— optional —</option>
-                    {p.enum.map((v) => (
-                      <option key={v} value={v}>
-                        {v}
-                      </option>
-                    ))}
+                    {p.enum.map((v) => <option key={v} value={v}>{v}</option>)}
                   </select>
                 ) : (
                   <input
@@ -296,20 +266,19 @@ export const ApiExplorer = memo(function ApiExplorer({
         </div>
       )}
 
+      {/* Body params */}
       {(endpoint.bodyParams?.length ?? 0) > 0 && (
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2">
-            Request Body
-          </p>
+          <p className={sectionLabelCls}>Request Body</p>
           <div className="space-y-2">
             {endpoint.bodyParams!.map((p) => {
               if (p.type === "object[]") {
                 return (
                   <div key={p.name} className="pt-1">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
-                      <span className="font-mono text-gray-400">{p.name}</span>
-                      <span className="text-gray-600">· array of objects</span>
-                      {p.required && <span className="text-red-400">*</span>}
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-code-dim flex items-center gap-1.5">
+                      <span className="font-mono text-code-muted">{p.name}</span>
+                      <span className="text-code-dim opacity-60">· array of objects</span>
+                      {p.required && <span className="text-danger">*</span>}
                     </p>
                   </div>
                 );
@@ -318,19 +287,12 @@ export const ApiExplorer = memo(function ApiExplorer({
               const isArrayChild = /\[\]\./.test(p.name);
 
               return (
-                <div
-                  key={p.name}
-                  className={
-                    isArrayChild ? "pl-3 border-l border-gray-700" : ""
-                  }
-                >
+                <div key={p.name} className={isArrayChild ? "pl-3 border-l border-code" : ""}>
                   <label className={labelCls}>
                     <span className="font-mono">
-                      {isArrayChild
-                        ? p.name.replace(/^[^[]+\[\]\./, "")
-                        : p.name}
+                      {isArrayChild ? p.name.replace(/^[^[]+\[\]\./, "") : p.name}
                     </span>
-                    {p.required && <span className="ml-1 text-red-400">*</span>}
+                    {p.required && <span className="ml-1 text-danger">*</span>}
                   </label>
                   {p.enum ? (
                     <select
@@ -339,11 +301,7 @@ export const ApiExplorer = memo(function ApiExplorer({
                       className={inputCls + " appearance-none"}
                     >
                       <option value="">— select —</option>
-                      {p.enum.map((v) => (
-                        <option key={v} value={v}>
-                          {v}
-                        </option>
-                      ))}
+                      {p.enum.map((v) => <option key={v} value={v}>{v}</option>)}
                     </select>
                   ) : p.type === "boolean" ? (
                     <select
@@ -360,18 +318,13 @@ export const ApiExplorer = memo(function ApiExplorer({
                       type="file"
                       multiple
                       ref={(el) => { fileInputRefs.current[p.name] = el; }}
-                      onChange={(e) =>
-                        setFileValues((prev) => ({ ...prev, [p.name]: e.target.files }))
-                      }
+                      onChange={(e) => setFileValues((prev) => ({ ...prev, [p.name]: e.target.files }))}
                       className={inputCls + " cursor-pointer file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:bg-blue-600 file:text-white"}
                     />
                   ) : (
                     <input
                       type="text"
-                      placeholder={
-                        p.example ||
-                        (p.type === "integer" && !p.required ? "integer or null" : "")
-                      }
+                      placeholder={p.example || (p.type === "integer" && !p.required ? "integer or null" : "")}
                       value={bodyValues[p.name] || ""}
                       onChange={(e) => onBodyChange(p.name, e.target.value)}
                       className={inputCls}
@@ -384,6 +337,7 @@ export const ApiExplorer = memo(function ApiExplorer({
         </div>
       )}
 
+      {/* Submit */}
       <button
         onClick={execute}
         disabled={loading}
@@ -391,24 +345,9 @@ export const ApiExplorer = memo(function ApiExplorer({
       >
         {loading ? (
           <>
-            <svg
-              className="w-4 h-4 animate-spin"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-              />
+            <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
             Sending…
           </>
@@ -417,23 +356,29 @@ export const ApiExplorer = memo(function ApiExplorer({
         )}
       </button>
 
+      {/* Error */}
       {error && (
-        <div className="px-3 py-2.5 rounded bg-red-900/30 border border-red-700/50 text-red-300 text-xs leading-relaxed">
+        <div className="px-3 py-2.5 rounded bg-danger-faint border border-danger-muted text-danger-ink text-xs leading-relaxed">
           {error}
         </div>
       )}
 
+      {/* Result */}
       {result && (
         <div>
           <div className="flex items-center gap-3 mb-2">
             <span
-              className={`text-xs font-bold font-mono px-2 py-0.5 rounded ${result.status >= 200 && result.status < 300 ? "bg-emerald-900/40 text-emerald-400" : "bg-red-900/40 text-red-400"}`}
+              className={`text-xs font-bold font-mono px-2 py-0.5 rounded ${
+                result.status >= 200 && result.status < 300
+                  ? "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400"
+                  : "bg-danger-faint text-danger-ink"
+              }`}
             >
               {result.status} {result.statusText}
             </span>
-            <span className="text-xs text-gray-500">{result.time}ms</span>
+            <span className="text-xs text-code-dim">{result.time}ms</span>
           </div>
-          <pre className="p-3 pb-6 rounded bg-gray-900 text-xs font-mono text-gray-300 overflow-x-auto max-h-150 border border-gray-800 leading-5 whitespace-pre-wrap wrap-break-word">
+          <pre className="p-3 pb-6 rounded bg-code-head text-xs font-mono text-code overflow-x-auto max-h-150 border border-code leading-5 whitespace-pre-wrap wrap-break-word">
             {JSON.stringify(result.data, null, 2)}
           </pre>
         </div>
