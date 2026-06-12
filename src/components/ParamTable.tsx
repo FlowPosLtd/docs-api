@@ -5,6 +5,7 @@ interface ParamTableProps {
   title: string;
   params: Param[];
   showBadges?: boolean;
+  collapsible?: boolean;
 }
 
 function getParentKey(name: string): string | null {
@@ -189,29 +190,60 @@ function ParamRow({
   );
 }
 
+const COLLAPSE_PX = 320;
+
 export const ParamTable = memo(function ParamTable({
   title,
   params,
   showBadges = true,
+  collapsible = false,
 }: ParamTableProps) {
+  const [expanded, setExpanded] = useState(false);
+
   if (!params.length) return null;
   const groups = buildGroups(params);
+  const topLevelCount = groups.length;
+  const needsCollapse = collapsible && topLevelCount > 5;
 
   return (
     <div className="mb-6">
       {title && <h4 className="t-caption mb-3">{title}</h4>}
-      <div className="border border-line rounded-lg overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
-        {groups.map((group) => (
-          <ParamRow
-            key={group.param.name}
-            param={group.param}
-            childParams={group.childParams}
-            isChild={false}
-            synthetic={group.synthetic}
-            showBadges={showBadges}
-            depth={0}
-          />
-        ))}
+      <div className="border border-line rounded-lg overflow-hidden">
+        <div
+          className="divide-y divide-gray-100 dark:divide-gray-800"
+          style={needsCollapse && !expanded ? { maxHeight: COLLAPSE_PX, overflowY: "auto" } : undefined}
+        >
+          {groups.map((group) => (
+            <ParamRow
+              key={group.param.name}
+              param={group.param}
+              childParams={group.childParams}
+              isChild={false}
+              synthetic={group.synthetic}
+              showBadges={showBadges}
+              depth={0}
+            />
+          ))}
+        </div>
+        {needsCollapse && (
+          <div className="border-t border-line px-4 py-2.5 flex items-center justify-between bg-canvas">
+            <span className="text-xs text-ink-tertiary">
+              {expanded ? `All ${topLevelCount} attributes` : `Showing a few of ${topLevelCount} attributes`}
+            </span>
+            <button
+              onClick={() => setExpanded(e => !e)}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-secondary hover:text-ink-primary transition-colors"
+            >
+              <span>{expanded ? "Show less" : `Show all ${topLevelCount}`}</span>
+              <svg
+                className={`w-3.5 h-3.5 transition-transform ${expanded ? "rotate-180" : ""}`}
+                fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

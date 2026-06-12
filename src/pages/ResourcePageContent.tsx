@@ -40,6 +40,7 @@ interface ResourcePageContentProps {
   onEndpointFocus: (ep: Endpoint) => void;
 }
 
+
 export const ResourcePageContent = memo(function ResourcePageContent({
   resource,
   onEndpointFocus,
@@ -127,7 +128,7 @@ export const ResourcePageContent = memo(function ResourcePageContent({
           <h2 className="t-subheading text-ink-tertiary uppercase tracking-widest mb-1">
             The {resource.objectName ?? resource.name.toLowerCase()} object
           </h2>
-          <ParamTable title="Attributes" params={resource.attributes} showBadges={false} />
+          <ParamTable title="Attributes" params={resource.attributes} showBadges={false} collapsible />
         </div>
       )}
 
