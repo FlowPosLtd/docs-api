@@ -6,6 +6,15 @@ export const teamResources: Resource[] = [
     name: "Roles",
     description:
       "Manage roles and permissions for your team members. Each role defines what actions a user can perform.",
+    objectName: "role",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the role." },
+      { name: "name", type: "string", required: false, description: "Display name of the role." },
+      { name: "permissions_count", type: "integer", required: false, description: "Number of permissions assigned to this role." },
+      { name: "users_count", type: "integer", required: false, description: "Number of users currently assigned this role." },
+      { name: "permissions", type: "object[]", required: false, description: "Array of permission objects granted to this role." },
+      { name: "permissions[].name", type: "string", required: false, description: "Permission identifier string (e.g. `products.view`, `orders.create`)." },
+    ],
     endpoints: [
       {
         id: "list-roles",
@@ -14,13 +23,17 @@ export const teamResources: Resource[] = [
         title: "List all roles",
         description: "Returns all roles configured for your tenant.",
         response: {
-          roles: [
-            {
-              id: 1,
-              name: "Manager",
-              permissions: ["orders:read", "orders:write"],
-            },
-          ],
+          data: {
+            roles: [
+              {
+                id: 1,
+                name: "new role for testing",
+                users_count: 1,
+                permissions_count: 15,
+              },
+            ],
+          },
+          status: true,
         },
         responseDescription: "Returns an array of role objects.",
       },
@@ -41,11 +54,18 @@ export const teamResources: Resource[] = [
           },
         ],
         response: {
-          role: {
-            id: 1,
-            name: "Manager",
-            permissions: ["orders:read", "orders:write", "customers:read"],
+          data: {
+            role: {
+              id: 1,
+              name: "new role for testing",
+              permissions: [
+                {
+                  name: "products.view",
+                },
+              ],
+            },
           },
+          status: true,
         },
         responseDescription: "Returns the role object.",
       },
@@ -68,16 +88,22 @@ export const teamResources: Resource[] = [
             type: "string[]",
             required: true,
             description: "Array of permission strings granted to this role.",
-            example: '["orders:read","customers:read"]',
+            example: '["products.view","orders.view"]',
           },
         ],
         response: {
-          role: {
-            id: 3,
-            name: "Manager",
-            permissions: ["orders:read", "customers:read"],
-            created_at: "2024-06-10T12:00:00Z",
+          data: {
+            role: {
+              name: "Store Manager",
+              id: 117,
+              permissions: [
+                { name: "products.view" },
+                { name: "orders.view" },
+                { name: "customers.view" },
+              ],
+            },
           },
+          status: true,
         },
         responseDescription: "Returns the created role.",
       },
@@ -109,16 +135,23 @@ export const teamResources: Resource[] = [
             type: "string[]",
             required: false,
             description: "Array of permission strings.",
-            example: '["orders:read","orders:write","customers:read"]',
+            example: '["orders.view","orders.create","customers.view"]',
           },
         ],
         response: {
-          role: {
-            id: 1,
-            name: "Senior Manager",
-            permissions: ["orders:read", "orders:write", "customers:read"],
-            updated_at: "2024-06-10T13:00:00Z",
+          data: {
+            role: {
+              id: 117,
+              name: "Store Manager",
+              permissions: [
+                { name: "products.view" },
+                { name: "orders.view" },
+                { name: "orders.create" },
+                { name: "customers.view" },
+              ],
+            },
           },
+          status: true,
         },
         responseDescription: "Returns the updated role.",
       },
@@ -137,7 +170,7 @@ export const teamResources: Resource[] = [
             example: "1",
           },
         ],
-        response: { message: "Role deleted." },
+        response: { data: null, status: true },
         responseDescription: "Returns a confirmation message.",
       },
     ],

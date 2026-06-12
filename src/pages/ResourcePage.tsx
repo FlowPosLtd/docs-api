@@ -1,8 +1,18 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import type { Endpoint, HttpMethod } from "../types";
 import { CodeExamples } from "../components/CodeExamples";
 import { ApiExplorer } from "../components/ApiExplorer";
 import { METHOD_PANEL_BADGE } from "../utils/method-colors";
+
+function prefillFromParams(
+  params: Endpoint["bodyParams"],
+): Record<string, string> {
+  const values: Record<string, string> = {};
+  (params || []).forEach((p) => {
+    if (p.example && p.type !== "object[]") values[p.name] = p.example;
+  });
+  return values;
+}
 
 interface RightPanelContentProps {
   endpoint: Endpoint;
@@ -10,12 +20,6 @@ interface RightPanelContentProps {
   baseUrl: string;
   showExplorer: boolean;
   setShowExplorer: (v: boolean) => void;
-  pathValues: Record<string, string>;
-  queryValues: Record<string, string>;
-  bodyValues: Record<string, string>;
-  onPathChange: (k: string, v: string) => void;
-  onQueryChange: (k: string, v: string) => void;
-  onBodyChange: (k: string, v: string) => void;
 }
 
 export function RightPanelContent({
@@ -24,13 +28,29 @@ export function RightPanelContent({
   baseUrl,
   showExplorer,
   setShowExplorer,
-  pathValues,
-  queryValues,
-  bodyValues,
-  onPathChange,
-  onQueryChange,
-  onBodyChange,
 }: RightPanelContentProps) {
+  const [pathValues, setPathValues] = useState<Record<string, string>>(() =>
+    prefillFromParams(endpoint.pathParams),
+  );
+  const [queryValues, setQueryValues] = useState<Record<string, string>>(() =>
+    prefillFromParams(endpoint.queryParams),
+  );
+  const [bodyValues, setBodyValues] = useState<Record<string, string>>(() =>
+    prefillFromParams(endpoint.bodyParams),
+  );
+
+  useEffect(() => {
+    setPathValues(prefillFromParams(endpoint.pathParams));
+    setQueryValues(prefillFromParams(endpoint.queryParams));
+    setBodyValues(prefillFromParams(endpoint.bodyParams));
+  }, [endpoint.id]);
+
+  const onPathChange = useCallback((k: string, v: string) =>
+    setPathValues((p) => ({ ...p, [k]: v })), []);
+  const onQueryChange = useCallback((k: string, v: string) =>
+    setQueryValues((p) => ({ ...p, [k]: v })), []);
+  const onBodyChange = useCallback((k: string, v: string) =>
+    setBodyValues((p) => ({ ...p, [k]: v })), []);
   const [shown, setShown] = useState(endpoint);
   const [hidden, setHidden] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);

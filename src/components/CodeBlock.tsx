@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo, memo } from "react";
 
 interface CodeBlockProps {
   code: string;
   language?: string;
 }
 
-export function CodeBlock({ code, language }: CodeBlockProps) {
+export const CodeBlock = memo(function CodeBlock({ code, language }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -14,7 +14,7 @@ export function CodeBlock({ code, language }: CodeBlockProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const highlighted = highlightCode(code, language);
+  const highlighted = useMemo(() => highlightCode(code, language), [code, language]);
 
   return (
     <div className="relative group">
@@ -30,7 +30,7 @@ export function CodeBlock({ code, language }: CodeBlockProps) {
       />
     </div>
   );
-}
+});
 
 function escapeHtml(str: string): string {
   return str

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Link } from "../utils/use-router";
@@ -53,25 +53,29 @@ function FlowPOSIcon({ className }: { className?: string }) {
   );
 }
 
-function SearchModal({ onClose }: { onClose: () => void }) {
+const SearchModal = memo(function SearchModal({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
 
-  const results =
-    query.length > 1
-      ? resources
-          .flatMap((r) =>
-            r.endpoints
-              .filter(
-                (e) =>
-                  e.title.toLowerCase().includes(query.toLowerCase()) ||
-                  e.path.toLowerCase().includes(query.toLowerCase()) ||
-                  e.description.toLowerCase().includes(query.toLowerCase()),
-              )
-              .map((e) => ({ ...e, resourceId: r.id, resourceName: r.name })),
-          )
-          .slice(0, 8)
-      : [];
+  const lowerQuery = query.toLowerCase();
+  const results = useMemo(
+    () =>
+      query.length > 1
+        ? resources
+            .flatMap((r) =>
+              r.endpoints
+                .filter(
+                  (e) =>
+                    e.title.toLowerCase().includes(lowerQuery) ||
+                    e.path.toLowerCase().includes(lowerQuery) ||
+                    e.description.toLowerCase().includes(lowerQuery),
+                )
+                .map((e) => ({ ...e, resourceId: r.id, resourceName: r.name })),
+            )
+            .slice(0, 8)
+        : [],
+    [query],
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] px-4">
@@ -151,7 +155,7 @@ function SearchModal({ onClose }: { onClose: () => void }) {
       </div>
     </div>
   );
-}
+});
 
 export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
   const [dark, setDark] = useState<boolean>(() => {
@@ -161,6 +165,11 @@ export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+
+  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
+  const closeSearch  = useCallback(() => setSearchOpen(false), []);
+  const toggleDark   = useCallback(() => setDark((d) => !d), []);
+  const openSearch   = useCallback(() => setSearchOpen(true), []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
@@ -184,7 +193,7 @@ export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-20 bg-black/50 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
+          onClick={closeSidebar}
         />
       )}
 
@@ -200,7 +209,7 @@ export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
           <Link
             href="/"
             className="flex items-center gap-2.5"
-            onClick={() => setSidebarOpen(false)}
+            onClick={closeSidebar}
           >
             <FlowPOSIcon className="w-7 h-7 shrink-0" />
             <span className="text-sm font-semibold text-ink-primary">
@@ -211,7 +220,7 @@ export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
         <div className="flex-1 overflow-hidden">
           <Sidebar
             currentPath={currentPath}
-            onNavigate={() => setSidebarOpen(false)}
+            onNavigate={closeSidebar}
           />
         </div>
       </aside>
@@ -238,7 +247,7 @@ export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
           </button>
 
           <button
-            onClick={() => setSearchOpen(true)}
+            onClick={openSearch}
             className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-line bg-canvas-subtle text-sm text-ink-tertiary hover:border-line-strong transition-colors flex-1 max-w-sm"
           >
             <svg
@@ -262,7 +271,7 @@ export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
 
           <div className="ml-auto flex items-center gap-2">
             <button
-              onClick={() => setDark((d) => !d)}
+              onClick={toggleDark}
               className="cursor-pointer p-1.5 rounded-md text-ink-secondary hover:bg-canvas-subtle transition-colors"
               title="Toggle dark mode"
             >
@@ -316,7 +325,7 @@ export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
         </div>
       </div>
 
-      {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
+      {searchOpen && <SearchModal onClose={closeSearch} />}
     </div>
   );
 }

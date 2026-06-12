@@ -14,7 +14,6 @@ const topLinks = [
   { href: "/", label: "Getting Started" },
   { href: "/authentication", label: "Authentication" },
   { href: "/errors", label: "Errors" },
-  { href: "/constants", label: "Constants & Enums" },
 ];
 
 const resourceGroups = [

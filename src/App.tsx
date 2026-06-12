@@ -7,7 +7,6 @@ import { ApiKeyBanner } from "./components/ApiKeyBanner";
 import { HomePage } from "./pages/HomePage";
 import { AuthPage } from "./pages/AuthPage";
 import { ErrorsPage } from "./pages/ErrorsPage";
-import { ConstantsPage } from "./pages/ConstantsPage";
 import { RightPanelContent } from "./pages/ResourcePage";
 import { ResourcePageContent } from "./pages/ResourcePageContent";
 import { getResource } from "./data/resources";
@@ -55,12 +54,6 @@ export default function App() {
       baseUrl={baseUrl}
       showExplorer={explorer.showExplorer}
       setShowExplorer={explorer.setShowExplorer}
-      pathValues={explorer.pathValues}
-      queryValues={explorer.queryValues}
-      bodyValues={explorer.bodyValues}
-      onPathChange={explorer.onPathChange}
-      onQueryChange={explorer.onQueryChange}
-      onBodyChange={explorer.onBodyChange}
     />
   ) : undefined;
 
@@ -71,7 +64,6 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/authentication" element={<AuthPage />} />
           <Route path="/errors" element={<ErrorsPage />} />
-          <Route path="/constants" element={<ConstantsPage />} />
           <Route
             path="/:resourceId"
             element={<ResourceRoute explorer={explorer} />}

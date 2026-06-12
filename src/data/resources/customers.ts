@@ -6,6 +6,20 @@ export const customerResources: Resource[] = [
     name: "Customers",
     description:
       "The Customer object represents a customer who has interacted with your business. Customers can have associated orders, addresses, notes, and group memberships.",
+    objectName: "customer",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the customer." },
+      { name: "name", type: "string", required: false, description: "Full name of the customer." },
+      { name: "email", type: "string", required: false, nullable: true, description: "Email address of the customer." },
+      { name: "phone", type: "string", required: false, nullable: true, description: "Phone number of the customer." },
+      { name: "address", type: "string", required: false, nullable: true, description: "Primary address of the customer." },
+      { name: "notes", type: "string", required: false, nullable: true, description: "Internal notes about this customer." },
+      { name: "total_spend", type: "number", required: false, description: "Lifetime total spend by this customer." },
+      { name: "orders_count", type: "integer", required: false, description: "Total number of orders placed by this customer." },
+      { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this customer belongs to." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the customer record was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the customer record was last modified." },
+    ],
     endpoints: [
       {
         id: "list-customers",
@@ -40,24 +54,48 @@ export const customerResources: Resource[] = [
           },
         ],
         response: {
-          customers: {
-            current_page: 1,
-            data: [
-              {
-                id: 1,
-                name: "Jane Smith",
-                email: "jane@example.com",
-                phone: "+44 7700 900001",
-                has_online_account: true,
-                orders_count: 5,
-                created_at: "2024-03-10T09:15:00Z",
-                updated_at: "2024-06-01T14:22:00Z",
-              },
-            ],
-            last_page: 4,
-            total: 52,
-            per_page: 15,
+          data: {
+            customers: {
+              current_page: 1,
+              data: [
+                {
+                  id: 1,
+                  name: "John Doe",
+                  otp: null,
+                  otp_expires_at: null,
+                  has_online_account: false,
+                  phone: "+44 7700 900001",
+                  email: "john@example.com",
+                  stripe_customer_id: null,
+                  dob: null,
+                  gender: null,
+                  registered_at: null,
+                  created_at: "2024-01-10T09:00:00.000000Z",
+                  updated_at: "2024-01-10T09:00:00.000000Z",
+                  orders_count: 0,
+                },
+              ],
+              first_page_url: "http://api.flowpos.me/v1/customers?page=1",
+              from: 1,
+              last_page: 19,
+              last_page_url: "http://api.flowpos.me/v1/customers?page=19",
+              links: [
+                {
+                  url: null,
+                  label: "&laquo; Previous",
+                  page: null,
+                  active: false,
+                },
+              ],
+              next_page_url: "http://api.flowpos.me/v1/customers?page=2",
+              path: "http://api.flowpos.me/v1/customers",
+              per_page: 15,
+              prev_page_url: null,
+              to: 15,
+              total: 280,
+            },
           },
+          status: true,
         },
         responseDescription:
           "Returns a paginated list wrapped in a `customers` object.",
@@ -93,16 +131,17 @@ export const customerResources: Resource[] = [
           },
         ],
         response: {
-          customer: {
-            id: 1,
-            name: "Jane Smith",
-            email: "jane@example.com",
-            phone: "+44 7700 900001",
-            has_online_account: false,
-            orders_count: 0,
-            created_at: "2024-06-10T12:00:00Z",
-            updated_at: "2024-06-10T12:00:00Z",
+          data: {
+            customer: {
+              name: "John Doe",
+              email: "john@example.com",
+              phone: "+44 7700 900001",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+              created_at: "2024-01-10T09:00:00.000000Z",
+              id: 1,
+            },
           },
+          status: true,
         },
         responseDescription: "Returns the newly created customer object.",
       },
@@ -122,44 +161,30 @@ export const customerResources: Resource[] = [
           },
         ],
         response: {
-          customer: {
-            id: 1,
-            name: "Jane Smith",
-            email: "jane@example.com",
-            phone: "+44 7700 900001",
-            has_online_account: true,
-            orders_count: 5,
-            otp: null,
-            otp_expires_at: null,
-            orders: [
-              {
-                id: 12,
-                order_number: "ORD-0012",
-                total: 4250,
-                status_label: "Completed",
-                created_at: "2024-05-20T10:00:00Z",
-              },
-            ],
-            notes: [
-              {
-                id: 1,
-                note: "VIP customer – priority support",
-                user: { id: 2, name: "Admin User" },
-                created_at: "2024-04-01T09:00:00Z",
-              },
-            ],
-            addresses: [
-              {
-                address_line_1: "12 High Street",
-                city: "London",
-                post_code: "W1A 1AA",
-                country: { shortcode: "GB", name: "United Kingdom" },
-              },
-            ],
-            groups: [{ id: 2, name: "VIP", colour: "#FFD700" }],
-            created_at: "2024-03-10T09:15:00Z",
-            updated_at: "2024-06-01T14:22:00Z",
+          data: {
+            customer: {
+              id: 1,
+              name: "John Doe",
+              otp: null,
+              otp_expires_at: null,
+              has_online_account: false,
+              phone: "+44 7700 900001",
+              email: "john@example.com",
+              stripe_customer_id: null,
+              dob: null,
+              gender: null,
+              registered_at: null,
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+              orders_count: 0,
+              subscriptions: [],
+              orders: [],
+              notes: [],
+              addresses: [],
+              groups: [],
+            },
           },
+          status: true,
         },
         responseDescription:
           "Returns the full customer object with nested orders, notes, addresses, and groups.",
@@ -195,55 +220,26 @@ export const customerResources: Resource[] = [
           },
         ],
         response: {
-          customer: {
-            id: 1,
-            name: "Jane A. Smith",
-            email: "jane@example.com",
-            phone: "+44 7700 900002",
-            has_online_account: true,
-            orders_count: 5,
-            created_at: "2024-03-10T09:15:00Z",
-            updated_at: "2024-06-10T13:00:00Z",
+          data: {
+            customer: {
+              id: 1,
+              name: "John Doe",
+              otp: null,
+              otp_expires_at: null,
+              has_online_account: false,
+              phone: "+44 7700 900001",
+              email: "john@example.com",
+              stripe_customer_id: null,
+              dob: null,
+              gender: null,
+              registered_at: null,
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+            },
           },
+          status: true,
         },
         responseDescription: "Returns the updated customer object.",
-      },
-      {
-        id: "create-customer-note",
-        method: "POST",
-        path: "/customers/{customerId}/notes",
-        title: "Add a customer note",
-        description:
-          "Adds an internal note to a customer record. Notes are visible only to your team.",
-        pathParams: [
-          {
-            name: "customerId",
-            type: "integer",
-            required: true,
-            description: "The numeric ID of the customer.",
-          },
-        ],
-        bodyParams: [
-          {
-            name: "note",
-            type: "string",
-            required: true,
-            description: "The note text to attach to the customer.",
-            example: "Prefers email contact only.",
-          },
-        ],
-        response: {
-          note: {
-            id: 3,
-            customer_id: 1,
-            note: "Prefers email contact only.",
-            user_id: 2,
-            user: { id: 2, name: "Admin User", full_name: "Admin User" },
-            created_at: "2024-06-10T14:00:00Z",
-            updated_at: "2024-06-10T14:00:00Z",
-          },
-        },
-        responseDescription: "Returns the newly created note object.",
       },
     ],
   },
@@ -253,6 +249,16 @@ export const customerResources: Resource[] = [
     name: "Customer Groups",
     description:
       'Customer Groups let you segment your customers into labelled collections (e.g. "VIP", "Wholesale"). You can assign multiple customers to a group and use groups for targeted discounts.',
+    objectName: "customer group",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the customer group." },
+      { name: "name", type: "string", required: false, description: "Display name of the group." },
+      { name: "colour", type: "string", required: false, description: "Hex colour code used to label the group in the dashboard (e.g. `#FFD700`)." },
+      { name: "customers_count", type: "integer", required: false, description: "Number of customers currently in this group." },
+      { name: "customers", type: "object[]", required: false, description: "Array of customer objects in this group. Only included on retrieve endpoints." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the group was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the group was last modified." },
+    ],
     endpoints: [
       {
         id: "list-customer-groups",
@@ -261,16 +267,19 @@ export const customerResources: Resource[] = [
         title: "List all customer groups",
         description: "Returns all customer groups for your tenant.",
         response: {
-          groups: [
-            {
-              id: 1,
-              name: "VIP",
-              colour: "#FFD700",
-              customers_count: 12,
-              created_at: "2024-01-15T10:00:00Z",
-              updated_at: "2024-05-20T08:30:00Z",
-            },
-          ],
+          data: {
+            groups: [
+              {
+                id: 8,
+                name: "VIP",
+                colour: "#FFD700",
+                created_at: "2024-01-10T09:00:00.000000Z",
+                updated_at: "2024-01-10T09:00:00.000000Z",
+                customers_count: 0,
+              },
+            ],
+          },
+          status: true,
         },
         responseDescription:
           "Returns an array of group objects in a `groups` key.",
@@ -298,14 +307,16 @@ export const customerResources: Resource[] = [
           },
         ],
         response: {
-          group: {
-            id: 1,
-            name: "VIP",
-            colour: "#FFD700",
-            customers_count: 0,
-            created_at: "2024-06-10T12:00:00Z",
-            updated_at: "2024-06-10T12:00:00Z",
+          data: {
+            group: {
+              name: "VIP",
+              colour: "#FFD700",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+              created_at: "2024-01-10T09:00:00.000000Z",
+              id: 9,
+            },
           },
+          status: true,
         },
         responseDescription: "Returns the created group.",
       },
@@ -324,19 +335,17 @@ export const customerResources: Resource[] = [
           },
         ],
         response: {
-          group: {
-            id: 1,
-            name: "VIP",
-            colour: "#FFD700",
-            customers: [
-              {
-                id: 1,
-                name: "Jane Smith",
-                email: "jane@example.com",
-                phone: "+44 7700 900001",
-              },
-            ],
+          data: {
+            group: {
+              id: 8,
+              name: "VIP",
+              colour: "#FFD700",
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+              customers: [],
+            },
           },
+          status: true,
         },
         responseDescription: "Returns the group with its `customers` array.",
       },
@@ -371,14 +380,16 @@ export const customerResources: Resource[] = [
           },
         ],
         response: {
-          group: {
-            id: 1,
-            name: "Premium",
-            colour: "#C0C0C0",
-            customers_count: 12,
-            created_at: "2024-01-15T10:00:00Z",
-            updated_at: "2024-06-10T14:00:00Z",
+          data: {
+            group: {
+              id: 8,
+              name: "Premium",
+              colour: "#C0C0C0",
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+            },
           },
+          status: true,
         },
         responseDescription: "Returns the updated group.",
       },
@@ -397,7 +408,7 @@ export const customerResources: Resource[] = [
             description: "The numeric ID of the group.",
           },
         ],
-        response: { message: "Customer group deleted successfully." },
+        response: { data: null, status: true },
         responseDescription: "Returns a confirmation message.",
       },
       {
@@ -424,8 +435,40 @@ export const customerResources: Resource[] = [
             example: "[1, 2, 3]",
           },
         ],
-        response: { message: "Customers assigned successfully." },
-        responseDescription: "Returns a confirmation message.",
+        response: {
+          data: {
+            group: {
+              id: 1,
+              name: "VIP",
+              colour: "#FFD700",
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+              customers: [
+                {
+                  id: 1,
+                  name: "John Doe",
+                  otp: null,
+                  otp_expires_at: null,
+                  has_online_account: false,
+                  phone: "+44 7700 900001",
+                  email: "john@example.com",
+                  stripe_customer_id: null,
+                  dob: null,
+                  gender: null,
+                  registered_at: null,
+                  created_at: "2024-01-10T09:00:00.000000Z",
+                  updated_at: "2024-01-10T09:00:00.000000Z",
+                  pivot: {
+                    customer_group_id: 1,
+                    customer_id: 1,
+                  },
+                },
+              ],
+            },
+          },
+          status: true,
+        },
+        responseDescription: "Returns the updated group with its assigned customers.",
       },
     ],
   },

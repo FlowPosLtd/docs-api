@@ -4,6 +4,7 @@ export interface Param {
   name: string;
   type: string;
   required: boolean;
+  nullable?: boolean;
   description: string;
   enum?: string[];
   default?: string;
@@ -28,6 +29,8 @@ export interface Resource {
   id: string;
   name: string;
   description: string;
+  objectName?: string;
+  attributes?: Param[];
   endpoints: Endpoint[];
 }
 

@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react";
 import { MethodBadge } from "./MethodBadge";
 import { ParamTable } from "./ParamTable";
 import { ResponseShape } from "./ResponseShape";
@@ -5,13 +6,13 @@ import type { Endpoint, HttpMethod } from "../types";
 
 interface EndpointSectionProps {
   endpoint: Endpoint;
-  isActive?: boolean;
-  onFocus: () => void;
+  onFocus: (id: string) => void;
 }
 
-export function EndpointSection({ endpoint, onFocus }: EndpointSectionProps) {
+export const EndpointSection = memo(function EndpointSection({ endpoint, onFocus }: EndpointSectionProps) {
+  const handleClick = useCallback(() => onFocus(endpoint.id), [onFocus, endpoint.id]);
   return (
-    <section id={endpoint.id} onClick={onFocus} className="mb-12 scroll-mt-6">
+    <section id={endpoint.id} onClick={handleClick} className="mb-12 scroll-mt-6">
       <div className="flex items-start gap-3 mb-4">
         <MethodBadge method={endpoint.method as HttpMethod} size="md" />
         <div className="flex-1 min-w-0">
@@ -52,10 +53,10 @@ export function EndpointSection({ endpoint, onFocus }: EndpointSectionProps) {
         <ParamTable title="Path Parameters" params={endpoint.pathParams} />
       )}
       {endpoint.queryParams && endpoint.queryParams.length > 0 && (
-        <ParamTable title="Query Parameters" params={endpoint.queryParams} />
+        <ParamTable title="Query Parameters" params={endpoint.queryParams} collapsible />
       )}
       {endpoint.bodyParams && endpoint.bodyParams.length > 0 && (
-        <ParamTable title="Body Parameters" params={endpoint.bodyParams} />
+        <ParamTable title="Body Parameters" params={endpoint.bodyParams} collapsible />
       )}
 
       {endpoint.response && (
@@ -66,4 +67,4 @@ export function EndpointSection({ endpoint, onFocus }: EndpointSectionProps) {
       )}
     </section>
   );
-}
+});

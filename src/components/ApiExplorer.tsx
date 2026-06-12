@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { useState, useRef, memo } from "react";
+
+const inputCls =
+  "w-full px-3 py-1.5 rounded bg-gray-800 border border-gray-700 text-gray-200 text-sm font-mono placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors";
+const labelCls = "block text-xs text-gray-400 mb-1";
 import axios from "axios";
 import {
   apiClient,
@@ -26,7 +30,7 @@ interface ApiResult {
   time: number;
 }
 
-export function ApiExplorer({
+export const ApiExplorer = memo(function ApiExplorer({
   endpoint,
   apiKey,
   baseUrl,
@@ -40,6 +44,8 @@ export function ApiExplorer({
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ApiResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [fileValues, setFileValues] = useState<Record<string, FileList | null>>({});
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const effectiveKey = apiKey || getStoredApiKey();
   const effectiveBase = (baseUrl || getStoredBaseUrl()).replace(/\/$/, "");
@@ -69,34 +75,105 @@ export function ApiExplorer({
     const hasBody = ["POST", "PUT", "PATCH"].includes(endpoint.method);
     const bodyPairs = Object.entries(bodyValues).filter(([, v]) => v !== "");
 
-    let data: Record<string, unknown> | undefined;
-    if (hasBody && bodyPairs.length) {
-      const assembled: Record<string, unknown> = {};
-      const arrayFields: Record<string, Record<string, string>> = {};
+    const bodyParamTypeMap: Record<string, string> = {};
+    const bodyParamEnumFields = new Set<string>();
+    const hasFileParam = (endpoint.bodyParams ?? []).some((p) => p.type === "file");
+    for (const p of endpoint.bodyParams ?? []) {
+      bodyParamTypeMap[p.name] = p.type;
+      if (p.enum) bodyParamEnumFields.add(p.name);
+    }
 
-      for (const [k, v] of bodyPairs) {
-        const m = k.match(/^([^[]+)\[\]\.(.+)$/);
-        if (m) {
-          const [, parent, field] = m;
-          if (!arrayFields[parent]) arrayFields[parent] = {};
-          arrayFields[parent][field] = v;
-        } else {
-          assembled[k] = v;
+    let data: Record<string, unknown> | FormData | undefined;
+    if (hasBody) {
+      if (hasFileParam) {
+        // Build multipart/form-data
+        const fd = new FormData();
+        for (const [k, files] of Object.entries(fileValues)) {
+          if (!files) continue;
+          const isMultiple = k.endsWith("[]");
+          Array.from(files).forEach((f) => fd.append(k, f));
+          void isMultiple;
         }
-      }
+        // Also append any non-file body values
+        for (const [k, v] of bodyPairs) {
+          if (bodyParamTypeMap[k] !== "file") fd.append(k, v);
+        }
+        data = fd;
+      } else if (bodyPairs.length) {
+        const assembled: Record<string, unknown> = {};
+        const arrayFields: Record<string, Record<string, string>> = {};
+        const nestedFields: Record<string, Record<string, unknown>> = {};
 
-      for (const [parent, fields] of Object.entries(arrayFields)) {
-        assembled[parent] = [
-          Object.fromEntries(
-            Object.entries(fields).map(([k, v]) => {
+        for (const [k, v] of bodyPairs) {
+          const arrayMatch = k.match(/^([^[]+)\[\]\.(.+)$/);
+          if (arrayMatch) {
+            const [, parent, field] = arrayMatch;
+            if (!arrayFields[parent]) arrayFields[parent] = {};
+            arrayFields[parent][field] = v;
+          } else if (k.includes(".")) {
+            const dotIdx = k.indexOf(".");
+            const parent = k.substring(0, dotIdx);
+            const child = k.substring(dotIdx + 1);
+            if (!nestedFields[parent]) nestedFields[parent] = {};
+            const t = bodyParamTypeMap[k] ?? "";
+            if (t === "integer" || t === "number") {
               const n = Number(v);
-              return [k, v !== "" && !isNaN(n) ? n : v];
-            }),
-          ),
-        ];
-      }
+              nestedFields[parent][child] = isNaN(n) ? v : n;
+            } else if (t === "boolean") {
+              nestedFields[parent][child] = v === "true" ? true : v === "false" ? false : v;
+            } else {
+              nestedFields[parent][child] = v;
+            }
+          } else {
+            const t = bodyParamTypeMap[k] ?? "";
+            if (t.endsWith("[]") || t === "array") {
+              try { assembled[k] = JSON.parse(v); } catch {
+                assembled[k] = v.split(",").map((s) => s.trim()).filter(Boolean);
+              }
+            } else if (t === "integer" || t === "number") {
+              const n = Number(v);
+              assembled[k] = isNaN(n) ? v : n;
+            } else if (t === "boolean") {
+              assembled[k] = v === "true" ? true : v === "false" ? false : v;
+            } else {
+              assembled[k] = bodyParamEnumFields.has(k) ? v.toLowerCase() : v;
+            }
+          }
+        }
 
-      data = Object.keys(assembled).length ? assembled : undefined;
+        for (const [parent, fields] of Object.entries(arrayFields)) {
+          assembled[parent] = [
+            Object.fromEntries(
+              Object.entries(fields).map(([k, v]) => {
+                const fullKey = `${parent}[].${k}`;
+                const t = bodyParamTypeMap[fullKey] ?? "";
+
+                if (v === "null") return [k, null];
+
+                if (t === "boolean") {
+                  return [k, v === "true" ? true : v === "false" ? false : v];
+                }
+                if (t === "integer" || t === "number") {
+                  const n = Number(v);
+                  return [k, isNaN(n) ? v : n];
+                }
+                const n = Number(v);
+                if (v !== "" && !isNaN(n)) return [k, n];
+                if (v.trim().startsWith("[") || v.trim().startsWith("{")) {
+                  try { return [k, JSON.parse(v)]; } catch { /* fall through */ }
+                }
+                return [k, v];
+              }),
+            ),
+          ];
+        }
+
+        for (const [parent, fields] of Object.entries(nestedFields)) {
+          assembled[parent] = fields;
+        }
+
+        data = Object.keys(assembled).length ? assembled : undefined;
+      }
     }
 
     const start = Date.now();
@@ -107,7 +184,10 @@ export function ApiExplorer({
         baseURL: effectiveBase,
         params,
         data,
-        headers: { "x-api-key": effectiveKey },
+        headers: {
+          "x-api-key": effectiveKey,
+          ...(data instanceof FormData ? { "Content-Type": undefined } : {}),
+        },
         validateStatus: () => true,
       });
 
@@ -131,9 +211,7 @@ export function ApiExplorer({
     }
   };
 
-  const inputCls =
-    "w-full px-3 py-1.5 rounded bg-gray-800 border border-gray-700 text-gray-200 text-sm font-mono placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors";
-  const labelCls = "block text-xs text-gray-400 mb-1";
+
 
   return (
     <div className="p-4 flex flex-col gap-4">
@@ -267,10 +345,33 @@ export function ApiExplorer({
                         </option>
                       ))}
                     </select>
+                  ) : p.type === "boolean" ? (
+                    <select
+                      value={bodyValues[p.name] ?? ""}
+                      onChange={(e) => onBodyChange(p.name, e.target.value)}
+                      className={inputCls + " appearance-none"}
+                    >
+                      <option value="">— select —</option>
+                      <option value="true">true</option>
+                      <option value="false">false</option>
+                    </select>
+                  ) : p.type === "file" ? (
+                    <input
+                      type="file"
+                      multiple
+                      ref={(el) => { fileInputRefs.current[p.name] = el; }}
+                      onChange={(e) =>
+                        setFileValues((prev) => ({ ...prev, [p.name]: e.target.files }))
+                      }
+                      className={inputCls + " cursor-pointer file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:bg-blue-600 file:text-white"}
+                    />
                   ) : (
                     <input
                       type="text"
-                      placeholder={p.example || ""}
+                      placeholder={
+                        p.example ||
+                        (p.type === "integer" && !p.required ? "integer or null" : "")
+                      }
                       value={bodyValues[p.name] || ""}
                       onChange={(e) => onBodyChange(p.name, e.target.value)}
                       className={inputCls}
@@ -332,11 +433,11 @@ export function ApiExplorer({
             </span>
             <span className="text-xs text-gray-500">{result.time}ms</span>
           </div>
-          <pre className="p-3 rounded bg-gray-900 text-xs font-mono text-gray-300 overflow-x-auto max-h-72 border border-gray-800 leading-5 whitespace-pre-wrap break-words">
+          <pre className="p-3 pb-6 rounded bg-gray-900 text-xs font-mono text-gray-300 overflow-x-auto max-h-150 border border-gray-800 leading-5 whitespace-pre-wrap wrap-break-word">
             {JSON.stringify(result.data, null, 2)}
           </pre>
         </div>
       )}
     </div>
   );
-}
+});

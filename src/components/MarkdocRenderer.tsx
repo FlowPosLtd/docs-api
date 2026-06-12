@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Markdoc, { type RenderableTreeNode } from "@markdoc/markdoc";
 import { markdocConfig } from "../markdoc/config";
 import { CodeBlock } from "./CodeBlock";
@@ -177,13 +177,14 @@ const components = {
 };
 
 export function MarkdocRenderer({ content }: { content: string }) {
-  const ast = Markdoc.parse(content);
-  const tree = Markdoc.transform(ast, markdocConfig);
+  const tree = useMemo(() => {
+    const ast = Markdoc.parse(content);
+    return Markdoc.transform(ast, markdocConfig);
+  }, [content]);
+
   return (
     <div>
-      {Markdoc.renderers.react(tree as RenderableTreeNode, React, {
-        components,
-      })}
+      {Markdoc.renderers.react(tree as RenderableTreeNode, React, { components })}
     </div>
   );
 }
