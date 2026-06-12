@@ -204,6 +204,7 @@ export const ParamTable = memo(function ParamTable({
   const groups = buildGroups(params);
   const topLevelCount = groups.length;
   const needsCollapse = collapsible && topLevelCount > 5;
+  const noun = title.toLowerCase().includes("attr") ? "attributes" : "parameters";
 
   return (
     <div className="mb-6">
@@ -228,7 +229,7 @@ export const ParamTable = memo(function ParamTable({
         {needsCollapse && (
           <div className="border-t border-line px-4 py-2.5 flex items-center justify-between bg-canvas">
             <span className="text-xs text-ink-tertiary">
-              {expanded ? `All ${topLevelCount} attributes` : `Showing a few of ${topLevelCount} attributes`}
+              {expanded ? `All ${topLevelCount} ${noun}` : `Showing a few of ${topLevelCount} ${noun}`}
             </span>
             <button
               onClick={() => setExpanded(e => !e)}

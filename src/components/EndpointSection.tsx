@@ -53,10 +53,10 @@ export const EndpointSection = memo(function EndpointSection({ endpoint, onFocus
         <ParamTable title="Path Parameters" params={endpoint.pathParams} />
       )}
       {endpoint.queryParams && endpoint.queryParams.length > 0 && (
-        <ParamTable title="Query Parameters" params={endpoint.queryParams} />
+        <ParamTable title="Query Parameters" params={endpoint.queryParams} collapsible />
       )}
       {endpoint.bodyParams && endpoint.bodyParams.length > 0 && (
-        <ParamTable title="Body Parameters" params={endpoint.bodyParams} />
+        <ParamTable title="Body Parameters" params={endpoint.bodyParams} collapsible />
       )}
 
       {endpoint.response && (
