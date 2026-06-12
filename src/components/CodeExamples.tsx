@@ -34,15 +34,15 @@ export const CodeExamples = memo(function CodeExamples({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center px-4 pt-4 gap-1 border-b border-gray-800 pb-0">
+      <div className="flex items-center px-4 pt-4 gap-1 border-b border-code pb-0">
         {LANGUAGES.map((l) => (
           <button
             key={l}
             onClick={() => setLang(l)}
             className={`px-3 py-2 text-xs font-medium rounded-t transition-colors ${
               lang === l
-                ? "text-white bg-gray-800 border-b-2 border-blue-500"
-                : "text-gray-400 hover:text-gray-200"
+                ? "text-code bg-code-head border-b-2 border-blue-500"
+                : "text-code-dim hover:text-code"
             }`}
           >
             {LANGUAGE_LABELS[l]}
@@ -54,7 +54,7 @@ export const CodeExamples = memo(function CodeExamples({
             className={`ml-auto px-3 py-1.5 rounded text-xs font-medium transition-colors ${
               isTryItOpen
                 ? "bg-blue-600 text-white"
-                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                : "bg-code-head text-code-muted hover:text-code border border-code"
             }`}
           >
             {isTryItOpen ? "← Code" : "Try it ▶"}
