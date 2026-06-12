@@ -318,7 +318,7 @@ export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
           </main>
 
           {rightPanel && (
-            <aside className="hidden xl:flex w-[420px] shrink-0 bg-pitch-900 border-l border-pitch-600 overflow-y-auto scroll-smooth">
+            <aside className="hidden xl:flex w-[420px] shrink-0 bg-code border-l border-code overflow-y-auto scroll-smooth">
               {rightPanel}
             </aside>
           )}

@@ -85,14 +85,14 @@ export function RightPanelContent({
 
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="px-4 py-3 border-b border-pitch-600 bg-pitch-800 shrink-0">
+      <div className="px-4 py-3 border-b border-code bg-code-head shrink-0">
         <div className="flex items-center gap-2">
           <span
             className={`text-[10px] font-bold uppercase font-mono px-1.5 py-0.5 rounded ${METHOD_PANEL_BADGE[endpoint.method as HttpMethod]}`}
           >
             {endpoint.method}
           </span>
-          <code className="text-xs font-mono text-pitch-300 truncate">
+          <code className="text-xs font-mono text-code-muted truncate">
             {endpoint.path}
           </code>
         </div>
@@ -114,7 +114,7 @@ export function RightPanelContent({
           <div className="px-4 pb-4 mt-auto shrink-0">
             <button
               onClick={() => setShowExplorer(false)}
-              className="cursor-pointer text-xs text-pitch-400 hover:text-pitch-200 transition-colors"
+              className="cursor-pointer text-xs text-code-dim hover:text-code transition-colors"
             >
               ← Back to code examples
             </button>
