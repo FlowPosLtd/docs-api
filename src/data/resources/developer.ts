@@ -32,20 +32,45 @@ export const developerResources: Resource[] = [
           },
         ],
         response: {
-          webhook_endpoints: {
-            data: [
-              {
-                id: 1,
-                url: "https://yourdomain.com/webhooks",
-                events: ["order.created", "payment.paid"],
-                description: "Production webhook",
-                is_active: true,
-                created_at: "2024-03-01T10:00:00Z",
-              },
-            ],
-            current_page: 1,
-            total: 1,
+          data: {
+            webhook_endpoints: {
+              current_page: 1,
+              data: [
+                {
+                  id: 14,
+                  url: "https://yourdomain.com/webhooks",
+                  secret: "D6FnqjsubEMiaPFKbt8quRmKRU1Hct9vCfgY3UJd",
+                  events: [
+                    "order.placed",
+                    "order.status_changed",
+                    "product.updated",
+                    "product.created",
+                  ],
+                  is_active: true,
+                  description: "Production webhook",
+                  created_at: "2024-01-10T09:00:00.000000Z",
+                  updated_at: "2024-01-10T09:00:00.000000Z",
+                  tenant_id: 1,
+                },
+              ],
+              first_page_url: "http://api.flowpos.me/v1/webhook-endpoints?page=1",
+              from: 1,
+              last_page: 1,
+              last_page_url: "http://api.flowpos.me/v1/webhook-endpoints?page=1",
+              links: [
+                { url: null, label: "&laquo; Previous", page: null, active: false },
+                { url: "http://api.flowpos.me/v1/webhook-endpoints?page=1", label: "1", page: 1, active: true },
+                { url: null, label: "Next &raquo;", page: null, active: false },
+              ],
+              next_page_url: null,
+              path: "http://api.flowpos.me/v1/webhook-endpoints",
+              per_page: 15,
+              prev_page_url: null,
+              to: 1,
+              total: 1,
+            },
           },
+          status: true,
         },
         responseDescription: "Returns paginated list of webhook endpoints.",
       },
@@ -87,20 +112,25 @@ export const developerResources: Resource[] = [
           },
         ],
         response: {
-          webhook_endpoint: {
-            id: 2,
-            url: "https://yourdomain.com/webhooks",
-            events: ["order.created"],
-            description: "Production webhook",
-            is_active: true,
-            secret: "whsec_a1b2c3d4e5f6g7h8",
-            created_at: "2024-06-10T12:00:00Z",
+          data: {
+            webhook_endpoint: {
+              tenant_id: 1,
+              url: "https://yourdomain.com/webhooks",
+              secret: "QRRrp7ALemUxWFot0KiiJzOxQkwgJ7ZGMAL2dF1u",
+              events: ["order.placed", "order.status_changed"],
+              description: "Production webhook",
+              is_active: true,
+              updated_at: "2024-01-10T09:27:01.000000Z",
+              created_at: "2024-01-10T09:27:01.000000Z",
+              id: 21,
+            },
           },
+          status: true,
         },
         responseDescription:
-          "Returns the created endpoint. The `secret` is shown only once.",
+          "Returns the created endpoint including the signing secret.",
         notes: [
-          "The webhook `secret` is only returned once on creation. Store it securely to verify incoming webhook signatures.",
+          "Store the `secret` securely — it is used to verify incoming webhook signatures via HMAC.",
         ],
       },
       {
@@ -159,8 +189,14 @@ export const developerResources: Resource[] = [
             description: "The numeric ID of the webhook event.",
           },
         ],
-        response: { webhook_event_id: 15, event_id: "evt_a1b2c3d4" },
-        responseDescription: "Returns the event IDs for the retry.",
+        response: {
+          data: {
+            webhook_event_id: 1242,
+            event_id: "35d6dc69-1770-4d9e-b2f5-59311acfae63",
+          },
+          status: true,
+        },
+        responseDescription: "Returns the event IDs for the queued retry.",
       },
       {
         id: "get-webhook-endpoint",
@@ -178,15 +214,20 @@ export const developerResources: Resource[] = [
           },
         ],
         response: {
-          webhook_endpoint: {
-            id: 1,
-            url: "https://yourdomain.com/webhooks",
-            events: ["order.created", "payment.paid"],
-            description: "Production webhook",
-            is_active: true,
-            created_at: "2024-03-01T10:00:00Z",
-            updated_at: "2024-06-01T09:00:00Z",
+          data: {
+            webhook_endpoint: {
+              id: 14,
+              url: "https://yourdomain.com/webhooks",
+              secret: "D6FnqjsubEMiaPFKbt8quRmKRU1Hct9vCfgY3UJd",
+              events: ["order.placed", "order.status_changed", "product.updated", "product.created"],
+              is_active: true,
+              description: "Production webhook",
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+              tenant_id: 1,
+            },
           },
+          status: true,
         },
         responseDescription: "Returns the webhook endpoint object.",
       },
@@ -230,13 +271,20 @@ export const developerResources: Resource[] = [
           },
         ],
         response: {
-          webhook_endpoint: {
-            id: 1,
-            url: "https://yourdomain.com/webhooks/v2",
-            events: ["order.created"],
-            is_active: true,
-            updated_at: "2024-06-10T13:00:00Z",
+          data: {
+            webhook_endpoint: {
+              id: 14,
+              url: "https://yourdomain.com/webhooks/v2",
+              secret: "D6FnqjsubEMiaPFKbt8quRmKRU1Hct9vCfgY3UJd",
+              events: ["order.placed"],
+              is_active: true,
+              description: "Production webhook",
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:01.000000Z",
+              tenant_id: 1,
+            },
           },
+          status: true,
         },
         responseDescription: "Returns the updated webhook endpoint.",
       },
@@ -257,15 +305,25 @@ export const developerResources: Resource[] = [
           },
         ],
         response: {
-          webhook_endpoint: {
-            id: 1,
-            secret: "whsec_z9y8x7w6v5u4t3s2r1q0",
+          data: {
+            webhook_endpoint: {
+              id: 14,
+              url: "https://yourdomain.com/webhooks",
+              secret: "W12SgHSwPsEwQT3jCnTdZuHBxxPGgyM1DQvszy0g",
+              events: ["order.placed", "order.status_changed"],
+              is_active: true,
+              description: "Production webhook",
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:01.000000Z",
+              tenant_id: 1,
+            },
           },
+          status: true,
         },
         responseDescription:
-          "Returns the new secret. Store it immediately it cannot be retrieved again.",
+          "Returns the full endpoint object with the new signing secret.",
         notes: [
-          "The new webhook secret is shown only once. Copy it immediately; it cannot be retrieved again.",
+          "The new secret immediately replaces the old one. Update your webhook handler to use the new secret.",
         ],
       },
       {
@@ -303,20 +361,57 @@ export const developerResources: Resource[] = [
           },
         ],
         response: {
-          data: [
-            {
-              id: 1,
-              event_id: "evt_a1b2c3d4",
-              event_type: "order.created",
-              status: "delivered",
-              attempts: 1,
-              response_code: 200,
-              delivered_at: "2024-06-10T12:01:00Z",
-              created_at: "2024-06-10T12:00:00Z",
+          data: {
+            webhook_events: {
+              current_page: 1,
+              data: [
+                {
+                  id: 1242,
+                  webhook_endpoint_id: 14,
+                  event_id: "35d6dc69-1770-4d9e-b2f5-59311acfae63",
+                  event: "product.created",
+                  payload: {
+                    sku: null,
+                    name: "Classic Burger",
+                    price: 1200,
+                    product_id: 42635,
+                  },
+                  created_at: "2024-01-10T09:00:00.000000Z",
+                  updated_at: "2024-01-10T09:00:00.000000Z",
+                },
+                {
+                  id: 1202,
+                  webhook_endpoint_id: 14,
+                  event_id: "48228a93-5ea6-4b40-baf9-0eca52cc1348",
+                  event: "order.status_changed",
+                  payload: {
+                    order_id: 10496,
+                    new_status: 2,
+                    old_status: 1,
+                    order_number: "AB23",
+                  },
+                  created_at: "2024-01-10T08:00:00.000000Z",
+                  updated_at: "2024-01-10T08:00:00.000000Z",
+                },
+              ],
+              first_page_url: "http://api.flowpos.me/v1/webhook-endpoints/14/events?page=1",
+              from: 1,
+              last_page: 15,
+              last_page_url: "http://api.flowpos.me/v1/webhook-endpoints/14/events?page=15",
+              links: [
+                { url: null, label: "&laquo; Previous", page: null, active: false },
+                { url: "http://api.flowpos.me/v1/webhook-endpoints/14/events?page=1", label: "1", page: 1, active: true },
+                { url: "http://api.flowpos.me/v1/webhook-endpoints/14/events?page=2", label: "Next &raquo;", page: 2, active: false },
+              ],
+              next_page_url: "http://api.flowpos.me/v1/webhook-endpoints/14/events?page=2",
+              path: "http://api.flowpos.me/v1/webhook-endpoints/14/events",
+              per_page: 15,
+              prev_page_url: null,
+              to: 15,
+              total: 215,
             },
-          ],
-          current_page: 1,
-          total: 28,
+          },
+          status: true,
         },
         responseDescription:
           "Returns a paginated list of webhook event delivery records.",
@@ -344,20 +439,46 @@ export const developerResources: Resource[] = [
           },
         ],
         response: {
-          event: {
-            id: 15,
-            event_id: "evt_a1b2c3d4",
-            event_type: "order.created",
-            status: "delivered",
-            attempts: 1,
-            response_code: 200,
-            payload: { order_id: 42, total: 4250, status: "pending" },
-            delivered_at: "2024-06-10T12:01:00Z",
-            created_at: "2024-06-10T12:00:00Z",
+          data: {
+            webhook_event: {
+              id: 1242,
+              webhook_endpoint_id: 14,
+              event_id: "35d6dc69-1770-4d9e-b2f5-59311acfae63",
+              event: "product.created",
+              payload: {
+                sku: null,
+                name: "Classic Burger",
+                price: 1200,
+                product_id: 42635,
+              },
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+              logs: [
+                {
+                  id: 1281,
+                  attempt: 1,
+                  webhook_event_id: 1242,
+                  url: "https://yourdomain.com/webhooks",
+                  response_status: 200,
+                  response_body: "OK",
+                  response_headers: {
+                    "Content-Type": ["application/json"],
+                    "Connection": ["keep-alive"],
+                  },
+                  duration_ms: 252,
+                  success: true,
+                  error_message: null,
+                  attempted_at: "2024-01-10T09:00:00.000000Z",
+                  created_at: "2024-01-10T09:00:00.000000Z",
+                  updated_at: "2024-01-10T09:00:00.000000Z",
+                },
+              ],
+            },
           },
+          status: true,
         },
         responseDescription:
-          "Returns the full webhook event delivery record including payload.",
+          "Returns the full webhook event delivery record including payload and delivery logs.",
       },
       {
         id: "bulk-retry-webhook-events",
@@ -375,9 +496,12 @@ export const developerResources: Resource[] = [
             example: "1",
           },
         ],
-        response: { message: "Bulk retry queued.", retried_count: 7 },
+        response: {
+          data: { dispatched: 7 },
+          status: true,
+        },
         responseDescription:
-          "Returns a confirmation with the number of events queued for retry.",
+          "Returns a confirmation with the number of failed events dispatched for retry.",
       },
     ],
   },
@@ -393,8 +517,7 @@ export const developerResources: Resource[] = [
         method: "GET",
         path: "/api-keys",
         title: "List all API keys",
-        description:
-          "Returns a paginated list of API keys. Key tokens are masked after creation.",
+        description: "Returns a paginated list of API keys.",
         queryParams: [
           {
             name: "page",
@@ -423,7 +546,7 @@ export const developerResources: Resource[] = [
                   tenant_id: 2,
                   created_by: 2,
                   name: "create order key",
-                  token: "tok_live_a1b2c3d4e5f6",
+                  token: "flpos_R8SZQnxo7vtwjTyEREJ1A4nUTtrCvEnbQgzWecwx",
                   last_used_at: "2024-01-10T09:00:00.000000Z",
                   expires_at: null,
                   created_at: "2024-01-10T09:00:00.000000Z",
@@ -457,16 +580,14 @@ export const developerResources: Resource[] = [
           },
           status: true,
         },
-        responseDescription:
-          "Returns a paginated list of API key objects. The `token` is `null` after creation.",
+        responseDescription: "Returns a paginated list of API key objects.",
       },
       {
         id: "create-api-key",
         method: "POST",
         path: "/api-keys",
         title: "Create an API key",
-        description:
-          "Creates a new API key. The full token is returned only at creation time.",
+        description: "Creates a new API key.",
         bodyParams: [
           {
             name: "name",
@@ -491,20 +612,28 @@ export const developerResources: Resource[] = [
           },
         ],
         response: {
-          apiKey: {
-            id: 3,
-            name: "Production Key",
-            token: "tok_live_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
-            expires_at: null,
-            last_used_at: null,
-            created_at: "2024-06-10T12:00:00Z",
-            permissions: [{ name: "orders:read" }],
+          data: {
+            apiKey: {
+              id: 17,
+              tenant_id: 1,
+              created_by: 1,
+              name: "Production Key",
+              token: "flpos_a2g5hfBAmorj3x6Q3HWteUAnX0MNzjcfM0Iqb7st",
+              last_used_at: null,
+              expires_at: null,
+              created_at: "2024-01-10T09:27:05.000000Z",
+              updated_at: "2024-01-10T09:27:05.000000Z",
+              permissions: [
+                { name: "products.view" },
+                { name: "orders.view" },
+              ],
+            },
           },
+          status: true,
         },
-        responseDescription:
-          "Returns the created key. The `token` value is shown only once store it securely.",
+        responseDescription: "Returns the created API key with its token.",
         notes: [
-          "The API key token is shown only once in the response. Copy it immediately; it cannot be retrieved again.",
+          "The `token` field is always visible via the API. Store it securely to authenticate API requests.",
         ],
       },
       {
@@ -530,8 +659,7 @@ export const developerResources: Resource[] = [
         method: "GET",
         path: "/api-keys/{id}",
         title: "Retrieve an API key",
-        description:
-          "Returns details of a single API key. The token is masked.",
+        description: "Returns details of a single API key.",
         pathParams: [
           {
             name: "id",
@@ -548,7 +676,7 @@ export const developerResources: Resource[] = [
               tenant_id: 2,
               created_by: 2,
               name: "create order key",
-              token: "tok_live_a1b2c3d4e5f6",
+              token: "flpos_R8SZQnxo7vtwjTyEREJ1A4nUTtrCvEnbQgzWecwx",
               last_used_at: "2024-01-10T09:00:00.000000Z",
               expires_at: null,
               created_at: "2024-01-10T09:00:00.000000Z",
@@ -562,8 +690,7 @@ export const developerResources: Resource[] = [
           },
           status: true,
         },
-        responseDescription:
-          "Returns the API key object. The `token` is always `null` after creation.",
+        responseDescription: "Returns the API key object.",
       },
       {
         id: "update-api-key",
@@ -606,60 +733,27 @@ export const developerResources: Resource[] = [
           },
         ],
         response: {
-          apiKey: {
-            id: 1,
-            name: "Production Key",
-            token: null,
-            expires_at: "2025-12-31T23:59:59Z",
-            last_used_at: "2024-06-09T08:30:00Z",
-            updated_at: "2024-06-10T13:00:00Z",
-            permissions: [{ name: "orders:read" }, { name: "customers:read" }],
-          },
-        },
-        responseDescription: "Returns the updated API key.",
-      },
-      {
-        id: "regenerate-api-key",
-        method: "POST",
-        path: "/api-keys/{id}/regenerate",
-        title: "Regenerate API key secret",
-        description:
-          "Generates a new secret token for an existing API key. The old token is immediately invalidated.",
-        pathParams: [
-          {
-            name: "id",
-            type: "integer",
-            required: true,
-            description: "The numeric ID of the API key.",
-            example: "1",
-          },
-        ],
-        response: {
           data: {
             apiKey: {
-              id: 16,
-              tenant_id: 2,
-              created_by: 2,
-              name: "create order key",
-              token: "tok_live_a1b2c3d4e5f6",
-              last_used_at: "2024-01-10T09:00:00.000000Z",
+              id: 17,
+              tenant_id: 1,
+              created_by: 1,
+              name: "Production Key",
+              token: "flpos_a2g5hfBAmorj3x6Q3HWteUAnX0MNzjcfM0Iqb7st",
+              last_used_at: null,
               expires_at: null,
-              created_at: "2024-01-10T09:00:00.000000Z",
-              updated_at: "2024-01-10T09:00:00.000000Z",
+              created_at: "2024-01-10T09:27:05.000000Z",
+              updated_at: "2024-01-10T09:27:21.000000Z",
               permissions: [
-                {
-                  name: "addonGroups.create",
-                },
+                { name: "products.view" },
+                { name: "orders.view" },
+                { name: "customers.view" },
               ],
             },
           },
           status: true,
         },
-        responseDescription:
-          "Returns the API key with the new token. Store it immediately it cannot be retrieved again.",
-        notes: [
-          "The new token is shown only once. Copy it immediately; it cannot be retrieved again.",
-        ],
+        responseDescription: "Returns the updated API key.",
       },
     ],
   }

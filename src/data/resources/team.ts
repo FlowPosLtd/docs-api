@@ -79,16 +79,22 @@ export const teamResources: Resource[] = [
             type: "string[]",
             required: true,
             description: "Array of permission strings granted to this role.",
-            example: '["orders:read","customers:read"]',
+            example: "products.view, orders.view",
           },
         ],
         response: {
-          role: {
-            id: 3,
-            name: "Manager",
-            permissions: ["orders:read", "customers:read"],
-            created_at: "2024-06-10T12:00:00Z",
+          data: {
+            role: {
+              name: "Store Manager",
+              id: 117,
+              permissions: [
+                { name: "products.view" },
+                { name: "orders.view" },
+                { name: "customers.view" },
+              ],
+            },
           },
+          status: true,
         },
         responseDescription: "Returns the created role.",
       },
@@ -120,16 +126,23 @@ export const teamResources: Resource[] = [
             type: "string[]",
             required: false,
             description: "Array of permission strings.",
-            example: '["orders:read","orders:write","customers:read"]',
+            example: "orders.view, orders.create, customers.view",
           },
         ],
         response: {
-          role: {
-            id: 1,
-            name: "Senior Manager",
-            permissions: ["orders:read", "orders:write", "customers:read"],
-            updated_at: "2024-06-10T13:00:00Z",
+          data: {
+            role: {
+              id: 117,
+              name: "Store Manager",
+              permissions: [
+                { name: "products.view" },
+                { name: "orders.view" },
+                { name: "orders.create" },
+                { name: "customers.view" },
+              ],
+            },
           },
+          status: true,
         },
         responseDescription: "Returns the updated role.",
       },
