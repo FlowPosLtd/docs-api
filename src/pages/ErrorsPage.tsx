@@ -43,10 +43,10 @@ export function ErrorsPage() {
         ].map((item) => (
           <div key={item.label} className="mb-4">
             <p className="t-caption mb-2">{item.label}</p>
-            <div className="bg-pitch-900 rounded-lg border border-pitch-600 overflow-hidden">
-              <div className="flex items-center gap-2 px-4 py-2 border-b border-pitch-600">
+            <div className="bg-code rounded-lg border border-code overflow-hidden">
+              <div className="flex items-center gap-2 px-4 py-2 border-b border-code">
                 <span className={`w-2 h-2 rounded-full ${item.dot}`}></span>
-                <span className="text-xs font-mono text-pitch-300">
+                <span className="text-xs font-mono text-code-muted">
                   {item.header}
                 </span>
               </div>
@@ -108,9 +108,9 @@ export function ErrorsPage() {
           <code className="t-code">errors</code> object to display field-level
           feedback to users.
         </p>
-        <div className="bg-pitch-900 rounded-lg border border-pitch-600 overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2 border-b border-pitch-600">
-            <span className="text-xs text-pitch-400 font-mono">JavaScript</span>
+        <div className="bg-code rounded-lg border border-code overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2 border-b border-code">
+            <span className="text-xs text-code-muted font-mono">JavaScript</span>
           </div>
           <CodeBlock
             language="javascript"

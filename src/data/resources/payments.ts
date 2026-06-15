@@ -1547,67 +1547,6 @@ export const paymentResources: Resource[] = [
   },
 
   {
-    id: "payment-account",
-    name: "Payment Account",
-    description:
-      "Manage your Stripe Connect payment account. Used to configure payouts and card processing.",
-    objectName: "payment account",
-    attributes: [
-      { name: "id", type: "string", required: false, description: "Stripe Connect account ID (e.g. `acct_xxx`)." },
-      { name: "charges_enabled", type: "boolean", required: false, description: "Whether the account can accept card charges." },
-      { name: "payouts_enabled", type: "boolean", required: false, description: "Whether payouts to the bank account are enabled." },
-      { name: "country", type: "string", required: false, description: "Two-letter country code of the connected account." },
-    ],
-    endpoints: [
-      {
-        id: "get-payment-account",
-        method: "GET",
-        path: "/payment-account",
-        title: "Get payment account",
-        description: "Returns the connected Stripe account details.",
-        response: {
-          account: {
-            id: "acct_1OkT2r2eZvKYlo2C",
-            charges_enabled: true,
-            payouts_enabled: true,
-            country: "GB",
-          },
-        },
-        responseDescription: "Returns the Stripe Connect account object.",
-      },
-      {
-        id: "create-payment-account",
-        method: "POST",
-        path: "/payment-account",
-        title: "Create payment account",
-        description:
-          "Creates a new Stripe Connect account and returns an onboarding URL.",
-        response: {
-          account: {
-            id: "acct_1OkT2r2eZvKYlo2C",
-            onboarding_url: "https://connect.stripe.com/setup/s/abc123",
-          },
-        },
-        responseDescription:
-          "Returns the Stripe account ID and onboarding URL. Redirect the user to complete setup.",
-      },
-      {
-        id: "get-payment-account-session",
-        method: "GET",
-        path: "/payment-account-session",
-        title: "Get account session",
-        description:
-          "Returns a short-lived client secret for embedded Stripe Connect components.",
-        response: {
-          client_secret: "acas_a1b2c3d4e5f6g7h8",
-        },
-        responseDescription:
-          "Returns a client secret for use with Stripe's embedded UI.",
-      },
-    ],
-  },
-
-  {
     id: "payment-settings",
     name: "Payment Settings",
     description:
