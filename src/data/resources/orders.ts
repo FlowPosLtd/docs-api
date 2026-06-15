@@ -885,42 +885,6 @@ export const orderResources: Resource[] = [
         },
         responseDescription: "Returns the payment URL.",
       },
-      {
-        id: "export-orders",
-        method: "POST",
-        path: "/orders/export.csv",
-        title: "Export orders to CSV",
-        description:
-          "Queues a CSV export for the specified date range and emails it to the provided address.",
-        bodyParams: [
-          {
-            name: "gte",
-            type: "string",
-            required: true,
-            description: "Start of date range. Format: `Y-m-d H:i:s`.",
-            example: "2024-01-01 00:00:00",
-          },
-          {
-            name: "lte",
-            type: "string",
-            required: true,
-            description: "End of date range. Format: `Y-m-d H:i:s`.",
-            example: "2024-06-30 23:59:59",
-          },
-          {
-            name: "email",
-            type: "string",
-            required: true,
-            description: "Email address to send the CSV export to.",
-            example: "reports@yourbusiness.com",
-          },
-        ],
-        response: {
-          data: null,
-          status: true,
-        },
-        responseDescription: "Returns a confirmation message.",
-      },
     ],
   },
 ];
