@@ -8,66 +8,79 @@ interface ParamTableProps {
   collapsible?: boolean;
 }
 
+// Returns the direct parent key for a param name, e.g.:
+//   "variants[].items[].id"  → "variants[].items"
+//   "variants[].items"       → "variants"
+//   "default_variant.id"     → "default_variant"
 function getParentKey(name: string): string | null {
-  const m = name.match(/^([^[]+)\[\]\./);
-  if (m) return m[1];
-  const dot = name.indexOf(".");
-  return dot > -1 ? name.substring(0, dot) : null;
+  const arr = name.match(/^(.*)\[\]\.\w+$/);
+  if (arr) return arr[1];
+  const dot = name.match(/^(.*)\.\w+$/);
+  if (dot) return dot[1];
+  return null;
 }
 
+// Returns the short display name of a nested param, e.g.:
+//   "variants[].items[].id" → "id"
+//   "variants[].items"      → "items"
+//   "default_variant.id"    → "id"
 function getChildDisplayName(name: string): string {
-  const m = name.match(/^[^[]+\[\]\.(.+)$/);
-  if (m) return m[1];
-  const dot = name.indexOf(".");
-  return dot > -1 ? name.substring(dot + 1) : name;
+  const arr = name.match(/\[\]\.(\w+)$/);
+  if (arr) return arr[1];
+  const dot = name.match(/\.(\w+)$/);
+  if (dot) return dot[1];
+  return name;
 }
 
 interface ParamGroup {
   param: Param;
-  childParams: Param[];
+  childGroups: ParamGroup[];
   synthetic: boolean;
 }
 
 function buildGroups(params: Param[]): ParamGroup[] {
-  const groups: ParamGroup[] = [];
-  const indexMap = new Map<string, number>();
+  const roots: ParamGroup[] = [];
+  const groupMap = new Map<string, ParamGroup>();
 
   for (const p of params) {
+    const group: ParamGroup = { param: p, childGroups: [], synthetic: false };
+    groupMap.set(p.name, group);
+
     const parentKey = getParentKey(p.name);
     if (!parentKey) {
-      indexMap.set(p.name, groups.length);
-      groups.push({ param: p, childParams: [], synthetic: false });
+      roots.push(group);
     } else {
-      const idx = indexMap.get(parentKey);
-      if (idx !== undefined) {
-        groups[idx].childParams.push(p);
+      const parent = groupMap.get(parentKey);
+      if (parent) {
+        parent.childGroups.push(group);
       } else {
-        const isArray = /^[^[]+\[\]\./.test(p.name);
+        // Parent hasn't been declared yet — create a synthetic placeholder
         const synthetic: Param = {
           name: parentKey,
-          type: isArray ? "object[]" : "object",
+          type: "object",
           required: false,
           description: "",
         };
-        indexMap.set(parentKey, groups.length);
-        groups.push({ param: synthetic, childParams: [p], synthetic: true });
+        const syntheticGroup: ParamGroup = { param: synthetic, childGroups: [group], synthetic: true };
+        groupMap.set(parentKey, syntheticGroup);
+        roots.push(syntheticGroup);
       }
     }
   }
 
-  return groups;
+  return roots;
 }
 
 function ParamRow({
   param,
-  childParams,
+  childGroups,
   isChild,
   synthetic,
   showBadges,
   depth,
 }: {
   param: Param;
-  childParams: Param[];
+  childGroups: ParamGroup[];
   isChild: boolean;
   synthetic: boolean;
   showBadges: boolean;
@@ -75,7 +88,7 @@ function ParamRow({
 }) {
   const [open, setOpen] = useState(false);
   const displayName = isChild ? getChildDisplayName(param.name) : param.name;
-  const hasChildren = childParams.length > 0;
+  const hasChildren = childGroups.length > 0;
   const level = depth ?? 0;
 
   return (
@@ -84,7 +97,7 @@ function ParamRow({
         className={`px-4 py-3.5 ${level > 0 ? "bg-gray-50 dark:bg-gray-900/40" : "bg-canvas"}`}
         style={level > 0 ? { paddingLeft: `${16 + level * 12}px` } : undefined}
       >
-        {/* Name + type + badges — all inline */}
+        {/* Name + type + badges */}
         <div className="flex items-baseline gap-2 flex-wrap mb-1.5">
           <code className="text-[13px] font-mono font-bold text-ink-primary">
             {displayName}
@@ -139,7 +152,7 @@ function ParamRow({
           </p>
         )}
 
-        {/* Show child parameters button */}
+        {/* Show child parameters toggle */}
         {hasChildren && (
           <button
             onClick={() => setOpen((o) => !o)}
@@ -147,9 +160,7 @@ function ParamRow({
             style={{
               border: "1px solid rgba(100,100,100,0.25)",
               color: open ? "#6b7280" : "#374151",
-              background: open
-                ? "rgba(0,0,0,0.04)"
-                : "rgba(0,0,0,0.02)",
+              background: open ? "rgba(0,0,0,0.04)" : "rgba(0,0,0,0.02)",
             }}
           >
             <span
@@ -165,22 +176,24 @@ function ParamRow({
         )}
       </div>
 
-      {/* Child params — revealed on click */}
+      {/* Recursively render children */}
       {hasChildren && open && (
-        <div className="border-t border-l-4 border-blue-400/30 dark:border-blue-500/30"
-          style={{ borderLeftWidth: 3 }}>
-          {childParams.map((child, i) => (
+        <div
+          className="border-t border-l-4 border-blue-400/30 dark:border-blue-500/30"
+          style={{ borderLeftWidth: 3 }}
+        >
+          {childGroups.map((child, i) => (
             <div
-              key={child.name}
+              key={child.param.name}
               className={i > 0 ? "border-t border-gray-100 dark:border-gray-800" : ""}
             >
               <ParamRow
-                param={child}
-                childParams={[]}
+                param={child.param}
+                childGroups={child.childGroups}
                 isChild
-                synthetic={false}
+                synthetic={child.synthetic}
                 showBadges={showBadges}
-                depth={(level) + 1}
+                depth={level + 1}
               />
             </div>
           ))}
@@ -218,7 +231,7 @@ export const ParamTable = memo(function ParamTable({
             <ParamRow
               key={group.param.name}
               param={group.param}
-              childParams={group.childParams}
+              childGroups={group.childGroups}
               isChild={false}
               synthetic={group.synthetic}
               showBadges={showBadges}
