@@ -128,7 +128,7 @@ export const operationResources: Resource[] = [
                     name: "John Doe",
                     created_at: "2024-01-10T09:00:00.000000Z",
                     updated_at: "2024-01-10T09:00:00.000000Z",
-                    stripe_id: "tml_GQR8qAR7koECj3",
+                    provider_id: "tml_GQR8qAR7koECj3",
                   },
                 },
               ],
@@ -258,7 +258,7 @@ export const operationResources: Resource[] = [
                 name: "Lake Alanna",
                 created_at: "2025-01-01T00:00:00.000000Z",
                 updated_at: "2025-01-01T00:00:00.000000Z",
-                stripe_id: "tml_xxx",
+                provider_id: "tml_xxx",
               },
             },
           },
@@ -419,7 +419,7 @@ export const operationResources: Resource[] = [
                 name: "John Doe",
                 created_at: "2024-01-10T09:00:00.000000Z",
                 updated_at: "2024-01-10T09:00:00.000000Z",
-                stripe_id: "tml_GaoWQJdBU2SzYo",
+                provider_id: "tml_GaoWQJdBU2SzYo",
               },
               history: [
                 {
@@ -542,7 +542,7 @@ export const operationResources: Resource[] = [
                 name: "beta location",
                 created_at: "2025-01-01T00:00:00.000000Z",
                 updated_at: "2025-01-01T00:00:00.000000Z",
-                stripe_id: "tml_xxx",
+                provider_id: "tml_xxx",
               },
             },
           },
@@ -994,7 +994,7 @@ export const operationResources: Resource[] = [
     attributes: [
       { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the location." },
       { name: "name", type: "string", required: false, description: "Display name of the location." },
-      { name: "stripe_id", type: "string", required: false, description: "Stripe Terminal location ID linked to this location." },
+      { name: "provider_id", type: "string", required: false, description: "Terminal location ID linked to this location." },
       { name: "address", type: "object", required: false, description: "Physical address of this location." },
       { name: "address.address_line_1", type: "string", required: false, description: "Street address." },
       { name: "address.address_line_2", type: "string", required: false, nullable: true, description: "Suite, unit, or apartment number." },
@@ -1029,7 +1029,7 @@ export const operationResources: Resource[] = [
                 name: "beta location",
                 created_at: "2024-01-10T09:00:00.000000Z",
                 updated_at: "2024-01-10T09:00:00.000000Z",
-                stripe_id: "tml_Gaoaw1Hwo8Fnp2",
+                provider_id: "tml_Gaoaw1Hwo8Fnp2",
                 address: {
                   address_line_1: "12 High Street",
                   address_line_2: null,
@@ -1505,12 +1505,12 @@ export const operationResources: Resource[] = [
     id: "terminal-readers",
     name: "Terminals",
     description:
-      "Terminal readers are physical card readers registered with Stripe. Each reader is linked to a location and uses an app PIN code for secure authentication.",
+      "Terminal readers are physical card readers. Each reader is linked to a location and uses an app PIN code for secure authentication.",
     objectName: "terminal reader",
     attributes: [
       { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the terminal reader." },
       { name: "label", type: "string", required: false, description: "Friendly name for the terminal." },
-      { name: "stripe_id", type: "string", required: false, description: "Stripe Terminal reader ID (e.g. `tmr_xxx`)." },
+      { name: "provider_id", type: "string", required: false, description: "Terminal reader ID (e.g. `tmr_xxx`)." },
       { name: "registration_code", type: "string", required: false, description: "The registration code used when the reader was set up." },
       { name: "ip_address", type: "string", required: false, nullable: true, description: "IP address of the reader on the local network." },
       { name: "app_logged_in", type: "boolean", required: false, description: "Whether the FlowPOS app is currently authenticated on this reader." },
@@ -1541,7 +1541,7 @@ export const operationResources: Resource[] = [
             terminals: [
               {
                 id: 1,
-                stripe_id: "tmr_FDTsF9F8h1A0rM",
+                provider_id: "tmr_FDTsF9F8h1A0rM",
                 registration_code: "simul-putjlt-stkng",
                 app_logged_in: false,
                 app_pin_code: null,
@@ -1555,7 +1555,7 @@ export const operationResources: Resource[] = [
                   name: "Main Store",
                   created_at: "2024-01-10T09:00:00.000000Z",
                   updated_at: "2024-01-10T09:00:00.000000Z",
-                  stripe_id: "tml_GQR8qAR7koECj3",
+                  provider_id: "tml_GQR8qAR7koECj3",
                 },
               },
             ],
@@ -1570,7 +1570,7 @@ export const operationResources: Resource[] = [
         path: "/terminal-readers",
         title: "Register a terminal",
         description:
-          "Registers a new terminal reader using the Stripe registration code displayed on the device.",
+          "Registers a new terminal reader using the registration code displayed on the device.",
         bodyParams: [
           {
             name: "label",
@@ -1598,7 +1598,7 @@ export const operationResources: Resource[] = [
           data: {
             terminalReader: {
               id: 1,
-              stripe_id: "tmr_FDTsF9F8h1A0rM",
+              provider_id: "tmr_FDTsF9F8h1A0rM",
               registration_code: "simul-putjlt-stkng",
               app_logged_in: false,
               app_pin_code: null,
@@ -1612,7 +1612,7 @@ export const operationResources: Resource[] = [
                 name: "Main Store",
                 created_at: "2024-01-10T09:00:00.000000Z",
                 updated_at: "2024-01-10T09:00:00.000000Z",
-                stripe_id: "tml_GQR8qAR7koECj3",
+                provider_id: "tml_GQR8qAR7koECj3",
               },
             },
           },
@@ -1673,7 +1673,7 @@ export const operationResources: Resource[] = [
           data: {
             terminalReader: {
               id: 1,
-              stripe_id: "tmr_FDTsF9F8h1A0rM",
+              provider_id: "tmr_FDTsF9F8h1A0rM",
               registration_code: "simul-putjlt-stkng",
               app_logged_in: false,
               app_pin_code: null,
@@ -1687,7 +1687,7 @@ export const operationResources: Resource[] = [
                 name: "Branch 2",
                 created_at: "2024-01-10T09:00:00.000000Z",
                 updated_at: "2024-01-10T09:00:00.000000Z",
-                stripe_id: "tml_GiekKAHh3ZFQKh",
+                provider_id: "tml_GiekKAHh3ZFQKh",
               },
             },
           },

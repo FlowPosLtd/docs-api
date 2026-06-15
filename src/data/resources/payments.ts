@@ -21,7 +21,6 @@ export const paymentResources: Resource[] = [
       { name: "customer_id", type: "integer", required: false, nullable: true, description: "ID of the linked customer record." },
       { name: "amount_refunded", type: "integer", required: false, description: "Total amount refunded so far, in pence." },
       { name: "application_fee_amount", type: "number", required: false, description: "FlowPOS platform fee applied to this payment." },
-      { name: "total", type: "integer", required: false, description: "Final total charged, in pence." },
       { name: "url", type: "string", required: false, description: "Hosted payment page URL the customer can use to complete payment." },
       { name: "is_refundable", type: "boolean", required: false, description: "Whether this payment is eligible for a refund." },
       { name: "is_cash", type: "boolean", required: false, description: "Whether this was a cash payment recorded in EPOS." },
@@ -33,7 +32,6 @@ export const paymentResources: Resource[] = [
       { name: "failed_at", type: "timestamp", required: false, nullable: true, description: "Time the payment failed, if applicable." },
       { name: "failed_reason", type: "string", required: false, nullable: true, description: "Reason for payment failure." },
       { name: "receipt_sent_at", type: "timestamp", required: false, nullable: true, description: "Time the receipt email was dispatched." },
-      { name: "terminal_reader_id", type: "string", required: false, nullable: true, description: "ID of the Stripe Terminal reader used for in-person payments." },
       { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this payment belongs to." },
       { name: "created_at", type: "timestamp", required: false, description: "Time the payment object was created." },
       { name: "updated_at", type: "timestamp", required: false, description: "Time the payment object was last modified." },
@@ -127,9 +125,7 @@ export const paymentResources: Resource[] = [
                   receipt_sent_at: null,
                   created_at: "2024-01-10T09:00:00.000000Z",
                   updated_at: "2024-01-10T09:00:00.000000Z",
-                  terminal_reader_id: null,
                   customer_id: 1,
-                  total: 250,
                   url: "https://pay.flowpos.me/fc217486-5ca1-444d-b9f4-47dc372ed057",
                   is_refundable: true,
                   is_cash: false,
@@ -198,9 +194,7 @@ export const paymentResources: Resource[] = [
               receipt_sent_at: null,
               created_at: "2024-01-10T09:00:00.000000Z",
               updated_at: "2024-01-10T09:00:00.000000Z",
-              terminal_reader_id: null,
               customer_id: 1,
-              total: 250,
               url: "https://pay.flowpos.me/fc217486-5ca1-444d-b9f4-47dc372ed057",
               is_refundable: true,
               is_cash: false,
@@ -284,7 +278,6 @@ export const paymentResources: Resource[] = [
               updated_at: "2026-06-11T13:30:32.000000Z",
               created_at: "2026-06-11T13:30:32.000000Z",
               id: 11571,
-              total: 4250,
               url: "https://pay.flowpos.me/6526fe79-47a1-4a0e-9244-dae24e26b43b",
               is_refundable: false,
               is_cash: false,
@@ -359,9 +352,7 @@ export const paymentResources: Resource[] = [
               receipt_sent_at: null,
               created_at: "2025-01-01T00:00:00.000000Z",
               updated_at: "2025-01-01T00:00:00.000000Z",
-              terminal_reader_id: null,
               customer_id: null,
-              total: 5,
               url: "https://pay.flowpos.me/00000000-0000-0000-0000-000000000000",
               is_refundable: true,
               is_cash: false,
@@ -451,9 +442,7 @@ export const paymentResources: Resource[] = [
               receipt_sent_at: null,
               created_at: "2025-01-01T00:00:00.000000Z",
               updated_at: "2025-01-01T00:00:00.000000Z",
-              terminal_reader_id: null,
               customer_id: null,
-              total: 4250,
               url: "https://pay.flowpos.me/00000000-0000-0000-0000-000000000000",
               is_refundable: false,
               is_cash: false,
@@ -1547,67 +1536,6 @@ export const paymentResources: Resource[] = [
   },
 
   {
-    id: "payment-account",
-    name: "Payment Account",
-    description:
-      "Manage your Stripe Connect payment account. Used to configure payouts and card processing.",
-    objectName: "payment account",
-    attributes: [
-      { name: "id", type: "string", required: false, description: "Stripe Connect account ID (e.g. `acct_xxx`)." },
-      { name: "charges_enabled", type: "boolean", required: false, description: "Whether the account can accept card charges." },
-      { name: "payouts_enabled", type: "boolean", required: false, description: "Whether payouts to the bank account are enabled." },
-      { name: "country", type: "string", required: false, description: "Two-letter country code of the connected account." },
-    ],
-    endpoints: [
-      {
-        id: "get-payment-account",
-        method: "GET",
-        path: "/payment-account",
-        title: "Get payment account",
-        description: "Returns the connected Stripe account details.",
-        response: {
-          account: {
-            id: "acct_1OkT2r2eZvKYlo2C",
-            charges_enabled: true,
-            payouts_enabled: true,
-            country: "GB",
-          },
-        },
-        responseDescription: "Returns the Stripe Connect account object.",
-      },
-      {
-        id: "create-payment-account",
-        method: "POST",
-        path: "/payment-account",
-        title: "Create payment account",
-        description:
-          "Creates a new Stripe Connect account and returns an onboarding URL.",
-        response: {
-          account: {
-            id: "acct_1OkT2r2eZvKYlo2C",
-            onboarding_url: "https://connect.stripe.com/setup/s/abc123",
-          },
-        },
-        responseDescription:
-          "Returns the Stripe account ID and onboarding URL. Redirect the user to complete setup.",
-      },
-      {
-        id: "get-payment-account-session",
-        method: "GET",
-        path: "/payment-account-session",
-        title: "Get account session",
-        description:
-          "Returns a short-lived client secret for embedded Stripe Connect components.",
-        response: {
-          client_secret: "acas_a1b2c3d4e5f6g7h8",
-        },
-        responseDescription:
-          "Returns a client secret for use with Stripe's embedded UI.",
-      },
-    ],
-  },
-
-  {
     id: "payment-settings",
     name: "Payment Settings",
     description:
@@ -1651,32 +1579,18 @@ export const paymentResources: Resource[] = [
         description: "Updates the payment processing configuration.",
         bodyParams: [
           {
-            name: "currency",
+            name: "send_receipt",
+            type: "boolean",
+            required: false,
+            description: "Whether to automatically email a receipt to the customer after a successful payment.",
+            example: "true",
+          },
+          {
+            name: "success_redirect_url",
             type: "string",
             required: false,
-            description: "Currency code, e.g. `GBP` for British pounds.",
-            example: "GBP",
-          },
-          {
-            name: "accept_cash",
-            type: "boolean",
-            required: false,
-            description: "Whether to accept cash payments.",
-            example: "true",
-          },
-          {
-            name: "accept_card",
-            type: "boolean",
-            required: false,
-            description: "Whether to accept card payments.",
-            example: "true",
-          },
-          {
-            name: "tips_enabled",
-            type: "boolean",
-            required: false,
-            description: "Whether to enable tipping at checkout.",
-            example: "false",
+            description: "URL to redirect customers to after a successful payment. Leave null to show the default FlowPOS success page.",
+            example: "https://yourbusiness.com/thank-you",
           },
         ],
         response: {

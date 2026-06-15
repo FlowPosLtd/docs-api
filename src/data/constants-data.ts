@@ -152,11 +152,11 @@ export const constantGroups: ConstantGroup[] = [
     description:
       "The `type` field on a Payment describes the payment instrument used.",
     constants: [
-      { value: "card", description: "Card payment processed via Stripe." },
+      { value: "card", description: "Card payment." },
       { value: "cash", description: "Cash payment recorded in EPOS." },
       {
         value: "terminal",
-        description: "Card-present payment via a Stripe Terminal reader.",
+        description: "Card-present payment via a Terminal reader.",
       },
     ],
   },

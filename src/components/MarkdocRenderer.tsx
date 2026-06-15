@@ -75,10 +75,10 @@ function CodePanel({
           .join("");
 
   return (
-    <div className="bg-pitch-900 rounded-lg border border-pitch-600 overflow-hidden mb-4">
+    <div className="bg-code rounded-lg border border-code overflow-hidden mb-4">
       {label && (
-        <div className="flex items-center gap-2 px-4 py-2 border-b border-pitch-600">
-          <span className="text-xs text-pitch-400 font-mono">{label}</span>
+        <div className="flex items-center gap-2 px-4 py-2 border-b border-code">
+          <span className="text-xs text-code-muted font-mono">{label}</span>
         </div>
       )}
       <CodeBlock language={language} code={code.trim()} />

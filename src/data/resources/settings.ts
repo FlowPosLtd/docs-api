@@ -3,7 +3,7 @@ import type { Resource } from "../../types";
 export const settingsResources: Resource[] = [
   {
     id: "business-settings",
-    name: "Business Settings",
+    name: "Organisation Settings",
     description:
       "Manage your business profile, branding, and configuration. Update your business name, contact info, logo, and other tenant-level settings.",
     objectName: "tenant",
