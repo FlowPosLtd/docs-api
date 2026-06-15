@@ -2,6 +2,523 @@ import type { Resource } from "../../types";
 
 export const developerResources: Resource[] = [
   {
+    id: "webhooks",
+    name: "Webhooks",
+    description:
+      "Webhooks deliver real-time event notifications to your servers via HTTP POST. You configure endpoint URLs and the events they subscribe to.",
+    objectName: "webhook endpoint",
+    attributes: [
+      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the webhook endpoint." },
+      { name: "url", type: "string", required: false, description: "HTTPS URL that receives event payloads." },
+      { name: "secret", type: "string", required: false, description: "HMAC signing secret used to verify the authenticity of incoming webhooks. Keep this private." },
+      { name: "events", type: "string[]", required: false, description: "List of event type strings this endpoint is subscribed to." },
+      { name: "is_active", type: "boolean", required: false, description: "Whether this endpoint is enabled and receiving events." },
+      { name: "description", type: "string", required: false, nullable: true, description: "Optional label describing the purpose of this endpoint." },
+      { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this endpoint belongs to." },
+      { name: "created_at", type: "timestamp", required: false, description: "Time the webhook endpoint was created." },
+      { name: "updated_at", type: "timestamp", required: false, description: "Time the webhook endpoint was last modified." },
+    ],
+    endpoints: [
+      {
+        id: "list-webhook-endpoints",
+        method: "GET",
+        path: "/webhook-endpoints",
+        title: "List webhook endpoints",
+        description: "Returns a paginated list of webhook endpoints.",
+        queryParams: [
+          {
+            name: "page",
+            type: "integer",
+            required: false,
+            description: "Page number.",
+            default: "1",
+            example: "1",
+          },
+          {
+            name: "limit",
+            type: "integer",
+            required: false,
+            description: "Results per page.",
+            default: "15",
+            example: "15",
+          },
+        ],
+        response: {
+          data: {
+            webhook_endpoints: {
+              current_page: 1,
+              data: [
+                {
+                  id: 14,
+                  url: "https://yourdomain.com/webhooks",
+                  secret: "whsec_••••••••••••••••••••••••••••••••••••••",
+                  events: [
+                    "order.placed",
+                    "order.status_changed",
+                    "product.updated",
+                    "product.created",
+                  ],
+                  is_active: true,
+                  description: "Production webhook",
+                  created_at: "2024-01-10T09:00:00.000000Z",
+                  updated_at: "2024-01-10T09:00:00.000000Z",
+                  tenant_id: 1,
+                },
+              ],
+              first_page_url: "http://api.flowpos.me/v1/webhook-endpoints?page=1",
+              from: 1,
+              last_page: 1,
+              last_page_url: "http://api.flowpos.me/v1/webhook-endpoints?page=1",
+              links: [
+                { url: null, label: "&laquo; Previous", page: null, active: false },
+                { url: "http://api.flowpos.me/v1/webhook-endpoints?page=1", label: "1", page: 1, active: true },
+                { url: null, label: "Next &raquo;", page: null, active: false },
+              ],
+              next_page_url: null,
+              path: "http://api.flowpos.me/v1/webhook-endpoints",
+              per_page: 15,
+              prev_page_url: null,
+              to: 1,
+              total: 1,
+            },
+          },
+          status: true,
+        },
+        responseDescription: "Returns paginated list of webhook endpoints.",
+      },
+      {
+        id: "create-webhook-endpoint",
+        method: "POST",
+        path: "/webhook-endpoints",
+        title: "Create a webhook endpoint",
+        description: "Registers a new webhook endpoint.",
+        bodyParams: [
+          {
+            name: "url",
+            type: "string",
+            required: true,
+            description: "HTTPS URL to receive webhook events.",
+            example: "https://yourdomain.com/webhooks",
+          },
+          {
+            name: "events",
+            type: "string[]",
+            required: true,
+            description: "Array of event type strings to subscribe to.",
+            example: '["order.created","payment.paid"]',
+          },
+          {
+            name: "description",
+            type: "string",
+            required: false,
+            description: "Optional description.",
+            example: "Production webhook",
+          },
+          {
+            name: "is_active",
+            type: "boolean",
+            required: false,
+            description: "Whether the endpoint is enabled.",
+            default: "true",
+            example: "true",
+          },
+        ],
+        response: {
+          data: {
+            webhook_endpoint: {
+              tenant_id: 1,
+              url: "https://yourdomain.com/webhooks",
+              secret: "whsec_••••••••••••••••••••••••••••••••••••••",
+              events: ["order.placed", "order.status_changed"],
+              description: "Production webhook",
+              is_active: true,
+              updated_at: "2024-01-10T09:27:01.000000Z",
+              created_at: "2024-01-10T09:27:01.000000Z",
+              id: 21,
+            },
+          },
+          status: true,
+        },
+        responseDescription:
+          "Returns the created endpoint including the signing secret.",
+        notes: [
+          "Store the `secret` securely — it is used to verify incoming webhook signatures via HMAC.",
+        ],
+      },
+      {
+        id: "delete-webhook-endpoint",
+        method: "DELETE",
+        path: "/webhook-endpoints/{id}",
+        title: "Delete a webhook endpoint",
+        description: "Permanently deletes a webhook endpoint.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook endpoint.",
+          },
+        ],
+        response: { data: null, status: true },
+        responseDescription: "Returns a confirmation message.",
+      },
+      {
+        id: "get-webhook-event-types",
+        method: "GET",
+        path: "/webhook-event-types",
+        title: "List webhook event types",
+        description: "Returns all available event types you can subscribe to.",
+        response: {
+          data: {
+            events: [
+              {
+                value: "order.placed",
+                label: "Order Placed",
+              },
+            ],
+          },
+          status: true,
+        },
+        responseDescription: "Returns an array of event type objects.",
+      },
+      {
+        id: "retry-webhook-event",
+        method: "POST",
+        path: "/webhook-endpoints/{endpointId}/events/{eventId}/retry",
+        title: "Retry a webhook event",
+        description: "Re-dispatches a specific webhook event to the endpoint.",
+        pathParams: [
+          {
+            name: "endpointId",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook endpoint.",
+          },
+          {
+            name: "eventId",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook event.",
+          },
+        ],
+        response: {
+          data: {
+            webhook_event_id: 1242,
+            event_id: "35d6dc69-1770-4d9e-b2f5-59311acfae63",
+          },
+          status: true,
+        },
+        responseDescription: "Returns the event IDs for the queued retry.",
+      },
+      {
+        id: "get-webhook-endpoint",
+        method: "GET",
+        path: "/webhook-endpoints/{id}",
+        title: "Retrieve a webhook endpoint",
+        description: "Returns full details of a single webhook endpoint.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook endpoint.",
+            example: "1",
+          },
+        ],
+        response: {
+          data: {
+            webhook_endpoint: {
+              id: 14,
+              url: "https://yourdomain.com/webhooks",
+              secret: "whsec_••••••••••••••••••••••••••••••••••••••",
+              events: ["order.placed", "order.status_changed", "product.updated", "product.created"],
+              is_active: true,
+              description: "Production webhook",
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+              tenant_id: 1,
+            },
+          },
+          status: true,
+        },
+        responseDescription: "Returns the webhook endpoint object.",
+      },
+      {
+        id: "update-webhook-endpoint",
+        method: "PUT",
+        path: "/webhook-endpoints/{id}",
+        title: "Update a webhook endpoint",
+        description:
+          "Updates the URL, events, or active status of a webhook endpoint.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook endpoint.",
+            example: "1",
+          },
+        ],
+        bodyParams: [
+          {
+            name: "url",
+            type: "string",
+            required: false,
+            description: "HTTPS URL to receive webhook events.",
+            example: "https://yourdomain.com/webhooks/v2",
+          },
+          {
+            name: "events",
+            type: "string[]",
+            required: false,
+            description: "Array of event type strings to subscribe to.",
+            example: '["order.created"]',
+          },
+          {
+            name: "is_active",
+            type: "boolean",
+            required: false,
+            description: "Whether the endpoint is enabled.",
+            example: "true",
+          },
+        ],
+        response: {
+          data: {
+            webhook_endpoint: {
+              id: 14,
+              url: "https://yourdomain.com/webhooks/v2",
+              secret: "whsec_••••••••••••••••••••••••••••••••••••••",
+              events: ["order.placed"],
+              is_active: true,
+              description: "Production webhook",
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:01.000000Z",
+              tenant_id: 1,
+            },
+          },
+          status: true,
+        },
+        responseDescription: "Returns the updated webhook endpoint.",
+      },
+      {
+        id: "regenerate-webhook-secret",
+        method: "POST",
+        path: "/webhook-endpoints/{id}/secret",
+        title: "Regenerate webhook secret",
+        description:
+          "Generates a new signing secret for the webhook endpoint. The old secret is immediately invalidated.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook endpoint.",
+            example: "1",
+          },
+        ],
+        response: {
+          data: {
+            webhook_endpoint: {
+              id: 14,
+              url: "https://yourdomain.com/webhooks",
+              secret: "whsec_••••••••••••••••••••••••••••••••••••••",
+              events: ["order.placed", "order.status_changed"],
+              is_active: true,
+              description: "Production webhook",
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:01.000000Z",
+              tenant_id: 1,
+            },
+          },
+          status: true,
+        },
+        responseDescription:
+          "Returns the full endpoint object with the new signing secret.",
+        notes: [
+          "The new secret immediately replaces the old one. Update your webhook handler to use the new secret.",
+        ],
+      },
+      {
+        id: "list-webhook-endpoint-events",
+        method: "GET",
+        path: "/webhook-endpoints/{id}/events",
+        title: "List webhook events for endpoint",
+        description:
+          "Returns a paginated list of webhook event deliveries for a specific endpoint.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook endpoint.",
+            example: "1",
+          },
+        ],
+        queryParams: [
+          {
+            name: "page",
+            type: "integer",
+            required: false,
+            description: "Page number.",
+            default: "1",
+            example: "1",
+          },
+          {
+            name: "per_page",
+            type: "integer",
+            required: false,
+            description: "Results per page.",
+            default: "15",
+            example: "15",
+          },
+        ],
+        response: {
+          data: {
+            webhook_events: {
+              current_page: 1,
+              data: [
+                {
+                  id: 1242,
+                  webhook_endpoint_id: 14,
+                  event_id: "35d6dc69-1770-4d9e-b2f5-59311acfae63",
+                  event: "product.created",
+                  payload: {
+                    sku: null,
+                    name: "Classic Burger",
+                    price: 1200,
+                    product_id: 42635,
+                  },
+                  created_at: "2024-01-10T09:00:00.000000Z",
+                  updated_at: "2024-01-10T09:00:00.000000Z",
+                },
+                {
+                  id: 1202,
+                  webhook_endpoint_id: 14,
+                  event_id: "48228a93-5ea6-4b40-baf9-0eca52cc1348",
+                  event: "order.status_changed",
+                  payload: {
+                    order_id: 10496,
+                    new_status: 2,
+                    old_status: 1,
+                    order_number: "AB23",
+                  },
+                  created_at: "2024-01-10T08:00:00.000000Z",
+                  updated_at: "2024-01-10T08:00:00.000000Z",
+                },
+              ],
+              first_page_url: "http://api.flowpos.me/v1/webhook-endpoints/14/events?page=1",
+              from: 1,
+              last_page: 15,
+              last_page_url: "http://api.flowpos.me/v1/webhook-endpoints/14/events?page=15",
+              links: [
+                { url: null, label: "&laquo; Previous", page: null, active: false },
+                { url: "http://api.flowpos.me/v1/webhook-endpoints/14/events?page=1", label: "1", page: 1, active: true },
+                { url: "http://api.flowpos.me/v1/webhook-endpoints/14/events?page=2", label: "Next &raquo;", page: 2, active: false },
+              ],
+              next_page_url: "http://api.flowpos.me/v1/webhook-endpoints/14/events?page=2",
+              path: "http://api.flowpos.me/v1/webhook-endpoints/14/events",
+              per_page: 15,
+              prev_page_url: null,
+              to: 15,
+              total: 215,
+            },
+          },
+          status: true,
+        },
+        responseDescription:
+          "Returns a paginated list of webhook event delivery records.",
+      },
+      {
+        id: "get-webhook-endpoint-event",
+        method: "GET",
+        path: "/webhook-endpoints/{id}/events/{eventId}",
+        title: "Retrieve a webhook event",
+        description: "Returns details of a single webhook event delivery.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook endpoint.",
+            example: "1",
+          },
+          {
+            name: "eventId",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook event.",
+            example: "15",
+          },
+        ],
+        response: {
+          data: {
+            webhook_event: {
+              id: 1242,
+              webhook_endpoint_id: 14,
+              event_id: "35d6dc69-1770-4d9e-b2f5-59311acfae63",
+              event: "product.created",
+              payload: {
+                sku: null,
+                name: "Classic Burger",
+                price: 1200,
+                product_id: 42635,
+              },
+              created_at: "2024-01-10T09:00:00.000000Z",
+              updated_at: "2024-01-10T09:00:00.000000Z",
+              logs: [
+                {
+                  id: 1281,
+                  attempt: 1,
+                  webhook_event_id: 1242,
+                  url: "https://yourdomain.com/webhooks",
+                  response_status: 200,
+                  response_body: "OK",
+                  response_headers: {
+                    "Content-Type": ["application/json"],
+                    "Connection": ["keep-alive"],
+                  },
+                  duration_ms: 252,
+                  success: true,
+                  error_message: null,
+                  attempted_at: "2024-01-10T09:00:00.000000Z",
+                  created_at: "2024-01-10T09:00:00.000000Z",
+                  updated_at: "2024-01-10T09:00:00.000000Z",
+                },
+              ],
+            },
+          },
+          status: true,
+        },
+        responseDescription:
+          "Returns the full webhook event delivery record including payload and delivery logs.",
+      },
+      {
+        id: "bulk-retry-webhook-events",
+        method: "POST",
+        path: "/webhook-endpoints/{id}/bulk-retry",
+        title: "Bulk retry webhook events",
+        description:
+          "Re-dispatches all failed webhook events for a specific endpoint.",
+        pathParams: [
+          {
+            name: "id",
+            type: "integer",
+            required: true,
+            description: "The numeric ID of the webhook endpoint.",
+            example: "1",
+          },
+        ],
+        response: {
+          data: { dispatched: 7 },
+          status: true,
+        },
+        responseDescription:
+          "Returns a confirmation with the number of failed events dispatched for retry.",
+      },
+    ],
+  },
+
+  {
     id: "api-keys",
     name: "API Keys",
     description:

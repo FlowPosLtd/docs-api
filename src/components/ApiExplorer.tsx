@@ -9,6 +9,7 @@ import axios from "axios";
 import { apiClient, getStoredApiKey, getStoredBaseUrl } from "../utils/api-client";
 import { stripStatus } from "../utils/strip-status";
 import { maskSensitive } from "../utils/mask-sensitive";
+import { filterResponse } from "../utils/filter-response";
 import type { Endpoint } from "../types";
 
 interface ApiExplorerProps {
@@ -381,7 +382,7 @@ export const ApiExplorer = memo(function ApiExplorer({
             <span className="text-xs text-code-dim">{result.time}ms</span>
           </div>
           <pre className="p-3 pb-6 rounded bg-code-head text-xs font-mono text-code overflow-x-auto max-h-150 border border-code leading-5 whitespace-pre-wrap wrap-break-word">
-            {JSON.stringify(maskSensitive(stripStatus(result.data)), null, 2)}
+            {JSON.stringify(filterResponse(maskSensitive(stripStatus(result.data))), null, 2)}
           </pre>
         </div>
       )}

@@ -16,7 +16,6 @@ export const orderResources: Resource[] = [
       { name: "mode", type: "integer", required: false, description: "Numeric code for how the order will be fulfilled. `3` = Collection, `5` = Delivery.", enum: ["3", "5"] },
       { name: "order_mode", type: "string", required: false, description: "How the order will be fulfilled.", enum: ["Eat-In", "Collection", "Takeaway", "Delivery"] },
       { name: "source", type: "string", required: false, description: "Channel through which the order was placed.", enum: ["epos", "online", "api", "Manual", "kiosk", "app"] },
-      { name: "is_online", type: "boolean", required: false, description: "Whether this order was placed through the online storefront." },
       { name: "is_epos", type: "boolean", required: false, description: "Whether this order was created at an EPOS terminal." },
       { name: "sub_total", type: "number", required: false, description: "Sum of line item prices before tax, shipping, and discounts." },
       { name: "sub_total_inclusive", type: "number", required: false, description: "Sub-total including VAT where tax is inclusive in the price." },
@@ -99,7 +98,7 @@ export const orderResources: Resource[] = [
               data: [
                 {
                   id: 1,
-                  is_online: false,
+
                   order_number: "AB20",
                   tenant_id: 2,
                   addressee_name: null,
@@ -201,7 +200,6 @@ export const orderResources: Resource[] = [
           data: {
             order: {
               id: 1,
-              is_online: false,
               order_number: "AB20",
               tenant_id: 2,
               addressee_name: null,
@@ -315,21 +313,6 @@ export const orderResources: Resource[] = [
             description: "Fulfillment mode. `3` = Collection, `5` = Delivery.",
             enum: ["3", "5"],
             example: "3",
-          },
-          {
-            name: "is_online",
-            type: "boolean",
-            required: false,
-            description: "Whether this is an online order. Set to `true` when `payment_method` is `online`.",
-            example: "false",
-          },
-          {
-            name: "payment_method",
-            type: "string",
-            required: false,
-            description: "Payment method to use.",
-            enum: ["online", "cash"],
-            example: "cash",
           },
           {
             name: "location_id",
@@ -460,7 +443,6 @@ export const orderResources: Resource[] = [
               discount_id: null,
               status: 1,
               discount_amount: 0,
-              is_online: false,
               created_at: "2026-06-12T10:41:43.000000Z",
               updated_at: "2026-06-12T10:41:43.000000Z",
               is_epos: false,
@@ -609,7 +591,6 @@ export const orderResources: Resource[] = [
           data: {
             order: {
               id: 1,
-              is_online: false,
               order_number: "ORD250416-1",
               tenant_id: 2,
               addressee_name: null,
@@ -750,7 +731,6 @@ export const orderResources: Resource[] = [
           data: {
             order: {
               id: 1,
-              is_online: false,
               order_number: "AB23",
               tenant_id: 2,
               addressee_name: null,
@@ -858,11 +838,9 @@ export const orderResources: Resource[] = [
                 id: 1,
                 name: "John Doe",
                 otp: null,
-                otp_expires_at: null,
                 has_online_account: false,
                 phone: "+44 7700 900001",
                 email: "john@example.com",
-                stripe_customer_id: null,
                 dob: null,
                 gender: null,
                 registered_at: null,

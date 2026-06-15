@@ -84,7 +84,7 @@ function ParamRow({
         className={`px-4 py-3.5 ${level > 0 ? "bg-gray-50 dark:bg-gray-900/40" : "bg-canvas"}`}
         style={level > 0 ? { paddingLeft: `${16 + level * 12}px` } : undefined}
       >
-        {/* Name + type + badges — all inline like Stripe */}
+        {/* Name + type + badges — all inline */}
         <div className="flex items-baseline gap-2 flex-wrap mb-1.5">
           <code className="text-[13px] font-mono font-bold text-ink-primary">
             {displayName}
@@ -139,7 +139,7 @@ function ParamRow({
           </p>
         )}
 
-        {/* Show child parameters button — Stripe style */}
+        {/* Show child parameters button */}
         {hasChildren && (
           <button
             onClick={() => setOpen((o) => !o)}
