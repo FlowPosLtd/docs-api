@@ -39,7 +39,6 @@ const resourceGroups = [
       "inventory",
       "employees",
       "locations",
-      "sections",
       "terminal-readers",
       "shipping-rates",
       "addon-groups",
