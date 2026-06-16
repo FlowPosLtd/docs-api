@@ -47,7 +47,7 @@ export default function App() {
   const { apiKey, baseUrl, handleSaveConfig } = useApiConfig();
   const explorer = useEndpointExplorer(path);
 
-  const isWebhooksPage = path.startsWith("/webhooks");
+  const isWebhooksPage = path.startsWith("/webhook-events");
   const rightPanel = explorer.activeEndpoint && !isWebhooksPage ? (
     <RightPanelContent
       endpoint={explorer.activeEndpoint}
