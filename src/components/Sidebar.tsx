@@ -55,7 +55,7 @@ const resourceGroups = [
   },
   {
     label: "DEVELOPER",
-    ids: ["webhooks", "api-keys"],
+    ids: ["webhook-events", "api-keys"],
   },
 ];
 
