@@ -39,7 +39,6 @@ const resourceGroups = [
       "inventory",
       "employees",
       "locations",
-      "sections",
       "terminal-readers",
       "shipping-rates",
       "addon-groups",
@@ -56,7 +55,7 @@ const resourceGroups = [
   },
   {
     label: "DEVELOPER",
-    ids: ["webhooks", "api-keys"],
+    ids: ["webhook-events", "api-keys"],
   },
 ];
 
