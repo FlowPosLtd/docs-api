@@ -1269,6 +1269,7 @@ export const developerResources: Resource[] = [
       { name: "permissions[].name", type: "string", required: false, description: "Permission identifier (e.g. `orders.view`, `products.create`)." },
       { name: "created_at", type: "timestamp", required: false, description: "Time the API key was created." },
       { name: "updated_at", type: "timestamp", required: false, description: "Time the API key was last modified." },
+      { name: "deleted_at", type: "timestamp", required: false, nullable: true, description: "When the key was deleted. Always `null` for keys you can see." },
     ],
     endpoints: [
       {

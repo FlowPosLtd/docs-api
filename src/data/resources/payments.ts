@@ -35,6 +35,17 @@ export const paymentResources: Resource[] = [
       { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this payment belongs to." },
       { name: "created_at", type: "timestamp", required: false, description: "Time the payment object was created." },
       { name: "updated_at", type: "timestamp", required: false, description: "Time the payment object was last modified." },
+      { name: "amount_authorised", type: "number", required: false, nullable: true, description: "Amount currently held on the card, for `pre_auth` payments." },
+      { name: "amount_released", type: "number", required: false, description: "Amount released back to the customer without being captured." },
+      { name: "capture_before", type: "timestamp", required: false, nullable: true, description: "Deadline for capturing a `pre_auth` payment before the hold expires." },
+      { name: "card_authorisation_code", type: "string", required: false, nullable: true, description: "Authorisation code from the card issuer." },
+      { name: "payment_method_type", type: "string", required: false, nullable: true, description: "How the payment was collected.", enum: ["cash", "online", "sdk", "terminal_reader"] },
+      { name: "payment_account_id", type: "integer", required: false, nullable: true, description: "ID of the payment account the payment was taken through." },
+      { name: "terminal_reader_id", type: "integer", required: false, nullable: true, description: "ID of the terminal reader that took the payment." },
+      { name: "payment_link", type: "object", required: false, nullable: true, description: "Payment link the payment was made through. Returned when retrieving a payment." },
+      { name: "subscription_plan", type: "object", required: false, nullable: true, description: "Subscription plan the payment is for. Returned when retrieving a payment." },
+      { name: "refunds", type: "object[]", required: false, description: "Refunds issued against the payment, each with who issued it. Returned when retrieving a payment." },
+      { name: "authorised_increments", type: "object[]", required: false, description: "Increases to the held amount of a `pre_auth` payment. Returned when retrieving a payment." },
     ],
     endpoints: [
       {
@@ -956,6 +967,8 @@ export const paymentResources: Resource[] = [
       { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this link belongs to." },
       { name: "created_at", type: "timestamp", required: false, description: "Time the link was created." },
       { name: "updated_at", type: "timestamp", required: false, description: "Time the link was last modified." },
+      { name: "variants", type: "object[]", required: false, description: "Products sold through a `product` link." },
+      { name: "shipping_countries", type: "object[]", required: false, description: "Countries a `product` link ships to." },
     ],
     endpoints: [
       {
@@ -1364,6 +1377,11 @@ export const paymentResources: Resource[] = [
       { name: "created_at", type: "timestamp", required: false, description: "Time the discount was created." },
       { name: "updated_at", type: "timestamp", required: false, description: "Time the discount was last modified." },
       { name: "deleted_at", type: "timestamp", required: false, nullable: true, description: "Time the discount was soft-deleted. Null for active records." },
+      { name: "orders", type: "object[]", required: false, description: "Orders the discount was applied to. Returned when retrieving a discount." },
+      { name: "orders_count", type: "integer", required: false, description: "Number of orders the discount was applied to. Returned when retrieving a discount." },
+      { name: "orders_sum", type: "number", required: false, description: "Total value of those orders. Returned when retrieving a discount." },
+      { name: "discount_sum", type: "number", required: false, description: "Total amount the discount took off. Returned when retrieving a discount." },
+      { name: "locations", type: "object[]", required: false, description: "Locations the discount applies at, for in-store discounts." },
     ],
     endpoints: [
       {
@@ -2342,6 +2360,8 @@ export const paymentResources: Resource[] = [
       { name: "arrival_date", type: "timestamp", required: false, description: "Expected or actual date the funds arrive in your bank account." },
       { name: "failure_reason", type: "string", required: false, nullable: true, description: "Reason the payout failed, if applicable." },
       { name: "created_at", type: "timestamp", required: false, description: "Time the payout was initiated." },
+      { name: "application_fee_amount", type: "number", required: false, description: "FlowPOS fees deducted from the payout." },
+      { name: "payments", type: "object[]", required: false, description: "Payments settled by the payout. Returned when retrieving a payout." },
     ],
     endpoints: [
       {
@@ -2512,6 +2532,7 @@ export const paymentResources: Resource[] = [
       { name: "send_receipt", type: "boolean", required: false, description: "Whether to automatically email a receipt after payment." },
       { name: "created_at", type: "timestamp", required: false, description: "Time the settings record was created." },
       { name: "updated_at", type: "timestamp", required: false, description: "Time the settings were last modified." },
+      { name: "domain_id", type: "integer", required: false, nullable: true, description: "ID of the custom domain your payment pages are hosted on. `null` for the FlowPOS domain." },
     ],
     endpoints: [
       {

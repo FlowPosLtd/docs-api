@@ -678,11 +678,31 @@ export const onlineStoreResources: Resource[] = [
         ],
         response: {
           data: {
-            deleted: ["pages/old.liquid"],
+            deleted: [
+              {
+                path: "pages/old.liquid",
+                deleted: true,
+                page: {
+                  title: "Old",
+                  slug: "old",
+                  path: "/pages",
+                  type: "custom",
+                  page: "old",
+                  status: "draft",
+                  seo_title: null,
+                  seo_description: null,
+                  seo_keywords: null,
+                  og_title: null,
+                  og_description: null,
+                  og_image_path: null,
+                  requires_auth: false,
+                },
+              },
+            ],
           },
           status: true,
         },
-        responseDescription: "Returns the `deleted` paths.",
+        responseDescription: "Returns one result per file: its `path`, `deleted`, and the removed page entry (or `null` for files that are not pages).",
       },
     ],
   },

@@ -18,6 +18,9 @@ export const settingsResources: Resource[] = [
       { name: "logo_url", type: "string", required: false, nullable: true, description: "Fully-qualified public URL to the business logo." },
       { name: "brand_colour", type: "string", required: false, description: "Primary brand hex colour (e.g. `#3B82F6`)." },
       { name: "accent_colour", type: "string", required: false, description: "Accent brand hex colour (e.g. `#8B5CF6`)." },
+      { name: "timezone", type: "string", required: false, description: "Your business's timezone, e.g. `Europe/London`. Reports and date filters use it." },
+      { name: "favicon", type: "string", required: false, nullable: true, description: "Storage path of the favicon." },
+      { name: "favicon_url", type: "string", required: false, nullable: true, description: "Public URL of the favicon." },
     ],
     endpoints: [
       {
@@ -237,6 +240,7 @@ export const settingsResources: Resource[] = [
       { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this domain belongs to." },
       { name: "created_at", type: "timestamp", required: false, description: "Time the domain was added." },
       { name: "updated_at", type: "timestamp", required: false, description: "Time the domain record was last modified." },
+      { name: "last_verified_at", type: "timestamp", required: false, nullable: true, description: "When the DNS was last checked successfully." },
     ],
     endpoints: [
       {
@@ -245,6 +249,15 @@ export const settingsResources: Resource[] = [
         path: "/domains",
         title: "List all domains",
         description: "Returns all domains configured for your tenant.",
+        queryParams: [
+          {
+            name: "search",
+            type: "string",
+            required: false,
+            description: "Filter by domain name.",
+            example: "shop",
+          },
+        ],
         response: {
           data: {
             domains: [

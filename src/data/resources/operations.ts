@@ -24,6 +24,7 @@ export const operationResources: Resource[] = [
       { name: "location.name", type: "string", required: false, description: "Location name." },
       { name: "created_at", type: "timestamp", required: false, description: "Time the inventory record was created." },
       { name: "updated_at", type: "timestamp", required: false, description: "Time the inventory record was last modified." },
+      { name: "history", type: "object[]", required: false, description: "Stock changes, each with the user who made it. Returned when retrieving an inventory record." },
     ],
     endpoints: [
       {
@@ -316,6 +317,14 @@ export const operationResources: Resource[] = [
             description: "Page number.",
             default: "1",
             example: "1",
+          },
+          {
+            name: "limit",
+            type: "integer",
+            required: false,
+            description: "Number of history entries per page.",
+            default: "20",
+            example: "20",
           },
         ],
         response: {
@@ -1061,6 +1070,13 @@ export const operationResources: Resource[] = [
             default: "15",
             example: "15",
           },
+          {
+            name: "pin_code",
+            type: "string",
+            required: false,
+            description: "Find the employee with this EPOS PIN code.",
+            example: "123456",
+          },
         ],
         response: {
           data: {
@@ -1144,27 +1160,27 @@ export const operationResources: Resource[] = [
           },
           {
             name: "is_active",
-            type: "integer",
+            type: "boolean",
             required: false,
             description: "Active status (`1` = active, `0` = inactive).",
-            enum: ["0", "1"],
-            example: "1",
+            enum: ["true", "false"],
+            example: "true",
           },
           {
             name: "is_manager",
-            type: "integer",
+            type: "boolean",
             required: true,
             description: "Manager flag.",
-            enum: ["0", "1"],
-            example: "0",
+            enum: ["true", "false"],
+            example: "false",
           },
           {
             name: "can_do_refund",
-            type: "integer",
+            type: "boolean",
             required: false,
             description: "Whether this employee can issue refunds.",
-            enum: ["0", "1"],
-            example: "1",
+            enum: ["true", "false"],
+            example: "true",
           },
         ],
         response: {
@@ -1174,8 +1190,8 @@ export const operationResources: Resource[] = [
               last_name: "Doe",
               email: "john@example.com",
               phone: "+44 7700 900001",
-              is_active: 1,
-              is_manager: 0,
+              is_active: true,
+              is_manager: false,
               can_do_refund: true,
               pin_code: 859053,
               updated_at: "2024-01-10T09:00:00.000000Z",
@@ -1187,6 +1203,7 @@ export const operationResources: Resource[] = [
           status: true,
         },
         responseDescription: "Returns the created employee.",
+        notes: ["`is_active`, `is_manager` and `can_do_refund` come back as sent when you set them, and as `1`/`0` when read from the database."],
       },
       {
         id: "delete-employee",
@@ -1272,27 +1289,27 @@ export const operationResources: Resource[] = [
           },
           {
             name: "is_active",
-            type: "integer",
+            type: "boolean",
             required: false,
             description: "Active status (`1` = active, `0` = inactive).",
-            enum: ["0", "1"],
-            example: "1",
+            enum: ["true", "false"],
+            example: "true",
           },
           {
             name: "is_manager",
-            type: "integer",
+            type: "boolean",
             required: false,
             description: "Manager flag.",
-            enum: ["0", "1"],
-            example: "0",
+            enum: ["true", "false"],
+            example: "false",
           },
           {
             name: "can_do_refund",
-            type: "integer",
+            type: "boolean",
             required: false,
             description: "Whether this employee can issue refunds.",
-            enum: ["0", "1"],
-            example: "1",
+            enum: ["true", "false"],
+            example: "true",
           },
         ],
         response: {
@@ -1307,7 +1324,7 @@ export const operationResources: Resource[] = [
               created_at: "2024-01-10T09:00:00.000000Z",
               updated_at: "2024-01-10T09:00:00.000000Z",
               is_active: 1,
-              is_manager: 0,
+              is_manager: false,
               can_do_refund: true,
               deleted_at: null,
               name: "John Doe",
@@ -1316,6 +1333,7 @@ export const operationResources: Resource[] = [
           status: true,
         },
         responseDescription: "Returns the updated employee.",
+        notes: ["`is_active`, `is_manager` and `can_do_refund` come back as sent when you set them, and as `1`/`0` when read from the database."],
       },
       {
         id: "rotate-employee-pin",
@@ -2479,6 +2497,7 @@ export const operationResources: Resource[] = [
       { name: "deleted_at", type: "timestamp", required: false, nullable: true, description: "Soft-delete timestamp. Non-null means the rate is archived." },
       { name: "created_at", type: "timestamp", required: false, description: "Time the shipping rate was created." },
       { name: "updated_at", type: "timestamp", required: false, description: "Time the shipping rate was last modified." },
+      { name: "customer_can_schedule", type: "boolean", required: false, description: "Whether customers can pick a time for this delivery option." },
     ],
     endpoints: [
       {
@@ -2678,6 +2697,7 @@ export const operationResources: Resource[] = [
       { name: "addons[].max_quantity", type: "integer", required: false, nullable: true, description: "Maximum quantity per selection. Null means unlimited." },
       { name: "created_at", type: "timestamp", required: false, description: "Time the addon group was created." },
       { name: "updated_at", type: "timestamp", required: false, description: "Time the addon group was last modified." },
+      { name: "variants", type: "object[]", required: false, description: "Product variants the group is assigned to. Returned when retrieving a group." },
     ],
     endpoints: [
       {

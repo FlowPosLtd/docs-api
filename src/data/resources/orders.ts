@@ -48,6 +48,13 @@ export const orderResources: Resource[] = [
       { name: "payments", type: "object[]", required: false, description: "Payment records linked to this order." },
       { name: "customer", type: "object", required: false, nullable: true, description: "Linked customer object, if available." },
       { name: "address", type: "object", required: false, nullable: true, description: "Delivery address for this order." },
+      { name: "scheduled_for", type: "timestamp", required: false, nullable: true, description: "When the order should be ready, if scheduled." },
+      { name: "shipping_rate_id", type: "integer", required: false, nullable: true, description: "ID of the shipping rate charged." },
+      { name: "shipping_discount_amount", type: "number", required: false, description: "Discount taken off the shipping charge." },
+      { name: "location", type: "object", required: false, nullable: true, description: "Location the order belongs to. Returned when retrieving an order." },
+      { name: "discount", type: "object", required: false, nullable: true, description: "Discount applied to the order, even if the discount has since been deleted. Returned when retrieving an order." },
+      { name: "notes", type: "object[]", required: false, description: "Internal notes on the order, each with the user who wrote it. Returned when retrieving an order." },
+      { name: "user", type: "object", required: false, nullable: true, description: "User who created the order (`id`, `name`, `email`). `null` for orders created with an API key or on the EPOS. Returned when retrieving an order." },
     ],
     endpoints: [
       {
@@ -958,7 +965,6 @@ export const orderResources: Resource[] = [
               customer: {
                 id: 1,
                 name: "John Doe",
-                otp: null,
                 has_online_account: false,
                 phone: "+44 7700 900001",
                 email: "john@example.com",

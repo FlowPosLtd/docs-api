@@ -109,6 +109,9 @@ export const productResources: Resource[] = [
       { name: "created_at", type: "timestamp", required: false, description: "Time the product was created." },
       { name: "updated_at", type: "timestamp", required: false, description: "Time the product was last modified." },
       { name: "deleted_at", type: "timestamp", required: false, nullable: true, description: "Time the product was soft-deleted. Null for active products." },
+      { name: "meta_title", type: "string", required: false, nullable: true, description: "SEO title for the product page." },
+      { name: "meta_description", type: "string", required: false, nullable: true, description: "SEO description for the product page." },
+      { name: "related_products", type: "object[]", required: false, description: "Products shown as related. Returned when retrieving a product." },
     ],
     endpoints: [
       {
@@ -1647,6 +1650,7 @@ export const productResources: Resource[] = [
       { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this category belongs to." },
       { name: "created_at", type: "timestamp", required: false, description: "Time the category was created." },
       { name: "updated_at", type: "timestamp", required: false, description: "Time the category was last modified." },
+      { name: "products", type: "object[]", required: false, description: "Products in the category. Returned when retrieving a category." },
     ],
     endpoints: [
       {
