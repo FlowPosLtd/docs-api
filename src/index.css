@@ -7,81 +7,86 @@
 :root {
   /* Canvas — background layers */
   --canvas:          hsl(0 0% 100%);
-  --canvas-subtle:   hsl(220 14% 97%);
-  --canvas-inset:    hsl(220 13% 94%);
+  --canvas-subtle:   hsl(220 16% 97.5%);
+  --canvas-inset:    hsl(220 14% 95%);
 
   /* Ink — text hierarchy */
-  --ink-primary:     hsl(222 47% 11%);
-  --ink-secondary:   hsl(220 9% 46%);
-  --ink-tertiary:    hsl(220 9% 64%);
+  --ink-primary:     hsl(222 28% 14%);
+  --ink-secondary:   hsl(220 11% 40%);
+  --ink-tertiary:    hsl(220 9% 56%);
+  --ink-heading:     hsl(220 10% 46%);
 
   /* Line — borders */
-  --line:            hsl(220 13% 91%);
-  --line-subtle:     hsl(220 14% 96%);
-  --line-strong:     hsl(220 13% 82%);
+  --line:            hsl(220 13% 90%);
+  --line-subtle:     hsl(220 14% 95%);
+  --line-strong:     hsl(220 12% 80%);
 
-  /* Accent — brand blue */
-  --accent:          hsl(221 83% 53%);
-  --accent-hover:    hsl(221 83% 46%);
-  --accent-faint:    hsl(221 83% 96%);
-  --accent-border:   hsl(221 83% 85%);
-  --accent-ink:      hsl(221 83% 42%);
+  /* Accent — deep indigo */
+  --accent:          hsl(234 52% 50%);
+  --accent-hover:    hsl(234 52% 43%);
+  --accent-faint:    hsl(234 60% 97%);
+  --accent-border:   hsl(234 45% 86%);
+  --accent-ink:      hsl(234 50% 42%);
 
   /* Danger */
-  --danger:          hsl(0 84% 60%);
-  --danger-faint:    hsl(0 84% 96%);
-  --danger-border:   hsl(0 84% 88%);
-  --danger-ink:      hsl(0 84% 44%);
+  --danger:          hsl(0 62% 52%);
+  --danger-faint:    hsl(0 70% 97%);
+  --danger-border:   hsl(0 60% 88%);
+  --danger-ink:      hsl(0 62% 42%);
 
   /* Code panels — light */
-  --code-bg:         hsl(220 14% 97%);
-  --code-head:       hsl(220 13% 93%);
-  --code-border:     hsl(220 13% 86%);
-  --code-text:       hsl(222 47% 18%);
-  --code-muted:      hsl(222 15% 50%);
-  --code-dim:        hsl(222 12% 60%);
-  --code-syn-key:    hsl(270 76% 43%);
-  --code-syn-string: hsl(152 56% 28%);
-  --code-syn-number: hsl(221 83% 43%);
-  --code-syn-bool:   hsl(38 92% 38%);
-  --code-syn-null:   hsl(215 20% 50%);
-  --code-syn-orange: hsl(25 95% 40%);
+  --code-bg:         hsl(220 16% 97.5%);
+  --code-head:       hsl(220 14% 94.5%);
+  --code-border:     hsl(220 13% 88%);
+  --code-text:       hsl(222 28% 18%);
+  --code-muted:      hsl(220 9% 46%);
+  --code-dim:        hsl(220 9% 58%);
+  --code-syn-key:    hsl(234 45% 45%);
+  --code-syn-string: hsl(158 42% 29%);
+  --code-syn-number: hsl(210 62% 38%);
+  --code-syn-bool:   hsl(30 72% 36%);
+  --code-syn-null:   hsl(220 9% 50%);
+  --code-syn-orange: hsl(24 70% 40%);
 }
 
 .dark {
-  --canvas:          hsl(224 71% 4%);
-  --canvas-subtle:   hsl(222 47% 8%);
-  --canvas-inset:    hsl(222 47% 6%);
+  --canvas:          hsl(222 18% 7%);
+  --canvas-subtle:   hsl(222 16% 10%);
+  --canvas-inset:    hsl(222 18% 8.5%);
 
-  --ink-primary:     hsl(213 31% 91%);
-  --ink-secondary:   hsl(215 20% 65%);
-  --ink-tertiary:    hsl(217 19% 45%);
+  --ink-primary:     hsl(220 16% 92%);
+  --ink-secondary:   hsl(220 10% 68%);
+  --ink-tertiary:    hsl(220 8% 50%);
+  --ink-heading:     hsl(220 9% 60%);
 
-  --line:            hsl(217 33% 17%);
-  --line-subtle:     hsl(222 47% 11%);
-  --line-strong:     hsl(217 33% 26%);
+  --line:            hsl(222 12% 18%);
+  --line-subtle:     hsl(222 14% 12%);
+  --line-strong:     hsl(222 10% 27%);
 
-  --accent-faint:    hsl(221 83% 11%);
-  --accent-border:   hsl(221 83% 22%);
-  --accent-ink:      hsl(221 83% 68%);
+  --accent:          hsl(234 55% 58%);
+  --accent-hover:    hsl(234 55% 52%);
+  --accent-faint:    hsl(234 30% 15%);
+  --accent-border:   hsl(234 30% 30%);
+  --accent-ink:      hsl(234 85% 80%);
 
-  --danger-faint:    hsl(0 84% 12%);
-  --danger-border:   hsl(0 84% 22%);
-  --danger-ink:      hsl(0 84% 70%);
+  --danger:          hsl(0 70% 62%);
+  --danger-faint:    hsl(0 40% 13%);
+  --danger-border:   hsl(0 40% 25%);
+  --danger-ink:      hsl(0 80% 74%);
 
   /* Code panels — dark */
-  --code-bg:         hsl(224 71% 5%);
-  --code-head:       hsl(222 47% 8%);
-  --code-border:     hsl(217 33% 17%);
-  --code-text:       hsl(213 31% 78%);
-  --code-muted:      hsl(215 20% 45%);
-  --code-dim:        hsl(215 20% 60%);
-  --code-syn-key:    hsl(270 76% 76%);
-  --code-syn-string: hsl(152 56% 62%);
-  --code-syn-number: hsl(221 83% 72%);
-  --code-syn-bool:   hsl(38 92% 66%);
-  --code-syn-null:   hsl(215 20% 50%);
-  --code-syn-orange: hsl(25 95% 65%);
+  --code-bg:         hsl(222 18% 6%);
+  --code-head:       hsl(222 16% 9%);
+  --code-border:     hsl(222 12% 17%);
+  --code-text:       hsl(220 14% 82%);
+  --code-muted:      hsl(220 9% 50%);
+  --code-dim:        hsl(220 9% 62%);
+  --code-syn-key:    hsl(234 70% 80%);
+  --code-syn-string: hsl(152 38% 68%);
+  --code-syn-number: hsl(210 70% 76%);
+  --code-syn-bool:   hsl(35 72% 68%);
+  --code-syn-null:   hsl(220 9% 55%);
+  --code-syn-orange: hsl(25 72% 68%);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -89,45 +94,64 @@
    border-* utility classes for every token below)
 ═══════════════════════════════════════════════════════════════ */
 @theme {
-  /* ── HTTP Method colours ── */
-  --color-get:            hsl(152 56% 40%);
-  --color-get-wash:       hsl(152 56% 95%);
-  --color-get-wash-dark:  hsl(152 56% 11%);
+  /* ── HTTP Method colours (muted, readable on light and dark) ── */
+  --color-get:              hsl(158 48% 37%);
+  --color-get-ink:          hsl(158 48% 30%);
+  --color-get-wash:         hsl(158 45% 88%);
+  --color-get-wash-dark:    hsl(158 30% 13%);
 
-  --color-post:           hsl(221 83% 53%);
-  --color-post-wash:      hsl(221 83% 96%);
-  --color-post-wash-dark: hsl(221 83% 11%);
+  --color-post:             hsl(221 60% 54%);
+  --color-post-ink:         hsl(221 60% 44%);
+  --color-post-wash:        hsl(221 70% 88%);
+  --color-post-wash-dark:   hsl(221 32% 12%);
 
-  --color-put:            hsl(38 92% 50%);
-  --color-put-wash:       hsl(38 92% 95%);
-  --color-put-wash-dark:  hsl(38 92% 12%);
+  --color-put:              hsl(33 78% 42%);
+  --color-put-ink:          hsl(33 80% 32%);
+  --color-put-wash:         hsl(36 85% 88%);
+  --color-put-wash-dark:    hsl(33 35% 13%);
 
-  --color-patch:            hsl(270 76% 55%);
-  --color-patch-wash:       hsl(270 76% 96%);
-  --color-patch-wash-dark:  hsl(270 76% 11%);
+  --color-patch:            hsl(262 42% 56%);
+  --color-patch-ink:        hsl(262 45% 46%);
+  --color-patch-wash:       hsl(262 55% 88%);
+  --color-patch-wash-dark:  hsl(262 24% 16%);
 
-  --color-destroy:            hsl(0 84% 60%);
-  --color-destroy-wash:       hsl(0 84% 96%);
-  --color-destroy-wash-dark:  hsl(0 84% 11%);
+  --color-destroy:          hsl(0 60% 52%);
+  --color-destroy-ink:      hsl(0 62% 44%);
+  --color-destroy-wash:     hsl(0 70% 88%);
+  --color-destroy-wash-dark: hsl(0 32% 14%);
 
-  /* ── Pitch — always-dark panel palette ── */
-  --color-pitch-950: hsl(224 71% 3%);
-  --color-pitch-900: hsl(224 71% 5%);
-  --color-pitch-800: hsl(222 47% 8%);
-  --color-pitch-700: hsl(222 47% 12%);
-  --color-pitch-600: hsl(217 33% 17%);
-  --color-pitch-500: hsl(217 33% 27%);
-  --color-pitch-400: hsl(215 20% 45%);
-  --color-pitch-300: hsl(215 20% 60%);
-  --color-pitch-200: hsl(213 31% 78%);
-  --color-pitch-100: hsl(213 31% 94%);
+  /* ── Pitch — always-dark panel palette (neutral slate) ── */
+  --color-pitch-950: hsl(222 20% 4%);
+  --color-pitch-900: hsl(222 18% 6%);
+  --color-pitch-800: hsl(222 16% 9%);
+  --color-pitch-700: hsl(222 14% 13%);
+  --color-pitch-600: hsl(222 12% 18%);
+  --color-pitch-500: hsl(222 10% 28%);
+  --color-pitch-400: hsl(220 9% 46%);
+  --color-pitch-300: hsl(220 9% 62%);
+  --color-pitch-200: hsl(220 14% 80%);
+  --color-pitch-100: hsl(220 16% 94%);
 
   /* ── Syntax highlighting (rendered on Pitch backgrounds) ── */
-  --color-syn-string:  hsl(152 56% 62%);
-  --color-syn-number:  hsl(221 83% 72%);
-  --color-syn-boolean: hsl(38 92% 66%);
-  --color-syn-key:     hsl(270 76% 76%);
-  --color-syn-null:    hsl(215 20% 50%);
+  --color-syn-string:  hsl(152 38% 68%);
+  --color-syn-number:  hsl(210 70% 76%);
+  --color-syn-boolean: hsl(35 72% 68%);
+  --color-syn-key:     hsl(234 70% 80%);
+  --color-syn-null:    hsl(220 9% 55%);
+}
+
+/* Theme-aware colours registered with Tailwind, so hover:, focus: and
+   dark: variants work on them (e.g. hover:bg-accent-hover). */
+@theme inline {
+  --color-accent:        var(--accent);
+  --color-accent-hover:  var(--accent-hover);
+  --color-accent-faint:  var(--accent-faint);
+  --color-accent-ink:    var(--accent-ink);
+  --color-canvas-subtle: var(--canvas-subtle);
+  --color-canvas-inset:  var(--canvas-inset);
+  --color-line:          var(--line);
+  --color-line-strong:   var(--line-strong);
+  --color-code-border:   var(--code-border);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -226,6 +250,15 @@
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: var(--ink-tertiary);
+  }
+
+  /* Sidebar group headings */
+  .t-nav-heading {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-heading);
   }
 
   /* Inline code (light-surface context) */

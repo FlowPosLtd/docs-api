@@ -400,47 +400,4 @@ export const basketResources: Resource[] = [
       },
     ],
   },
-
-  {
-    id: "addresses",
-    name: "Address Lookup",
-    description:
-      "Look up full UK addresses from a postcode or part of an address, to fill in address forms.",
-    endpoints: [
-      {
-        id: "lookup-address",
-        method: "GET",
-        path: "/addresses/lookup",
-        title: "Look up an address",
-        description: "Returns addresses matching a postcode or partial address.",
-        queryParams: [
-          {
-            name: "q",
-            type: "string",
-            required: true,
-            description: "Postcode or part of an address, 2 to 255 characters.",
-            example: "SW1A 2AA",
-          },
-        ],
-        response: {
-          data: [
-            {
-              address: "Flat 2, Rose House, 10 Downing Street, PRESTON, PR1 4RH",
-              address_line_1: "12 High Street",
-              address_line_2: "",
-              state: "Lancashire",
-              postcode: "W1A 1AA",
-              city: "London",
-              country: {
-                name: "United Kingdom",
-                shortcode: "GB",
-              },
-            },
-          ],
-          status: true,
-        },
-        responseDescription: "Returns the matching addresses directly in `data`.",
-      },
-    ],
-  },
 ];

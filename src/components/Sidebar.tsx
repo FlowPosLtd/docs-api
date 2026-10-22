@@ -11,53 +11,22 @@ interface SidebarProps {
 }
 
 const topLinks = [
-  { href: "/", label: "Getting Started" },
+  { href: "/", label: "Introduction" },
   { href: "/authentication", label: "Authentication" },
   { href: "/errors", label: "Errors" },
 ];
 
+// Sections appear in the order listed here.
 const resourceGroups = [
-  {
-    label: "CORE",
-    ids: ["customers", "customer-groups", "orders", "baskets", "products", "categories", "addresses"],
-  },
-  {
-    label: "PAYMENTS",
-    ids: [
-      "payments",
-      "payment-links",
-      "discounts",
-      "subscriptions",
-      "payouts",
-      "disputes",
-      "payment-account",
-      "payment-settings",
-    ],
-  },
-  {
-    label: "OPERATIONS",
-    ids: [
-      "inventory",
-      "employees",
-      "locations",
-      "terminal-readers",
-      "shipping-rates",
-      "addon-groups",
-      "attachments",
-    ],
-  },
-  {
-    label: "INSIGHTS",
-    ids: ["analytics"],
-  },
-  {
-    label: "SETTINGS",
-    ids: ["domains", "online-store", "marketing"],
-  },
-  {
-    label: "DEVELOPER",
-    ids: ["webhooks", "webhook-events", "api-keys"],
-  },
+  { label: "Catalog", ids: ["products", "categories", "addon-groups", "inventory", "attachments"] },
+  { label: "Customers", ids: ["customers", "customer-groups"] },
+  { label: "Sales", ids: ["baskets", "orders", "discounts", "shipping-rates"] },
+  { label: "Payments", ids: ["payments", "payment-links", "subscriptions", "disputes"] },
+  { label: "Payouts & Account", ids: ["payouts", "payment-account", "payment-settings"] },
+  { label: "Reports", ids: ["analytics"] },
+  { label: "Business Setup", ids: ["locations", "terminal-readers", "employees"] },
+  { label: "Online Store", ids: ["online-store", "domains"] },
+  { label: "Developer", ids: ["api-keys", "webhooks", "webhook-events"] },
 ];
 
 export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
@@ -79,6 +48,7 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
   return (
     <nav className="h-full overflow-y-auto py-4">
       <div className="px-3 mb-6">
+        <p className="px-3 mb-1.5 t-nav-heading">Getting Started</p>
         {topLinks.map((link) => (
           <Link
             key={link.href}
@@ -96,12 +66,12 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
       </div>
 
       {resourceGroups.map((group) => {
-        const groupResources = resources.filter((r) =>
-          group.ids.includes(r.id),
-        );
+        const groupResources = group.ids
+          .map((id) => resources.find((r) => r.id === id))
+          .filter((r): r is (typeof resources)[number] => r !== undefined);
         return (
-          <div key={group.label} className="mb-4 px-3">
-            <p className="px-3 mb-1 t-caption">{group.label}</p>
+          <div key={group.label} className="mb-6 px-3">
+            <p className="px-3 mb-1.5 t-nav-heading">{group.label}</p>
             {groupResources.map((resource) => {
               const isResourceActive =
                 currentPath === `/${resource.id}` ||
