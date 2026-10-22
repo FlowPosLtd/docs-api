@@ -47,8 +47,8 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
 
   return (
     <nav className="h-full overflow-y-auto py-4">
-      <div className="px-3 mb-5">
-        <p className="px-3 mb-1 t-caption">Getting Started</p>
+      <div className="px-3 mb-6">
+        <p className="px-3 mb-1.5 t-nav-heading">Getting Started</p>
         {topLinks.map((link) => (
           <Link
             key={link.href}
@@ -70,8 +70,8 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
           .map((id) => resources.find((r) => r.id === id))
           .filter((r): r is (typeof resources)[number] => r !== undefined);
         return (
-          <div key={group.label} className="mb-5 px-3">
-            <p className="px-3 mb-1 t-caption">{group.label}</p>
+          <div key={group.label} className="mb-6 px-3">
+            <p className="px-3 mb-1.5 t-nav-heading">{group.label}</p>
             {groupResources.map((resource) => {
               const isResourceActive =
                 currentPath === `/${resource.id}` ||

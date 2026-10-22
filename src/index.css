@@ -14,6 +14,7 @@
   --ink-primary:     hsl(222 28% 14%);
   --ink-secondary:   hsl(220 11% 40%);
   --ink-tertiary:    hsl(220 9% 56%);
+  --ink-heading:     hsl(220 10% 46%);
 
   /* Line — borders */
   --line:            hsl(220 13% 90%);
@@ -56,6 +57,7 @@
   --ink-primary:     hsl(220 16% 92%);
   --ink-secondary:   hsl(220 10% 68%);
   --ink-tertiary:    hsl(220 8% 50%);
+  --ink-heading:     hsl(220 9% 60%);
 
   --line:            hsl(222 12% 18%);
   --line-subtle:     hsl(222 14% 12%);
@@ -93,25 +95,30 @@
 ═══════════════════════════════════════════════════════════════ */
 @theme {
   /* ── HTTP Method colours (muted, readable on light and dark) ── */
-  --color-get:            hsl(158 48% 37%);
-  --color-get-wash:       hsl(158 40% 95%);
-  --color-get-wash-dark:  hsl(158 30% 13%);
+  --color-get:              hsl(158 48% 37%);
+  --color-get-ink:          hsl(158 48% 30%);
+  --color-get-wash:         hsl(158 45% 88%);
+  --color-get-wash-dark:    hsl(158 30% 13%);
 
-  --color-post:           hsl(221 60% 54%);
-  --color-post-wash:      hsl(221 60% 96%);
-  --color-post-wash-dark: hsl(221 32% 12%);
+  --color-post:             hsl(221 60% 54%);
+  --color-post-ink:         hsl(221 60% 44%);
+  --color-post-wash:        hsl(221 70% 88%);
+  --color-post-wash-dark:   hsl(221 32% 12%);
 
-  --color-put:            hsl(33 78% 42%);
-  --color-put-wash:       hsl(36 80% 94%);
-  --color-put-wash-dark:  hsl(33 35% 13%);
+  --color-put:              hsl(33 78% 42%);
+  --color-put-ink:          hsl(33 80% 32%);
+  --color-put-wash:         hsl(36 85% 88%);
+  --color-put-wash-dark:    hsl(33 35% 13%);
 
   --color-patch:            hsl(262 42% 56%);
-  --color-patch-wash:       hsl(262 45% 96%);
+  --color-patch-ink:        hsl(262 45% 46%);
+  --color-patch-wash:       hsl(262 55% 88%);
   --color-patch-wash-dark:  hsl(262 24% 16%);
 
-  --color-destroy:            hsl(0 60% 52%);
-  --color-destroy-wash:       hsl(0 65% 96%);
-  --color-destroy-wash-dark:  hsl(0 32% 14%);
+  --color-destroy:          hsl(0 60% 52%);
+  --color-destroy-ink:      hsl(0 62% 44%);
+  --color-destroy-wash:     hsl(0 70% 88%);
+  --color-destroy-wash-dark: hsl(0 32% 14%);
 
   /* ── Pitch — always-dark panel palette (neutral slate) ── */
   --color-pitch-950: hsl(222 20% 4%);
@@ -243,6 +250,15 @@
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: var(--ink-tertiary);
+  }
+
+  /* Sidebar group headings */
+  .t-nav-heading {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-heading);
   }
 
   /* Inline code (light-surface context) */
