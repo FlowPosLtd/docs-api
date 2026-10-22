@@ -1,4 +1,5 @@
 import type { Endpoint } from "../types";
+import { PRODUCTION_BASE_URL } from "./api-client";
 
 export type Language = "curl" | "javascript" | "python" | "axios";
 
@@ -63,7 +64,7 @@ export function generateCode(
     bodyObj[parent] = [fields];
   }
 
-  const BASE = "{BASE_URL}";
+  const BASE = PRODUCTION_BASE_URL;
 
   if (lang === "curl") {
     const lines: string[] = [];
@@ -81,7 +82,7 @@ export function generateCode(
 
   if (lang === "javascript") {
     const lines = [
-      `const BASE_URL = 'https://api.yourflowpos.com';`,
+      `const BASE_URL = '${BASE}';`,
       ``,
       `const response = await fetch(\`\${BASE_URL}${resolvedPath}${qs}\`, {`,
       `  method: '${endpoint.method}',`,
@@ -108,7 +109,7 @@ export function generateCode(
     const lines = [
       `import requests`,
       ``,
-      `BASE_URL = 'https://api.yourflowpos.com'`,
+      `BASE_URL = '${BASE}'`,
       ``,
       `response = requests.${endpoint.method.toLowerCase()}(`,
       `    f'{BASE_URL}${resolvedPath}',`,
@@ -137,7 +138,7 @@ export function generateCode(
     const lines = [
       `import axios from 'axios';`,
       ``,
-      `const BASE_URL = 'https://api.yourflowpos.com';`,
+      `const BASE_URL = '${BASE}';`,
       ``,
       `const { data } = await axios.${endpoint.method.toLowerCase()}(`,
       `  \`\${BASE_URL}${resolvedPath}\`,`,

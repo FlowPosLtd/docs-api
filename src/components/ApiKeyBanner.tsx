@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PRESET_URLS } from '../utils/api-client';
+import { ENVIRONMENTS } from '../utils/api-client';
 
 interface ApiKeyBannerProps {
   apiKey: string;
@@ -58,8 +58,8 @@ export function ApiKeyBanner({ apiKey, baseUrl, onSave }: ApiKeyBannerProps) {
                     onChange={e => setDraftUrl(e.target.value)}
                     className={inputCls + ' appearance-none pr-8 font-mono'}
                   >
-                    {PRESET_URLS.map(url => (
-                      <option key={url} value={url}>{url}</option>
+                    {ENVIRONMENTS.map(env => (
+                      <option key={env.id} value={env.url}>{env.url}</option>
                     ))}
                   </select>
                   <svg className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -67,7 +67,7 @@ export function ApiKeyBanner({ apiKey, baseUrl, onSave }: ApiKeyBannerProps) {
                   </svg>
                 </div>
                 <p className="mt-1.5 t-body-sm">
-                  {draftUrl === PRESET_URLS[0] ? 'Staging / development environment' : 'Production environment'}
+                  {ENVIRONMENTS.find(env => env.url === draftUrl)?.label}
                 </p>
               </div>
 

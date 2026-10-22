@@ -1,11 +1,31 @@
 import axios from "axios";
 
-export const PRESET_URLS = [
-  "https://api.flowpos.me/v1",
-  "https://api.flowpos.co.uk/v1",
-] as const;
+export interface ApiEnvironment {
+  id: "production" | "staging";
+  label: string;
+  url: string;
+}
 
-const DEFAULT_BASE_URL = PRESET_URLS[0];
+export const ENVIRONMENTS: ApiEnvironment[] = [
+  {
+    id: "production",
+    label: "Production environment",
+    url: import.meta.env.VITE_API_PRODUCTION_URL || "https://api.flowpos.co.uk/v1",
+  },
+  {
+    id: "staging",
+    label: "Staging / development environment",
+    url: import.meta.env.VITE_API_STAGING_URL || "https://api.flowpos.dev/v1",
+  },
+];
+
+export const PRODUCTION_BASE_URL = ENVIRONMENTS[0].url;
+
+const PRESET_URLS = ENVIRONMENTS.map((env) => env.url);
+
+const DEFAULT_BASE_URL = (
+  ENVIRONMENTS.find((env) => env.id === import.meta.env.VITE_API_DEFAULT_ENV) ?? ENVIRONMENTS[0]
+).url;
 
 export function getStoredApiKey(): string {
   return localStorage.getItem("flowpos_api_key") || "";
@@ -13,7 +33,7 @@ export function getStoredApiKey(): string {
 
 export function getStoredBaseUrl(): string {
   const stored = localStorage.getItem("flowpos_base_url");
-  if (stored && (PRESET_URLS as readonly string[]).includes(stored)) {
+  if (stored && PRESET_URLS.includes(stored)) {
     return stored;
   }
   if (stored) localStorage.removeItem("flowpos_base_url");
