@@ -94,7 +94,7 @@ function ParamRow({
   return (
     <>
       <div
-        className={`px-4 py-3.5 ${level > 0 ? "bg-gray-50 dark:bg-gray-900/40" : "bg-canvas"}`}
+        className={`px-4 py-3.5 ${level > 0 ? "bg-canvas-subtle" : "bg-canvas"}`}
         style={level > 0 ? { paddingLeft: `${16 + level * 12}px` } : undefined}
       >
         {/* Name + type + badges */}
@@ -113,11 +113,11 @@ function ParamRow({
           )}
           {showBadges && !synthetic && (
             param.required ? (
-              <span className="text-[10px] font-bold text-red-500 uppercase tracking-wide">
+              <span className="text-[10px] font-bold text-danger uppercase tracking-wide">
                 required
               </span>
             ) : (
-              <span className="text-[10px] font-medium text-gray-400 dark:text-gray-600 uppercase tracking-wide">
+              <span className="text-[10px] font-medium text-ink-tertiary uppercase tracking-wide">
                 optional
               </span>
             )
@@ -137,7 +137,7 @@ function ParamRow({
             {param.enum.map((v) => (
               <code
                 key={v}
-                className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300"
+                className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-canvas-inset border border-line text-ink-secondary"
               >
                 {v}
               </code>
@@ -169,7 +169,7 @@ function ParamRow({
             >
               {open ? "−" : "+"}
             </span>
-            <span className="dark:text-gray-300">
+            <span>
               {open ? "Hide" : "Show"} child parameters
             </span>
           </button>
@@ -179,13 +179,13 @@ function ParamRow({
       {/* Recursively render children */}
       {hasChildren && open && (
         <div
-          className="border-t border-l-4 border-blue-400/30 dark:border-blue-500/30"
+          className="border-t border-l-4 border-accent-muted"
           style={{ borderLeftWidth: 3 }}
         >
           {childGroups.map((child, i) => (
             <div
               key={child.param.name}
-              className={i > 0 ? "border-t border-gray-100 dark:border-gray-800" : ""}
+              className={i > 0 ? "border-t border-line-subtle" : ""}
             >
               <ParamRow
                 param={child.param}
@@ -224,7 +224,7 @@ export const ParamTable = memo(function ParamTable({
       {title && <h4 className="t-caption mb-3">{title}</h4>}
       <div className="border border-line rounded-lg overflow-hidden">
         <div
-          className="divide-y divide-gray-100 dark:divide-gray-800"
+          className="divide-y divide-line"
           style={needsCollapse && !expanded ? { maxHeight: COLLAPSE_PX, overflowY: "auto" } : undefined}
         >
           {groups.map((group) => (

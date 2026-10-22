@@ -1,7 +1,7 @@
 import { useState, useRef, memo } from "react";
 
 const inputCls =
-  "w-full px-3 py-1.5 rounded bg-code-head border border-code text-code text-sm font-mono placeholder:text-code-dim focus:outline-none focus:border-blue-500 transition-colors";
+  "w-full px-3 py-1.5 rounded bg-code-head border border-code text-code text-sm font-mono placeholder:text-code-dim focus:outline-none focus:border-accent transition-colors";
 const labelCls = "block text-xs text-code-muted mb-1";
 const sectionLabelCls = "text-[11px] font-semibold uppercase tracking-wider text-code-dim mb-2";
 
@@ -261,7 +261,7 @@ export const ApiExplorer = memo(function ApiExplorer({
                       multiple
                       ref={(el) => { fileInputRefs.current[p.name] = el; }}
                       onChange={(e) => setFileValues((prev) => ({ ...prev, [p.name]: e.target.files }))}
-                      className={inputCls + " cursor-pointer file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:bg-blue-600 file:text-white"}
+                      className={inputCls + " cursor-pointer file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:bg-accent file:text-white"}
                     />
                   ) : (
                     <input
@@ -283,7 +283,7 @@ export const ApiExplorer = memo(function ApiExplorer({
       <button
         onClick={execute}
         disabled={loading}
-        className="w-full py-2.5 rounded bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+        className="w-full py-2.5 rounded bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2"
       >
         {loading ? (
           <>

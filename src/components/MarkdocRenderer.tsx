@@ -119,7 +119,7 @@ function Callout({
       ),
     },
     danger: {
-      wrapper: "bg-danger-faint border-danger-border text-danger-ink",
+      wrapper: "bg-danger-faint border-danger-muted text-danger-ink",
       icon: "text-danger",
       svg: (
         <path

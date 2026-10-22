@@ -41,7 +41,7 @@ export const CodeExamples = memo(function CodeExamples({
             onClick={() => setLang(l)}
             className={`px-3 py-2 text-xs font-medium rounded-t transition-colors ${
               lang === l
-                ? "text-code bg-code-head border-b-2 border-blue-500"
+                ? "text-code bg-code-head border-b-2 border-accent"
                 : "text-code-dim hover:text-code"
             }`}
           >
@@ -53,7 +53,7 @@ export const CodeExamples = memo(function CodeExamples({
             onClick={onTryIt}
             className={`ml-auto px-3 py-1.5 rounded text-xs font-medium transition-colors ${
               isTryItOpen
-                ? "bg-blue-600 text-white"
+                ? "bg-accent text-white"
                 : "bg-code-head text-code-muted hover:text-code border border-code"
             }`}
           >
