@@ -2,161 +2,6 @@ import type { Resource } from "../../types";
 
 export const settingsResources: Resource[] = [
   {
-    id: "business-settings",
-    name: "Organisation Settings",
-    description:
-      "Manage your business profile, branding, and configuration. Update your business name, contact info, logo, and other tenant-level settings.",
-    objectName: "tenant",
-    attributes: [
-      { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the tenant." },
-      { name: "slug", type: "string", required: false, description: "URL-safe identifier for the business." },
-      { name: "business_name", type: "string", required: false, description: "Trading name of the business." },
-      { name: "business_email", type: "string", required: false, description: "Primary contact email for the business." },
-      { name: "business_type", type: "string", required: false, description: "Type of business entity.", enum: ["business", "individual"] },
-      { name: "vat_number", type: "string", required: false, nullable: true, description: "VAT registration number (e.g. `GB123456789`)." },
-      { name: "logo", type: "string", required: false, nullable: true, description: "Relative storage path to the business logo." },
-      { name: "logo_url", type: "string", required: false, nullable: true, description: "Fully-qualified public URL to the business logo." },
-      { name: "brand_colour", type: "string", required: false, description: "Primary brand hex colour (e.g. `#3B82F6`)." },
-      { name: "accent_colour", type: "string", required: false, description: "Accent brand hex colour (e.g. `#8B5CF6`)." },
-    ],
-    endpoints: [
-      {
-        id: "get-business-settings",
-        method: "GET",
-        path: "/tenants/{id}",
-        title: "Retrieve business settings",
-        description:
-          "Returns the business profile and configuration for your tenant.",
-        pathParams: [
-          {
-            name: "id",
-            type: "integer",
-            required: true,
-            description: "The numeric ID of the tenant.",
-            example: "1",
-          },
-        ],
-        response: {
-          data: {
-            tenant: {
-              id: 1,
-              slug: "my-cafe",
-              business_name: "My Cafe",
-              timezone: "Europe/London",
-              business_email: "hello@mycafe.com",
-              vat_number: "GB123456789",
-              business_type: "business",
-              logo: "tenants/1/logo/logo.png",
-              favicon: null,
-              brand_colour: "#3B82F6",
-              accent_colour: "#8B5CF6",
-              logo_url: "https://api.flowpos.co.uk/storage/tenants/1/logo/logo.png",
-              favicon_url: null,
-            },
-          },
-          status: true,
-        },
-        responseDescription: "Returns the tenant business settings object.",
-      },
-      {
-        id: "update-business-settings",
-        method: "PUT",
-        path: "/tenants/{id}",
-        title: "Update business settings",
-        description: "Updates your business profile.",
-        pathParams: [
-          {
-            name: "id",
-            type: "integer",
-            required: true,
-            description: "The numeric ID of the tenant.",
-            example: "1",
-          },
-        ],
-        bodyParams: [
-          {
-            name: "business_name",
-            type: "string",
-            required: false,
-            description: "Business display name.",
-            example: "My Cafe",
-          },
-          {
-            name: "business_email",
-            type: "string",
-            required: false,
-            description: "Primary business email.",
-            example: "hello@mycafe.com",
-          },
-          {
-            name: "brand_colour",
-            type: "string",
-            required: false,
-            description: "Brand primary colour (hex).",
-            example: "#3B82F6",
-          },
-          {
-            name: "accent_colour",
-            type: "string",
-            required: false,
-            description: "Brand accent colour (hex).",
-            example: "#8B5CF6",
-          },
-          {
-            name: "vat_number",
-            type: "string",
-            required: false,
-            description: "VAT registration number.",
-            example: "GB123456789",
-          },
-          {
-            name: "business_type",
-            type: "string",
-            required: false,
-            description: "Legal structure of the business.",
-            enum: ["sole_trader", "business", "partnership", "charity"],
-            example: "business",
-          },
-          {
-            name: "logo",
-            type: "file",
-            required: false,
-            description: "Logo image file (multipart/form-data).",
-            example: "logo.png",
-          },
-          {
-            name: "favicon",
-            type: "file",
-            required: false,
-            description: "Browser tab icon. ICO, JPEG, PNG, GIF or WebP, up to 1 MB. Send as multipart form data.",
-          },
-        ],
-        response: {
-          data: {
-            tenant: {
-              id: 1,
-              slug: "my-cafe",
-              business_name: "My Cafe",
-              timezone: "Europe/London",
-              business_email: "hello@mycafe.com",
-              vat_number: "GB123456789",
-              business_type: "business",
-              logo: "tenants/1/logo/logo.png",
-              favicon: "tenants/1/favicon/favicon.png",
-              brand_colour: "#3B82F6",
-              accent_colour: "#8B5CF6",
-              logo_url: "https://api.flowpos.co.uk/storage/tenants/1/logo/logo.png",
-              favicon_url: "https://api.flowpos.co.uk/storage/tenants/1/favicon/favicon.png",
-            },
-          },
-          status: true,
-        },
-        responseDescription: "Returns the updated tenant settings.",
-      },
-    ],
-  },
-
-  {
     id: "domains",
     name: "Domains",
     description:
@@ -171,6 +16,7 @@ export const settingsResources: Resource[] = [
       { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant this domain belongs to." },
       { name: "created_at", type: "timestamp", required: false, description: "Time the domain was added." },
       { name: "updated_at", type: "timestamp", required: false, description: "Time the domain record was last modified." },
+      { name: "last_verified_at", type: "timestamp", required: false, nullable: true, description: "When the DNS was last checked successfully." },
     ],
     endpoints: [
       {
@@ -179,6 +25,15 @@ export const settingsResources: Resource[] = [
         path: "/domains",
         title: "List all domains",
         description: "Returns all domains configured for your tenant.",
+        queryParams: [
+          {
+            name: "search",
+            type: "string",
+            required: false,
+            description: "Filter by domain name.",
+            example: "shop",
+          },
+        ],
         response: {
           data: {
             domains: [
@@ -251,6 +106,7 @@ export const settingsResources: Resource[] = [
             type: "integer",
             required: true,
             description: "The numeric ID of the domain.",
+            example: "1",
           },
         ],
         response: {
@@ -288,6 +144,7 @@ export const settingsResources: Resource[] = [
             type: "integer",
             required: true,
             description: "The numeric ID of the domain.",
+            example: "1",
           },
         ],
         response: { data: null, status: true },
