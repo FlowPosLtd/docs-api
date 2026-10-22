@@ -19,7 +19,7 @@ const topLinks = [
 const resourceGroups = [
   {
     label: "CORE",
-    ids: ["customers", "customer-groups", "orders", "baskets", "products", "categories", "addresses"],
+    ids: ["customers", "customer-groups", "orders", "baskets", "products", "categories"],
   },
   {
     label: "PAYMENTS",
