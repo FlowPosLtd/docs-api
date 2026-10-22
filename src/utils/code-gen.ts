@@ -1,7 +1,17 @@
 import type { Endpoint } from "../types";
 import { PRODUCTION_BASE_URL } from "./api-client";
+import { buildJsonBody, encodePathValue } from "./request-body";
 
 export type Language = "curl" | "javascript" | "python" | "axios";
+
+/** JSON rendered as a Python literal: `true`/`false`/`null` become `True`/`False`/`None`. */
+function toPython(value: unknown): string {
+  return JSON.stringify(value, null, 4).replace(
+    /("(?:[^"\\]|\\.)*")|\b(true|false|null)\b/g,
+    (_match, str: string | undefined, literal: string | undefined) =>
+      str ?? ({ true: "True", false: "False", null: "None" } as Record<string, string>)[literal!],
+  );
+}
 
 export function generateCode(
   endpoint: Endpoint,
@@ -15,54 +25,22 @@ export function generateCode(
   const hasBody = ["POST", "PUT", "PATCH"].includes(endpoint.method);
 
   let resolvedPath = endpoint.path;
-  for (const [k, v] of Object.entries(pathValues)) {
-    resolvedPath = resolvedPath.replace(`{${k}}`, v || `{${k}}`);
+  for (const p of endpoint.pathParams ?? []) {
+    const v = pathValues[p.name] || p.example;
+    if (v) resolvedPath = resolvedPath.replace(`{${p.name}}`, encodePathValue(v));
   }
 
   const queryPairs = Object.entries(queryValues).filter(([, v]) => v !== "");
   const qs = queryPairs.length
-    ? "?" + queryPairs.map(([k, v]) => `${k}=${v}`).join("&")
+    ? "?" + queryPairs.map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join("&")
     : "";
 
-  const bodyObj: Record<string, unknown> = {};
-  const arrayFields: Record<string, Record<string, unknown>> = {};
-
-  (endpoint.bodyParams || []).forEach((p) => {
-    const raw =
-      bodyValues[p.name] !== undefined && bodyValues[p.name] !== ""
-        ? bodyValues[p.name]
-        : p.example;
-    if (!raw) return;
-
-    const m = p.name.match(/^([^[]+)\[\]\.(.+)$/);
-    if (m) {
-      const [, parent, field] = m;
-      if (!arrayFields[parent]) arrayFields[parent] = {};
-      if (p.type === "object[]") {
-        try {
-          arrayFields[parent][field] = JSON.parse(raw);
-        } catch {
-          arrayFields[parent][field] = raw;
-        }
-      } else if (p.type === "integer" || p.type === "number") {
-        const n = Number(raw);
-        arrayFields[parent][field] = isNaN(n) ? raw : n;
-      } else if (p.type === "boolean") {
-        arrayFields[parent][field] =
-          raw === "true" ? true : raw === "false" ? false : raw;
-      } else if (raw === "null") {
-        arrayFields[parent][field] = null;
-      } else {
-        arrayFields[parent][field] = raw;
-      }
-    } else if (p.type !== "object[]") {
-      bodyObj[p.name] = raw;
-    }
-  });
-
-  for (const [parent, fields] of Object.entries(arrayFields)) {
-    bodyObj[parent] = [fields];
+  const filledBody: Record<string, string> = {};
+  for (const p of endpoint.bodyParams ?? []) {
+    const v = bodyValues[p.name] || p.example;
+    if (v) filledBody[p.name] = v;
   }
+  const bodyObj = buildJsonBody(endpoint.bodyParams, filledBody);
 
   const BASE = PRODUCTION_BASE_URL;
 
@@ -73,7 +51,7 @@ export function generateCode(
     if (hasBody && Object.keys(bodyObj).length) {
       lines.push(`  -H 'x-api-key: ${key}' \\`);
       lines.push(`  -H 'Content-Type: application/json' \\`);
-      lines.push(`  -d '${JSON.stringify(bodyObj, null, 2)}'`);
+      lines.push(`  -d '${JSON.stringify(bodyObj, null, 2).replace(/'/g, "'\\''")}'`);
     } else {
       lines.push(`  -H 'x-api-key: ${key}'`);
     }
@@ -121,7 +99,7 @@ export function generateCode(
         : []),
       ...(hasBody && Object.keys(bodyObj).length
         ? [
-            `    json=${JSON.stringify(bodyObj, null, 4)
+            `    json=${toPython(bodyObj)
               .split("\n")
               .map((l, i) => (i === 0 ? l : "    " + l))
               .join("\n")},`,

@@ -19,7 +19,7 @@ const topLinks = [
 const resourceGroups = [
   {
     label: "CORE",
-    ids: ["customers", "customer-groups", "orders", "products", "categories"],
+    ids: ["customers", "customer-groups", "orders", "baskets", "products", "categories", "addresses"],
   },
   {
     label: "PAYMENTS",
@@ -29,6 +29,7 @@ const resourceGroups = [
       "discounts",
       "subscriptions",
       "payouts",
+      "disputes",
       "payment-account",
       "payment-settings",
     ],
@@ -43,19 +44,24 @@ const resourceGroups = [
       "shipping-rates",
       "addon-groups",
       "attachments",
+      "epos",
     ],
   },
   {
+    label: "INSIGHTS",
+    ids: ["analytics"],
+  },
+  {
     label: "TEAM & ACCESS",
-    ids: ["roles"],
+    ids: ["users", "roles"],
   },
   {
     label: "SETTINGS",
-    ids: ["business-settings", "domains"],
+    ids: ["business-settings", "domains", "online-store", "marketing"],
   },
   {
     label: "DEVELOPER",
-    ids: ["webhook-events", "api-keys"],
+    ids: ["webhooks", "webhook-events", "api-keys", "apps"],
   },
 ];
 

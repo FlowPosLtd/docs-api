@@ -7,6 +7,7 @@ const sectionLabelCls = "text-[11px] font-semibold uppercase tracking-wider text
 
 import axios from "axios";
 import { apiClient, getStoredApiKey, getStoredBaseUrl } from "../utils/api-client";
+import { buildJsonBody, encodePathValue, toFormKey } from "../utils/request-body";
 import { stripStatus } from "../utils/strip-status";
 import { maskSensitive } from "../utils/mask-sensitive";
 import { filterResponse } from "../utils/filter-response";
@@ -57,13 +58,19 @@ export const ApiExplorer = memo(function ApiExplorer({
       return;
     }
 
+    const missingPathParam = (endpoint.pathParams ?? []).find((p) => !pathValues[p.name]?.trim());
+    if (missingPathParam) {
+      setError(`Enter a value for the \`${missingPathParam.name}\` path parameter.`);
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setResult(null);
 
     let resolvedPath = endpoint.path;
-    for (const [k, v] of Object.entries(pathValues)) {
-      resolvedPath = resolvedPath.replace(`{${k}}`, v || `{${k}}`);
+    for (const p of endpoint.pathParams ?? []) {
+      resolvedPath = resolvedPath.replace(`{${p.name}}`, encodePathValue(pathValues[p.name].trim()));
     }
 
     const queryPairs = Object.entries(queryValues).filter(([, v]) => v !== "");
@@ -73,11 +80,9 @@ export const ApiExplorer = memo(function ApiExplorer({
     const bodyPairs = Object.entries(bodyValues).filter(([, v]) => v !== "");
 
     const bodyParamTypeMap: Record<string, string> = {};
-    const bodyParamEnumFields = new Set<string>();
     const hasFileParam = (endpoint.bodyParams ?? []).some((p) => p.type === "file");
     for (const p of endpoint.bodyParams ?? []) {
       bodyParamTypeMap[p.name] = p.type;
-      if (p.enum) bodyParamEnumFields.add(p.name);
     }
 
     let data: Record<string, unknown> | FormData | undefined;
@@ -86,83 +91,17 @@ export const ApiExplorer = memo(function ApiExplorer({
         const fd = new FormData();
         for (const [k, files] of Object.entries(fileValues)) {
           if (!files) continue;
-          const isMultiple = k.endsWith("[]");
-          Array.from(files).forEach((f) => fd.append(k, f));
-          void isMultiple;
+          Array.from(files).forEach((f) => fd.append(toFormKey(k), f));
         }
         for (const [k, v] of bodyPairs) {
-          if (bodyParamTypeMap[k] !== "file") fd.append(k, v);
+          const t = bodyParamTypeMap[k];
+          if (t === "file") continue;
+          // Laravel's boolean rule takes 1/0 from form data, not "true"/"false".
+          fd.append(toFormKey(k), t === "boolean" ? (v === "true" ? "1" : v === "false" ? "0" : v) : v);
         }
         data = fd;
       } else if (bodyPairs.length) {
-        const assembled: Record<string, unknown> = {};
-        const arrayFields: Record<string, Record<string, string>> = {};
-        const nestedFields: Record<string, Record<string, unknown>> = {};
-
-        for (const [k, v] of bodyPairs) {
-          const arrayMatch = k.match(/^([^[]+)\[\]\.(.+)$/);
-          if (arrayMatch) {
-            const [, parent, field] = arrayMatch;
-            if (!arrayFields[parent]) arrayFields[parent] = {};
-            arrayFields[parent][field] = v;
-          } else if (k.includes(".")) {
-            const dotIdx = k.indexOf(".");
-            const parent = k.substring(0, dotIdx);
-            const child = k.substring(dotIdx + 1);
-            if (!nestedFields[parent]) nestedFields[parent] = {};
-            const t = bodyParamTypeMap[k] ?? "";
-            if (t === "integer" || t === "number") {
-              const n = Number(v);
-              nestedFields[parent][child] = isNaN(n) ? v : n;
-            } else if (t === "boolean") {
-              nestedFields[parent][child] = v === "true" ? true : v === "false" ? false : v;
-            } else {
-              nestedFields[parent][child] = v;
-            }
-          } else {
-            const t = bodyParamTypeMap[k] ?? "";
-            if (t.endsWith("[]") || t === "array") {
-              try { assembled[k] = JSON.parse(v); } catch {
-                assembled[k] = v.split(",").map((s) => s.trim()).filter(Boolean);
-              }
-            } else if (t === "integer" || t === "number") {
-              const n = Number(v);
-              assembled[k] = isNaN(n) ? v : n;
-            } else if (t === "boolean") {
-              assembled[k] = v === "true" ? true : v === "false" ? false : v;
-            } else {
-              assembled[k] = bodyParamEnumFields.has(k) ? v.toLowerCase() : v;
-            }
-          }
-        }
-
-        for (const [parent, fields] of Object.entries(arrayFields)) {
-          assembled[parent] = [
-            Object.fromEntries(
-              Object.entries(fields).map(([k, v]) => {
-                const fullKey = `${parent}[].${k}`;
-                const t = bodyParamTypeMap[fullKey] ?? "";
-                if (v === "null") return [k, null];
-                if (t === "boolean") return [k, v === "true" ? true : v === "false" ? false : v];
-                if (t === "integer" || t === "number") {
-                  const n = Number(v);
-                  return [k, isNaN(n) ? v : n];
-                }
-                const n = Number(v);
-                if (v !== "" && !isNaN(n)) return [k, n];
-                if (v.trim().startsWith("[") || v.trim().startsWith("{")) {
-                  try { return [k, JSON.parse(v)]; } catch { /* fall through */ }
-                }
-                return [k, v];
-              }),
-            ),
-          ];
-        }
-
-        for (const [parent, fields] of Object.entries(nestedFields)) {
-          assembled[parent] = fields;
-        }
-
+        const assembled = buildJsonBody(endpoint.bodyParams, bodyValues);
         data = Object.keys(assembled).length ? assembled : undefined;
       }
     }
