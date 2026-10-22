@@ -6,8 +6,8 @@
  * TypeScript resource files with real BE shapes and placeholder values.
  *
  * Usage:
- *   API_KEY=<key> npx tsx scripts/sync-samples.ts
- *   API_KEY=<key> BASE_URL=https://api.flowpos.co.uk/v1 npx tsx scripts/sync-samples.ts
+ *   API_KEY=<key> npx tsx scripts/sync-samples.ts                                  (staging)
+ *   API_KEY=<key> BASE_URL=https://api.flowpos.co.uk/v1 npx tsx scripts/sync-samples.ts (production)
  *
  * Smart context:  list endpoints run first and seed real IDs into a context
  * map so that single-resource endpoints (GET /{id}, PUT /{id} …) actually
@@ -26,7 +26,7 @@ const __dirname  = path.dirname(__filename);
 const ROOT       = path.resolve(__dirname, "..");
 
 // ── Configuration ─────────────────────────────────────────────────────────────
-const BASE_URL = (process.env.BASE_URL ?? "https://api.flowpos.me/v1").replace(/\/$/, "");
+const BASE_URL = (process.env.BASE_URL ?? "https://api.flowpos.dev/v1").replace(/\/$/, "");
 const API_KEY  = process.env.API_KEY ?? "";
 
 if (!API_KEY) {

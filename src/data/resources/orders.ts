@@ -156,10 +156,10 @@ export const orderResources: Resource[] = [
                   payments: [],
                 },
               ],
-              first_page_url: "http://api.flowpos.me/v1/orders?page=1",
+              first_page_url: "https://api.flowpos.co.uk/v1/orders?page=1",
               from: 1,
               last_page: 53,
-              last_page_url: "http://api.flowpos.me/v1/orders?page=53",
+              last_page_url: "https://api.flowpos.co.uk/v1/orders?page=53",
               links: [
                 {
                   url: null,
@@ -168,8 +168,8 @@ export const orderResources: Resource[] = [
                   active: false,
                 },
               ],
-              next_page_url: "http://api.flowpos.me/v1/orders?page=2",
-              path: "http://api.flowpos.me/v1/orders",
+              next_page_url: "https://api.flowpos.co.uk/v1/orders?page=2",
+              path: "https://api.flowpos.co.uk/v1/orders",
               per_page: 15,
               prev_page_url: null,
               to: 15,

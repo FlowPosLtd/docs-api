@@ -131,10 +131,10 @@ export const customerResources: Resource[] = [
                   orders_count: 0,
                 },
               ],
-              first_page_url: "http://api.flowpos.me/v1/customers?page=1",
+              first_page_url: "https://api.flowpos.co.uk/v1/customers?page=1",
               from: 1,
               last_page: 19,
-              last_page_url: "http://api.flowpos.me/v1/customers?page=19",
+              last_page_url: "https://api.flowpos.co.uk/v1/customers?page=19",
               links: [
                 {
                   url: null,
@@ -143,8 +143,8 @@ export const customerResources: Resource[] = [
                   active: false,
                 },
               ],
-              next_page_url: "http://api.flowpos.me/v1/customers?page=2",
-              path: "http://api.flowpos.me/v1/customers",
+              next_page_url: "https://api.flowpos.co.uk/v1/customers?page=2",
+              path: "https://api.flowpos.co.uk/v1/customers",
               per_page: 15,
               prev_page_url: null,
               to: 15,

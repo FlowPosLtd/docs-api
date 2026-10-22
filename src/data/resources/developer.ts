@@ -161,10 +161,10 @@ export const developerResources: Resource[] = [
                   ],
                 },
               ],
-              first_page_url: "http://api.flowpos.me/v1/api-keys?page=1",
+              first_page_url: "https://api.flowpos.co.uk/v1/api-keys?page=1",
               from: 1,
               last_page: 1,
-              last_page_url: "http://api.flowpos.me/v1/api-keys?page=1",
+              last_page_url: "https://api.flowpos.co.uk/v1/api-keys?page=1",
               links: [
                 {
                   url: null,
@@ -174,7 +174,7 @@ export const developerResources: Resource[] = [
                 },
               ],
               next_page_url: null,
-              path: "http://api.flowpos.me/v1/api-keys",
+              path: "https://api.flowpos.co.uk/v1/api-keys",
               per_page: 15,
               prev_page_url: null,
               to: 1,
