@@ -10,29 +10,17 @@ export const constantGroups: ConstantGroup[] = [
       {
         value: "Pending",
         description:
-          "Order has been created but not yet confirmed. The default state for new orders.",
-      },
-      {
-        value: "Confirmed",
-        description: "Order has been accepted and is awaiting preparation.",
-      },
-      {
-        value: "Processing",
-        description: "Order is actively being prepared or fulfilled.",
-      },
-      {
-        value: "On Hold",
-        description: "Order is paused, awaiting customer or supplier action.",
+          "`1`. The order has been created and is not yet complete. The default state for new orders.",
       },
       {
         value: "Completed",
         description:
-          "Order has been fully fulfilled and delivered to the customer.",
+          "`5`. The order has been fulfilled.",
       },
       {
         value: "Cancelled",
         description:
-          "Order has been cancelled. Refunds are processed separately.",
+          "`6`. The order has been cancelled. Refunds are processed separately.",
       },
     ],
   },
@@ -43,20 +31,34 @@ export const constantGroups: ConstantGroup[] = [
       "The `order_mode` field indicates how the order is intended to be fulfilled.",
     constants: [
       {
-        value: "Eat-In",
-        description: "Customer is dining in at the premises.",
-      },
-      {
-        value: "Delivery",
-        description: "Order is being delivered to a customer address.",
-      },
-      {
-        value: "Collection",
-        description: "Customer will collect (click-and-collect).",
+        value: "EatIn",
+        description:
+          "`1`. The customer is dining in at the premises.",
       },
       {
         value: "Takeaway",
-        description: "Order is prepared for customer to take away immediately.",
+        description:
+          "`2`. The order is prepared for the customer to take away.",
+      },
+      {
+        value: "Collection",
+        description:
+          "`3`. The customer will collect the order (click and collect).",
+      },
+      {
+        value: "Drive Thru",
+        description:
+          "`4`. The order is handed over at a drive-through.",
+      },
+      {
+        value: "Delivery",
+        description:
+          "`5`. The order is delivered to the customer's address.",
+      },
+      {
+        value: "InStore",
+        description:
+          "`6`. A walk-in sale at the till.",
       },
     ],
   },
@@ -68,16 +70,19 @@ export const constantGroups: ConstantGroup[] = [
     constants: [
       {
         value: "epos",
-        description: "Created via the EPOS point-of-sale terminal.",
+        description:
+          "Created on the FlowPOS EPOS till.",
       },
-      { value: "online", description: "Placed through the online storefront." },
-      { value: "api", description: "Created via the REST API." },
+      {
+        value: "online",
+        description:
+          "Placed through the online store.",
+      },
       {
         value: "manual",
-        description: "Manually entered by a team member via the dashboard.",
+        description:
+          "Created from the dashboard or through the API.",
       },
-      { value: "kiosk", description: "Placed via a self-service kiosk." },
-      { value: "app", description: "Placed via a mobile application." },
     ],
   },
   {
@@ -113,6 +118,10 @@ export const constantGroups: ConstantGroup[] = [
       {
         value: "released",
         description: "An authorised payment has been released (not captured).",
+      },
+      {
+        value: "failed",
+        description: "The payment attempt failed.",
       },
     ],
   },
@@ -150,13 +159,22 @@ export const constantGroups: ConstantGroup[] = [
     id: "payment-type",
     name: "Payment Type",
     description:
-      "The `type` field on a Payment describes the payment instrument used.",
+      "The `type` field on a Payment describes how the funds are taken.",
     constants: [
-      { value: "card", description: "Card payment." },
-      { value: "cash", description: "Cash payment recorded in EPOS." },
       {
-        value: "terminal",
-        description: "Card-present payment via a Terminal reader.",
+        value: "regular",
+        description:
+          "Charged immediately.",
+      },
+      {
+        value: "pre_auth",
+        description:
+          "Funds are authorised and held, then captured or released later. Formerly called `deposit`, which is still accepted when creating a payment.",
+      },
+      {
+        value: "transfer",
+        description:
+          "A payment made by transfer. Transfer payments cannot be refunded.",
       },
     ],
   },
@@ -196,11 +214,16 @@ export const constantGroups: ConstantGroup[] = [
     id: "subscription-customer-status",
     name: "Subscription Customer Status",
     description:
-      "The `status` in a customer's subscription pivot describes their current subscription state.",
+      "The `status` on a customer's subscription describes its current state.",
     constants: [
       {
         value: "pending",
         description: "Customer has subscribed but billing has not yet started.",
+      },
+      {
+        value: "processing",
+        description:
+          "The first payment is with the payment provider and not settled yet: seconds for a card, days for a bank debit such as SEPA.",
       },
       {
         value: "active",
@@ -221,7 +244,7 @@ export const constantGroups: ConstantGroup[] = [
     id: "payment-link-type",
     name: "Payment Link Type",
     description:
-      "The `type` field on a Payment Link determines whether customers pay a fixed amount or choose their own.",
+      "The `type` field on a Payment Link determines what the customer pays for.",
     constants: [
       {
         value: "fixed_amount",
@@ -233,25 +256,38 @@ export const constantGroups: ConstantGroup[] = [
         description:
           "Customers enter their own amount, constrained by `minimum_amount` and `maximum_amount`.",
       },
+      {
+        value: "product",
+        description:
+          "Customers buy up to five of your products, with optional shipping and discount codes.",
+      },
     ],
   },
   {
     id: "domain-status",
     name: "Domain Status",
     description:
-      "The `status` field on a Domain reflects its DNS verification state.",
+      "The `status` field on a Domain reflects its state.",
     constants: [
       {
-        value: "pending_verification",
-        description: "Domain has been added but DNS is not yet verified.",
+        value: "pending",
+        description:
+          "The domain has been added but its DNS is not yet verified.",
       },
       {
         value: "active",
-        description: "DNS is verified and the domain is serving traffic.",
+        description:
+          "DNS is verified and the domain is serving traffic.",
       },
       {
-        value: "error",
-        description: "DNS check failed. Check your CNAME configuration.",
+        value: "suspended",
+        description:
+          "The domain has been suspended and is not serving traffic.",
+      },
+      {
+        value: "deleted",
+        description:
+          "The domain has been removed.",
       },
     ],
   },

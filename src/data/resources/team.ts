@@ -97,9 +97,15 @@ export const teamResources: Resource[] = [
               name: "Store Manager",
               id: 117,
               permissions: [
-                { name: "products.view" },
-                { name: "orders.view" },
-                { name: "customers.view" },
+                {
+                  name: "products.view",
+                },
+                {
+                  name: "orders.view",
+                },
+                {
+                  name: "customers.view",
+                },
               ],
             },
           },
@@ -126,14 +132,14 @@ export const teamResources: Resource[] = [
           {
             name: "name",
             type: "string",
-            required: false,
+            required: true,
             description: "Role name.",
             example: "Senior Manager",
           },
           {
             name: "permissions",
             type: "string[]",
-            required: false,
+            required: true,
             description: "Array of permission strings.",
             example: '["orders.view","orders.create","customers.view"]',
           },
@@ -144,10 +150,18 @@ export const teamResources: Resource[] = [
               id: 117,
               name: "Store Manager",
               permissions: [
-                { name: "products.view" },
-                { name: "orders.view" },
-                { name: "orders.create" },
-                { name: "customers.view" },
+                {
+                  name: "products.view",
+                },
+                {
+                  name: "orders.view",
+                },
+                {
+                  name: "orders.create",
+                },
+                {
+                  name: "customers.view",
+                },
               ],
             },
           },
@@ -170,7 +184,10 @@ export const teamResources: Resource[] = [
             example: "1",
           },
         ],
-        response: { data: null, status: true },
+        response: {
+          data: null,
+          status: true,
+        },
         responseDescription: "Returns a confirmation message.",
       },
     ],
