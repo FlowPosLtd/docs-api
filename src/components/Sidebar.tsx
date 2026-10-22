@@ -52,7 +52,7 @@ const resourceGroups = [
   },
   {
     label: "SETTINGS",
-    ids: ["domains", "online-store", "marketing"],
+    ids: ["domains", "online-store"],
   },
   {
     label: "DEVELOPER",

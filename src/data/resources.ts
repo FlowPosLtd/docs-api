@@ -11,7 +11,6 @@ import { paymentAccountResources } from "./resources/payment-account";
 import { integrationResources } from "./resources/integrations";
 import { basketResources } from "./resources/baskets";
 import { onlineStoreResources } from "./resources/online-store";
-import { marketingResources } from "./resources/marketing";
 
 export const resources: Resource[] = [
   ...customerResources,
@@ -24,7 +23,6 @@ export const resources: Resource[] = [
   ...analyticsResources,
   ...settingsResources,
   ...onlineStoreResources,
-  ...marketingResources,
   ...developerResources,
   ...integrationResources,
 ];
