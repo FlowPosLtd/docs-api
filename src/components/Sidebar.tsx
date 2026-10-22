@@ -44,7 +44,6 @@ const resourceGroups = [
       "shipping-rates",
       "addon-groups",
       "attachments",
-      "epos",
     ],
   },
   {
@@ -52,16 +51,12 @@ const resourceGroups = [
     ids: ["analytics"],
   },
   {
-    label: "TEAM & ACCESS",
-    ids: ["users", "roles"],
-  },
-  {
     label: "SETTINGS",
-    ids: ["business-settings", "domains", "online-store", "marketing"],
+    ids: ["domains", "online-store", "marketing"],
   },
   {
     label: "DEVELOPER",
-    ids: ["webhooks", "webhook-events", "api-keys", "apps"],
+    ids: ["webhooks", "webhook-events", "api-keys"],
   },
 ];
 
