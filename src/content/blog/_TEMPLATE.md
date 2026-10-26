@@ -2,14 +2,14 @@
 title: Your article title
 description: One sentence that says what the reader gets out of it.
 date: 2026-01-31
+author: Your Name           # shown as "By Your Name · FlowPOS"
 audience: businesses        # businesses | developers | everyone
 tags: [orders, how-to]
-author: FlowPOS team
 ---
 
-Files starting with "_" are never published. Copy this file, rename it to the
-URL you want (e.g. `fulfillment-pipelines.md` becomes
-`/articles/fulfillment-pipelines`), and fill it in.
+Files starting with "_" are never published. Run `npm run new-post` to start
+a post from this template, or copy it and rename it to the URL you want
+(`fulfillment-pipelines.md` becomes `/blogs/fulfillment-pipelines`).
 
 Don't add a `# Title` heading: the page shows the title from the front matter.
 Start with `##` for sections.

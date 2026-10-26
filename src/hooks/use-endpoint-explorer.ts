@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { Endpoint } from "../types";
+import { apiPage } from "../utils/paths";
 
 export function useEndpointExplorer(path: string) {
   const [activeEndpoint, setActiveEndpoint] = useState<Endpoint | null>(null);
@@ -16,8 +17,8 @@ export function useEndpointExplorer(path: string) {
   }, []);
 
   useEffect(() => {
-    const segment = path.replace(/^\//, "").split("/")[0];
-    if (["", "authentication", "errors", "constants", "articles"].includes(segment)) {
+    const segment = apiPage(path).split("/")[0];
+    if (["", "authentication", "errors", "constants"].includes(segment)) {
       setActiveEndpoint(null);
       activeEndpointIdRef.current = null;
     }

@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "sync-samples": "tsx scripts/sync-samples.ts"
+    "sync-samples": "tsx scripts/sync-samples.ts",
+    "new-post": "tsx scripts/new-post.ts"
   },
   "dependencies": {
     "@markdoc/markdoc": "^0.5.7",

@@ -1,5 +1,6 @@
 import { Link } from "../utils/use-router";
 import { resources } from "../data/resources";
+import { apiPath } from "../utils/paths";
 
 export function HomePage() {
   return (
@@ -65,22 +66,22 @@ export function HomePage() {
             {
               title: "Authentication",
               desc: "All requests require x-api-key header",
-              href: "/authentication",
+              href: apiPath("authentication"),
             },
             {
               title: "Errors",
               desc: "Standard HTTP status codes + error shapes",
-              href: "/errors",
+              href: apiPath("errors"),
             },
             {
               title: "Pagination",
               desc: "All list endpoints return cursor-based paginated responses",
-              href: "/orders",
+              href: apiPath("orders"),
             },
             {
               title: "Pagination",
               desc: "All list endpoints return paginated responses",
-              href: "/customers",
+              href: apiPath("customers"),
             },
           ].map((item) => (
             <Link
@@ -105,7 +106,7 @@ export function HomePage() {
           {resources.map((resource) => (
             <Link
               key={resource.id}
-              href={`/${resource.id}`}
+              href={apiPath(resource.id)}
               className="flex items-center justify-between p-3 rounded-lg border border-line bg-canvas hover:border-line-strong hover:bg-canvas-subtle transition-colors group"
             >
               <div>

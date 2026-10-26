@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "../utils/use-router";
 import { MethodBadge } from "./MethodBadge";
 import { resources } from "../data/resources";
+import { apiPath } from "../utils/paths";
 import type { HttpMethod } from "../types";
 
 interface SidebarProps {
@@ -11,10 +12,9 @@ interface SidebarProps {
 }
 
 const topLinks = [
-  { href: "/", label: "Introduction" },
-  { href: "/authentication", label: "Authentication" },
-  { href: "/errors", label: "Errors" },
-  { href: "/articles", label: "Articles" },
+  { href: apiPath(), label: "Introduction" },
+  { href: apiPath("authentication"), label: "Authentication" },
+  { href: apiPath("errors"), label: "Errors" },
 ];
 
 // Sections appear in the order listed here.
@@ -35,7 +35,7 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
     resources.forEach((r) => {
-      if (currentPath === `/${r.id}` || currentPath.startsWith(`/${r.id}/`)) {
+      if (currentPath === apiPath(r.id) || currentPath.startsWith(`${apiPath(r.id)}/`)) {
         initial[r.id] = true;
       }
     });
@@ -44,10 +44,7 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
 
   const toggle = (id: string) =>
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
-  // Articles stays highlighted while reading one (/articles/<slug>).
-  const isActive = (href: string) =>
-    currentPath === href ||
-    (href === "/articles" && currentPath.startsWith("/articles/"));
+  const isActive = (href: string) => currentPath === href;
 
   return (
     <nav className="h-full overflow-y-auto py-4">
@@ -78,15 +75,15 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
             <p className="px-3 mb-1.5 t-nav-heading">{group.label}</p>
             {groupResources.map((resource) => {
               const isResourceActive =
-                currentPath === `/${resource.id}` ||
-                currentPath.startsWith(`/${resource.id}/`);
+                currentPath === apiPath(resource.id) ||
+                currentPath.startsWith(`${apiPath(resource.id)}/`);
               const isOpen = expanded[resource.id] ?? isResourceActive;
               return (
                 <div key={resource.id}>
                   <button
                     onClick={() => {
                       toggle(resource.id);
-                      navigate(`/${resource.id}`);
+                      navigate(apiPath(resource.id));
                       onNavigate();
                     }}
                     className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md text-sm transition-colors text-left ${
@@ -117,7 +114,7 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
                         <button
                           key={ep.id}
                           onClick={() => {
-                            navigate(`/${resource.id}`);
+                            navigate(apiPath(resource.id));
                             onNavigate();
                             setTimeout(() => {
                               document.getElementById(ep.id)?.scrollIntoView({
