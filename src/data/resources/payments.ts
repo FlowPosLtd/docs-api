@@ -22,6 +22,7 @@ export const paymentResources: Resource[] = [
       { name: "amount_refunded", type: "number", required: false, description: "Total amount refunded so far." },
       { name: "application_fee_amount", type: "number", required: false, description: "FlowPOS platform fee applied to this payment." },
       { name: "url", type: "string", required: false, description: "Hosted payment page URL the customer can use to complete payment." },
+      { name: "return_url", type: "string", required: false, nullable: true, description: "Where the customer is sent after paying on the hosted payment page, with `paymentId` and `status=paid` added to the query string. `null` shows the FlowPOS success page." },
       { name: "is_refundable", type: "boolean", required: false, description: "Whether this payment is eligible for a refund." },
       { name: "is_cash", type: "boolean", required: false, description: "Whether this was a cash payment recorded in EPOS." },
       { name: "source", type: "string", required: false, description: "Where the payment came from.", enum: ["order", "subscription", "terminal_reader", "payment_link", "api", "manual"] },
@@ -287,7 +288,7 @@ export const paymentResources: Resource[] = [
         method: "POST",
         path: "/payments",
         title: "Create a payment",
-        description: "Creates a new payment intent.",
+        description: "Creates a payment and returns its hosted payment page in `url`. Send the customer there to pay; set `return_url` to bring them back to your site afterwards.",
         bodyParams: [
           {
             name: "amount",
@@ -319,6 +320,18 @@ export const paymentResources: Resource[] = [
             description: "Customer email address to send the receipt to.",
             example: "jane@example.com",
           },
+          {
+            name: "return_url",
+            type: "string",
+            required: false,
+            nullable: true,
+            description: "Where to send the customer after they pay on the hosted payment page. Must start with `https://`, max 2048 characters. FlowPOS adds `paymentId` and `status=paid` to its query string (before any `#fragment`). Leave it out to show the FlowPOS success page.",
+            example: "https://yourbusiness.com/checkout/complete",
+          },
+        ],
+        notes: [
+          "After a successful payment the customer is redirected to `return_url?paymentId=11571&status=paid`. Treat this as a signal to show a thank-you page, not as proof of payment: confirm with the `payment.paid` webhook or by retrieving the payment, since the webhook can arrive a moment later.",
+          "`return_url` replaces the tenant-wide `success_redirect_url` payment setting, which is deprecated and only used for payments created without a `return_url`.",
         ],
         response: {
           data: {
@@ -338,6 +351,7 @@ export const paymentResources: Resource[] = [
               created_at: "2026-06-11T13:30:32.000000Z",
               id: 11571,
               url: "https://payment.flowpos.co.uk/6526fe79-47a1-4a0e-9244-dae24e26b43b",
+              return_url: "https://yourbusiness.com/checkout/complete",
               amount_authorised: 20,
               is_refundable: false,
               is_cash: false,
@@ -2528,7 +2542,7 @@ export const paymentResources: Resource[] = [
     attributes: [
       { name: "id", type: "integer", required: false, description: "Unique numeric identifier for the settings record." },
       { name: "tenant_id", type: "integer", required: false, description: "ID of the tenant these settings belong to." },
-      { name: "success_redirect_url", type: "string", required: false, nullable: true, description: "URL to redirect customers to after a successful payment." },
+      { name: "success_redirect_url", type: "string", required: false, nullable: true, description: "**Deprecated.** The old account-wide redirect after a successful payment. It can no longer be changed, and is only used for payments created without a `return_url`. Set `return_url` when you create a payment instead." },
       { name: "send_receipt", type: "boolean", required: false, description: "Whether to automatically email a receipt after payment." },
       { name: "created_at", type: "timestamp", required: false, description: "Time the settings record was created." },
       { name: "updated_at", type: "timestamp", required: false, description: "Time the settings were last modified." },
@@ -2563,6 +2577,9 @@ export const paymentResources: Resource[] = [
         path: "/payment-settings",
         title: "Update payment settings",
         description: "Updates the payment processing configuration.",
+        notes: [
+          "`success_redirect_url` can no longer be set here. To send customers back to your site after paying, pass `return_url` when you create each payment.",
+        ],
         bodyParams: [
           {
             name: "send_receipt",
@@ -2570,13 +2587,6 @@ export const paymentResources: Resource[] = [
             required: false,
             description: "Whether to automatically email a receipt to the customer after a successful payment.",
             example: "true",
-          },
-          {
-            name: "success_redirect_url",
-            type: "string",
-            required: false,
-            description: "URL to redirect customers to after a successful payment. Leave null to show the default FlowPOS success page.",
-            example: "https://yourbusiness.com/thank-you",
           },
           {
             name: "domain_id",

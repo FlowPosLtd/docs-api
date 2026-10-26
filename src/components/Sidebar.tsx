@@ -4,6 +4,7 @@ import { Link } from "../utils/use-router";
 import { MethodBadge } from "./MethodBadge";
 import { resources } from "../data/resources";
 import { apiPath } from "../utils/paths";
+import { resourceGroups } from "../data/resource-groups";
 import type { HttpMethod } from "../types";
 
 interface SidebarProps {
@@ -15,19 +16,6 @@ const topLinks = [
   { href: apiPath(), label: "Introduction" },
   { href: apiPath("authentication"), label: "Authentication" },
   { href: apiPath("errors"), label: "Errors" },
-];
-
-// Sections appear in the order listed here.
-const resourceGroups = [
-  { label: "Catalog", ids: ["products", "categories", "addon-groups", "inventory", "attachments"] },
-  { label: "Customers", ids: ["customers", "customer-groups"] },
-  { label: "Sales", ids: ["baskets", "orders", "discounts", "shipping-rates"] },
-  { label: "Payments", ids: ["payments", "payment-links", "subscriptions", "disputes"] },
-  { label: "Payouts & Account", ids: ["payouts", "payment-account", "payment-settings"] },
-  { label: "Reports", ids: ["analytics"] },
-  { label: "Business Setup", ids: ["locations", "terminal-readers", "employees"] },
-  { label: "Online Store", ids: ["online-store", "domains"] },
-  { label: "Developer", ids: ["api-keys", "webhooks", "webhook-events"] },
 ];
 
 export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
@@ -57,7 +45,7 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
             onClick={onNavigate}
             className={`flex items-center px-3 py-1.5 rounded-md text-sm transition-colors ${
               isActive(link.href)
-                ? "bg-accent-faint text-accent-ink font-medium border-accent-muted"
+                ? "bg-accent-faint text-accent-ink font-medium shadow-[inset_2px_0_0_var(--accent)]"
                 : "text-ink-secondary hover:text-ink-primary hover:bg-canvas-subtle"
             }`}
           >
@@ -88,7 +76,7 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
                     }}
                     className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md text-sm transition-colors text-left ${
                       isResourceActive
-                        ? "text-ink-primary font-medium"
+                        ? "text-accent-ink font-medium bg-accent-faint shadow-[inset_2px_0_0_var(--accent)]"
                         : "text-ink-secondary hover:text-ink-primary hover:bg-canvas-subtle"
                     }`}
                   >

@@ -12,6 +12,8 @@
     "new-post": "tsx scripts/new-post.ts"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@markdoc/markdoc": "^0.5.7",
     "axios": "^1.17.0",
     "react": "^19.2.6",

@@ -159,15 +159,18 @@ export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
       >
         <div className="h-14 flex items-center px-5 border-b border-line shrink-0">
           <Link
-            href={apiPath()}
+            href="/"
             className="flex items-center gap-2.5"
             onClick={closeSidebar}
           >
             <FlowPOSIcon className="w-7 h-7 shrink-0" />
             <span className="text-sm font-semibold text-ink-primary">
-              FlowPOS API
+              FlowPOS Docs
             </span>
           </Link>
+          <span className="ml-auto rounded-md border border-accent-border bg-accent-faint px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent-ink">
+            API v1
+          </span>
         </div>
         <div className="flex-1 overflow-hidden">
           <Sidebar
@@ -221,16 +224,25 @@ export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
             </kbd>
           </button>
 
-          <div className="ml-auto flex items-center gap-2">
+          <nav className="hidden md:flex items-center gap-1 ml-2">
             <Link
-              href="/"
-              className="hidden sm:block text-xs font-medium text-ink-tertiary hover:text-ink-primary transition-colors px-2 py-1"
+              href={apiPath()}
+              className="px-3 py-1.5 rounded-md text-sm font-medium text-ink-primary bg-canvas-subtle"
             >
-              Home
+              API reference
             </Link>
             <Link
               href={blogPath()}
-              className="text-xs font-medium text-ink-tertiary hover:text-ink-primary transition-colors px-2 py-1"
+              className="px-3 py-1.5 rounded-md text-sm font-medium text-ink-secondary hover:text-ink-primary transition-colors"
+            >
+              Blog
+            </Link>
+          </nav>
+
+          <div className="ml-auto flex items-center gap-1">
+            <Link
+              href={blogPath()}
+              className="md:hidden px-2 py-1.5 text-sm font-medium text-ink-secondary hover:text-ink-primary"
             >
               Blog
             </Link>
@@ -267,9 +279,9 @@ export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
               href="https://app.flowpos.co.uk/"
               target="_blank"
               rel="noreferrer"
-              className="hidden sm:block text-xs font-medium text-ink-tertiary hover:text-ink-primary transition-colors px-2 py-1"
+              className="hidden sm:inline-flex px-3 py-1.5 rounded-md text-sm font-medium text-ink-secondary hover:text-ink-primary transition-colors"
             >
-              flowpos.co.uk ↗
+              Dashboard ↗
             </a>
           </div>
         </header>

@@ -1,3 +1,4 @@
+import { RichText } from "./RichText";
 import { memo, useState } from "react";
 import type { Param } from "../types";
 
@@ -127,7 +128,7 @@ function ParamRow({
         {/* Description */}
         {param.description && (
           <p className="text-[13px] text-ink-secondary leading-relaxed mb-1.5">
-            {param.description}
+            <RichText text={param.description} />
           </p>
         )}
 
