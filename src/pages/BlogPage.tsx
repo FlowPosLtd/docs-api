@@ -49,7 +49,7 @@ export function BlogPage() {
                   replace: true,
                 })
               }
-              className={`cursor-pointer px-3 py-1.5 rounded-full text-sm border transition-colors ${
+              className={`cursor-pointer px-3 py-1.5 rounded text-sm border transition-colors ${
                 active
                   ? "bg-accent-faint border-accent-muted text-accent-ink font-medium"
                   : "border-line text-ink-secondary hover:text-ink-primary hover:border-line-strong"

@@ -26,10 +26,6 @@ export function LandingPage() {
     <div>
       <section className="border-b border-line bg-canvas-subtle">
         <div className="max-w-5xl mx-auto px-6 py-16 sm:py-24">
-          <p className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-faint border border-accent-muted text-accent-ink text-xs font-medium mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-            FlowPOS Docs
-          </p>
           <h1 className="t-display text-4xl sm:text-5xl max-w-3xl mb-5">
             Run your business on FlowPOS, and build on it.
           </h1>
@@ -43,7 +39,7 @@ export function LandingPage() {
               href={apiPath()}
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white hover:bg-accent-hover transition-colors"
             >
-              Read the developer guide →
+              Read the developer guide
             </Link>
             <Link
               href={blogPath()}
@@ -58,7 +54,6 @@ export function LandingPage() {
       <section className="max-w-5xl mx-auto px-6 py-14">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col rounded-xl border border-line p-6">
-            <p className="t-caption mb-2">For developers</p>
             <h2 className="t-title mb-2">Developer guide</h2>
             <p className="t-body-sm mb-5">
               {resources.length} resources and {endpointCount} endpoints, with
@@ -70,7 +65,7 @@ export function LandingPage() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="px-3 py-1 rounded-full border border-line text-xs font-medium text-ink-secondary hover:text-accent-ink hover:border-accent-muted transition-colors"
+                  className="px-2.5 py-1 rounded border border-line text-xs font-medium text-ink-secondary hover:text-accent-ink hover:border-accent-muted transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -80,12 +75,11 @@ export function LandingPage() {
               href={apiPath()}
               className="mt-auto text-sm font-semibold text-accent-ink hover:underline"
             >
-              Open the API reference →
+              Open the API reference
             </Link>
           </div>
 
           <div className="flex flex-col rounded-xl border border-line p-6">
-            <p className="t-caption mb-2">For everyone</p>
             <h2 className="t-title mb-2">Blog</h2>
             <p className="t-body-sm mb-6">
               What's new in FlowPOS, step-by-step how-tos for you and your
@@ -96,7 +90,7 @@ export function LandingPage() {
               href={blogPath()}
               className="mt-auto text-sm font-semibold text-accent-ink hover:underline"
             >
-              Read the blog →
+              Read the blog
             </Link>
           </div>
         </div>
@@ -110,7 +104,7 @@ export function LandingPage() {
               href={blogPath()}
               className="text-sm font-medium text-accent-ink hover:underline shrink-0"
             >
-              All posts →
+              All posts
             </Link>
           )}
         </div>

@@ -6,11 +6,11 @@ const STYLES: Record<PostAudience, string> = {
   everyone: "bg-accent-faint text-accent-ink",
 };
 
-/** Who a post is written for, as a small pill. */
+/** Who a post is written for, as a small badge. */
 export function AudienceBadge({ audience }: { audience: PostAudience }) {
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STYLES[audience]}`}
+      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${STYLES[audience]}`}
     >
       {AUDIENCE_LABELS[audience]}
     </span>

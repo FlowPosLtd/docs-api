@@ -22,9 +22,9 @@ export function BlogPostPage() {
     <article className="max-w-3xl mx-auto px-6 py-12 sm:py-16">
       <Link
         href={blogPath()}
-        className="inline-flex items-center gap-1 text-sm text-ink-tertiary hover:text-ink-primary transition-colors mb-6"
+        className="inline-flex text-sm text-ink-tertiary hover:text-ink-primary transition-colors mb-6"
       >
-        ← All posts
+        All posts
       </Link>
 
       <header className="mb-8 pb-8 border-b border-line">
@@ -77,8 +77,8 @@ function NeighbourLink({
         alignEnd ? "sm:text-right" : ""
       }`}
     >
-      <span className="t-caption block mb-1">
-        {alignEnd ? `${label} →` : `← ${label}`}
+      <span className="block text-xs text-ink-tertiary mb-1">
+        {label}
       </span>
       <span className="t-subheading">{title}</span>
     </Link>

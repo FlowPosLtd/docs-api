@@ -57,7 +57,7 @@ export const CodeExamples = memo(function CodeExamples({
                 : "bg-code-head text-code-muted hover:text-code border border-code"
             }`}
           >
-            {isTryItOpen ? "← Code" : "Try it ▶"}
+            {isTryItOpen ? "Code" : "Try it"}
           </button>
         )}
       </div>

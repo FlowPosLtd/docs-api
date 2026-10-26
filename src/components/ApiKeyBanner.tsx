@@ -23,7 +23,7 @@ export function ApiKeyBanner({ apiKey, baseUrl, onSave }: ApiKeyBannerProps) {
     <>
       <button
         onClick={() => { setDraftKey(apiKey); setDraftUrl(baseUrl); setOpen(true); }}
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-2.5 rounded-full bg-pitch-800 border border-pitch-600 text-pitch-200 text-xs font-medium shadow-xl hover:bg-pitch-700 transition-colors"
+        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-pitch-800 border border-pitch-600 text-pitch-200 text-xs font-medium shadow-xl hover:bg-pitch-700 transition-colors"
         title="Configure API key"
       >
         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -36,7 +36,7 @@ export function ApiKeyBanner({ apiKey, baseUrl, onSave }: ApiKeyBannerProps) {
           </span>
         ) : (
           <span className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-put animate-pulse"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-put"></span>
             Set API Key
           </span>
         )}
