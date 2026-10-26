@@ -1,3 +1,4 @@
+import { RichText } from "./RichText";
 import { memo, useCallback } from "react";
 import { MethodBadge } from "./MethodBadge";
 import { ParamTable } from "./ParamTable";
@@ -23,7 +24,7 @@ export const EndpointSection = memo(function EndpointSection({ endpoint, onFocus
         </div>
       </div>
 
-      <p className="t-body mb-6">{endpoint.description}</p>
+      <p className="t-body mb-6"><RichText text={endpoint.description} /></p>
 
       {endpoint.notes && endpoint.notes.length > 0 && (
         <div className="mb-6 flex flex-col gap-2">
@@ -43,7 +44,7 @@ export const EndpointSection = memo(function EndpointSection({ endpoint, onFocus
                   clipRule="evenodd"
                 />
               </svg>
-              {note}
+              <span><RichText text={note} /></span>
             </div>
           ))}
         </div>

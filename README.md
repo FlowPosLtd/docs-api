@@ -1,73 +1,41 @@
-# React + TypeScript + Vite
+# FlowPOS Docs
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The FlowPOS documentation site: the home page, the API reference and the blog. It's a static React + Vite app; there's no backend.
 
-Currently, two official plugins are available:
+| URL | What |
+|---|---|
+| `/` | Home page |
+| `/api/...` | API reference (old links like `/orders` redirect to `/api/orders`) |
+| `/blogs/...` | Blog |
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev        # http://localhost:5173
+npm run build      # type-check + production build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Writing a blog post
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Anyone can write a post: it's a Markdown file and a pull request.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. Branch from `main`: `git checkout main && git pull && git checkout -b blog/<short-name>`
+2. Run **`npm run new-post`**. It asks for:
+   - the title
+   - **your name**, suggesting your git user name. The post shows it as **"By Your Name · FlowPOS"**.
+   - who it's for (`businesses`, `developers` or `everyone`), a one-line description, and tags
+
+   It then creates `src/content/blog/<url>.md`.
+3. Write the post below the front matter:
+   - Start sections with `##`, because the page shows the title itself.
+   - Keep it plain and friendly, with an example for each idea.
+   - Callouts, tables, links and fenced code blocks work:
+     ````
+     {% callout type="info" title="Good to know" %}…{% /callout %}
+     ```json {% label="200 OK" %}
+     { "status": true }
+     ```
+     ````
+4. Preview with `npm run dev` at `/blogs/<url>`, then run `npm run build`.
+5. Commit, push, and **open a pull request to `main`**. The post goes live once it's merged.
+
+The file name is the URL: `src/content/blog/fulfillment-pipelines.md` becomes `/blogs/fulfillment-pipelines`. Files starting with `_` (like `_TEMPLATE.md`) are never published.

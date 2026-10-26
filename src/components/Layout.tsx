@@ -1,6 +1,9 @@
 import { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
+import { FlowPOSIcon } from "./FlowPOSIcon";
+import { useTheme } from "../hooks/use-theme";
+import { apiPath, blogPath } from "../utils/paths";
 import { Link } from "../utils/use-router";
 import { resources } from "../data/resources";
 import { METHOD_PILL } from "../utils/method-colors";
@@ -10,47 +13,6 @@ interface LayoutProps {
   currentPath: string;
   children: React.ReactNode;
   rightPanel?: React.ReactNode;
-}
-
-function FlowPOSIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 43 43"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M9.82 0C4.4 0 0 4.39 0 9.82V32.54C0 37.97 4.4 42.36 9.82 42.36H32.54C37.97 42.36 42.36 37.96 42.36 32.54V9.82C42.37 4.39 37.98 0 32.55 0H9.82Z"
-        fill="url(#fp-g)"
-      />
-      <path
-        d="M33.48 13.58H8.9C6.7 13.58 4.92 11.8 4.92 9.61C4.92 7.41 6.7 5.64 8.9 5.64H33.48C35.67 5.64 37.45 7.42 37.45 9.62C37.45 11.81 35.67 13.58 33.48 13.58Z"
-        fill="white"
-      />
-      <path
-        d="M21.18 25.15H8.9C6.7 25.15 4.92 23.37 4.92 21.18C4.92 18.98 6.7 17.2 8.9 17.2H21.18C23.38 17.2 25.16 18.98 25.16 21.18C25.16 23.38 23.38 25.15 21.18 25.15Z"
-        fill="white"
-      />
-      <path
-        d="M15.05 36.72H8.9C6.7 36.72 4.92 34.94 4.92 32.74C4.92 30.55 6.7 28.77 8.9 28.77H15.05C17.24 28.77 19.02 30.55 19.02 32.74C19.01 34.95 17.23 36.72 15.05 36.72Z"
-        fill="white"
-      />
-      <defs>
-        <linearGradient
-          id="fp-g"
-          x1="-0.62"
-          y1="42.99"
-          x2="44.14"
-          y2="-1.78"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#7728EB" />
-          <stop offset="1" stopColor="#E876E1" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
 }
 
 const SearchModal = memo(function SearchModal({ onClose }: { onClose: () => void }) {
@@ -113,7 +75,7 @@ const SearchModal = memo(function SearchModal({ onClose }: { onClose: () => void
               <li key={r.id}>
                 <button
                   onClick={() => {
-                    navigate(`/${r.resourceId}`);
+                    navigate(apiPath(r.resourceId));
                     onClose();
                     setTimeout(() => {
                       document
@@ -158,23 +120,13 @@ const SearchModal = memo(function SearchModal({ onClose }: { onClose: () => void
 });
 
 export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
-  const [dark, setDark] = useState<boolean>(() => {
-    const stored = localStorage.getItem("theme");
-    if (stored) return stored === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
+  const { dark, toggleDark } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
   const closeSearch  = useCallback(() => setSearchOpen(false), []);
-  const toggleDark   = useCallback(() => setDark((d) => !d), []);
   const openSearch   = useCallback(() => setSearchOpen(true), []);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", dark);
-    localStorage.setItem("theme", dark ? "dark" : "light");
-  }, [dark]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -213,9 +165,12 @@ export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
           >
             <FlowPOSIcon className="w-7 h-7 shrink-0" />
             <span className="text-sm font-semibold text-ink-primary">
-              FlowPOS API
+              FlowPOS Docs
             </span>
           </Link>
+          <span className="ml-auto rounded-md border border-accent-border bg-accent-faint px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent-ink">
+            API v1
+          </span>
         </div>
         <div className="flex-1 overflow-hidden">
           <Sidebar
@@ -269,7 +224,28 @@ export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
             </kbd>
           </button>
 
-          <div className="ml-auto flex items-center gap-2">
+          <nav className="hidden md:flex items-center gap-1 ml-2">
+            <Link
+              href={apiPath()}
+              className="px-3 py-1.5 rounded-md text-sm font-medium text-ink-primary bg-canvas-subtle"
+            >
+              API reference
+            </Link>
+            <Link
+              href={blogPath()}
+              className="px-3 py-1.5 rounded-md text-sm font-medium text-ink-secondary hover:text-ink-primary transition-colors"
+            >
+              Blog
+            </Link>
+          </nav>
+
+          <div className="ml-auto flex items-center gap-1">
+            <Link
+              href={blogPath()}
+              className="md:hidden px-2 py-1.5 text-sm font-medium text-ink-secondary hover:text-ink-primary"
+            >
+              Blog
+            </Link>
             <button
               onClick={toggleDark}
               className="cursor-pointer p-1.5 rounded-md text-ink-secondary hover:bg-canvas-subtle transition-colors"
@@ -303,9 +279,9 @@ export function Layout({ currentPath, children, rightPanel }: LayoutProps) {
               href="https://app.flowpos.co.uk/"
               target="_blank"
               rel="noreferrer"
-              className="hidden sm:block text-xs font-medium text-ink-tertiary hover:text-ink-primary transition-colors px-2 py-1"
+              className="hidden sm:inline-flex px-3 py-1.5 rounded-md text-sm font-medium text-ink-secondary hover:text-ink-primary transition-colors"
             >
-              flowpos.co.uk ↗
+              Dashboard ↗
             </a>
           </div>
         </header>

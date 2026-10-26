@@ -80,6 +80,28 @@ const nodes: Config["nodes"] = {
     },
   },
 
+  // Tables render through our components so they get the docs' styling.
+  table: { render: "Table" },
+  thead: { render: "THead" },
+  tbody: { render: "TBody" },
+  tr: { render: "Tr" },
+  th: { render: "Th" },
+  td: { render: "Td" },
+
+  link: {
+    render: "DocLink",
+    attributes: {
+      href: { type: String },
+    },
+    transform(node, config) {
+      return new Markdoc.Tag(
+        "DocLink",
+        { href: node.attributes.href },
+        node.transformChildren(config),
+      );
+    },
+  },
+
   hr: {
     render: "Hr",
     transform() {

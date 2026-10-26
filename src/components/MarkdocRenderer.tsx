@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import Markdoc, { type RenderableTreeNode } from "@markdoc/markdoc";
 import { markdocConfig } from "../markdoc/config";
+import { Link as RouterLink } from "react-router-dom";
 import { CodeBlock } from "./CodeBlock";
 
 function Heading({
@@ -33,6 +34,46 @@ function Em({ children }: { children: React.ReactNode }) {
   return <em className="italic">{children}</em>;
 }
 
+type Children = { children?: React.ReactNode };
+
+function Table({ children }: Children) {
+  return (
+    <div className="mb-6 overflow-x-auto rounded-lg border border-line">
+      <table className="w-full text-left text-sm">{children}</table>
+    </div>
+  );
+}
+const THead = ({ children }: Children) => (
+  <thead className="bg-canvas-subtle text-ink-primary">{children}</thead>
+);
+const TBody = ({ children }: Children) => (
+  <tbody className="divide-y divide-line">{children}</tbody>
+);
+const Tr = ({ children }: Children) => <tr>{children}</tr>;
+const Th = ({ children }: Children) => (
+  <th className="px-4 py-2.5 font-semibold border-b border-line whitespace-nowrap">{children}</th>
+);
+const Td = ({ children }: Children) => (
+  <td className="px-4 py-2.5 align-top text-ink-secondary">{children}</td>
+);
+
+/** Site links ("/api/orders") stay in the app; anything else opens in a new tab. */
+function DocLink({ href, children }: { href: string; children: React.ReactNode }) {
+  const className = "text-accent-ink font-medium underline underline-offset-2 decoration-accent-border hover:decoration-accent";
+  if (href.startsWith("/")) {
+    return (
+      <RouterLink to={href} className={className}>
+        {children}
+      </RouterLink>
+    );
+  }
+  return (
+    <a href={href} target="_blank" rel="noreferrer" className={className}>
+      {children}
+    </a>
+  );
+}
+
 function Hr() {
   return <hr className="border-line my-8" />;
 }
@@ -45,15 +86,23 @@ function List({
   children: React.ReactNode;
 }) {
   if (ordered) {
-    return <ol className="space-y-2 mb-4 ml-1">{children}</ol>;
+    return (
+      <ol className="space-y-2 mb-4 pl-6 list-decimal marker:text-ink-tertiary">
+        {children}
+      </ol>
+    );
   }
   return (
-    <ul className="space-y-2 mb-4 ml-1 list-disc list-inside">{children}</ul>
+    <ul className="space-y-2 mb-4 pl-6 list-disc marker:text-ink-tertiary">
+      {children}
+    </ul>
   );
 }
 
 function ListItem({ children }: { children: React.ReactNode }) {
-  return <li className="flex items-start gap-3 t-body-sm">{children}</li>;
+  // Not a flex row: inline children (bold, code, links) would each become a
+  // separate flex item, losing their spaces, and the list marker would go.
+  return <li className="t-body-sm pl-1">{children}</li>;
 }
 
 function CodePanel({
@@ -170,6 +219,13 @@ const components = {
   Strong,
   Em,
   Hr,
+  DocLink,
+  Table,
+  THead,
+  TBody,
+  Tr,
+  Th,
+  Td,
   List,
   ListItem,
   CodePanel,

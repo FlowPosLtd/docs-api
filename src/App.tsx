@@ -1,22 +1,31 @@
-import { Routes, Route, useParams, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { useApiConfig } from "./hooks/use-api-config";
 import { useEndpointExplorer } from "./hooks/use-endpoint-explorer";
 import { useRouter } from "./utils/use-router";
+import { apiPage, apiPath } from "./utils/paths";
 import { Layout } from "./components/Layout";
+import { SiteLayout } from "./components/SiteLayout";
+import { NotFound } from "./components/NotFound";
 import { ApiKeyBanner } from "./components/ApiKeyBanner";
 import { HomePage } from "./pages/HomePage";
 import { AuthPage } from "./pages/AuthPage";
 import { ErrorsPage } from "./pages/ErrorsPage";
+import { LandingPage } from "./pages/LandingPage";
+import { BlogPage } from "./pages/BlogPage";
+import { BlogPostPage } from "./pages/BlogPostPage";
 import { RightPanelContent } from "./pages/ResourcePage";
 import { ResourcePageContent } from "./pages/ResourcePageContent";
 import { getResource } from "./data/resources";
 
 type ExplorerState = ReturnType<typeof useEndpointExplorer>;
 
+/** Pages that lived at the root before the API reference moved to /api. */
+const LEGACY_PAGES = ["authentication", "errors"];
+
 function ResourceRoute({ explorer }: { explorer: ExplorerState }) {
   const { resourceId } = useParams<{ resourceId: string }>();
   const resource = resourceId ? getResource(resourceId) : undefined;
-  if (!resource) return <NotFoundPage />;
+  if (!resource) return <NotFound />;
   return (
     <ResourcePageContent
       key={resource.id}
@@ -26,28 +35,13 @@ function ResourceRoute({ explorer }: { explorer: ExplorerState }) {
   );
 }
 
-function NotFoundPage() {
-  const navigate = useNavigate();
-  return (
-    <div className="text-center py-20">
-      <p className="text-5xl font-bold text-ink-tertiary mb-4">404</p>
-      <p className="t-body-sm mb-4">Page not found.</p>
-      <button
-        onClick={() => navigate("/")}
-        className="text-accent-ink hover:underline text-sm"
-      >
-        Back to home →
-      </button>
-    </div>
-  );
-}
-
-export default function App() {
+/** The API reference: sidebar, pages and the request explorer, under /api. */
+function ApiDocs() {
   const { path } = useRouter();
   const { apiKey, baseUrl, handleSaveConfig } = useApiConfig();
   const explorer = useEndpointExplorer(path);
 
-  const isWebhooksPage = path.startsWith("/webhook-events");
+  const isWebhooksPage = apiPage(path).startsWith("webhook-events");
   const rightPanel = explorer.activeEndpoint && !isWebhooksPage ? (
     <RightPanelContent
       endpoint={explorer.activeEndpoint}
@@ -62,21 +56,44 @@ export default function App() {
     <>
       <Layout currentPath={path} rightPanel={rightPanel}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/authentication" element={<AuthPage />} />
-          <Route path="/errors" element={<ErrorsPage />} />
-          <Route
-            path="/:resourceId"
-            element={<ResourceRoute explorer={explorer} />}
-          />
-          <Route path="*" element={<NotFoundPage />} />
+          <Route index element={<HomePage />} />
+          <Route path="authentication" element={<AuthPage />} />
+          <Route path="errors" element={<ErrorsPage />} />
+          <Route path=":resourceId" element={<ResourceRoute explorer={explorer} />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
-      <ApiKeyBanner
-        apiKey={apiKey}
-        baseUrl={baseUrl}
-        onSave={handleSaveConfig}
-      />
+      <ApiKeyBanner apiKey={apiKey} baseUrl={baseUrl} onSave={handleSaveConfig} />
     </>
+  );
+}
+
+/**
+ * Links shared before the move (/orders, /authentication#api-keys) still
+ * work: they're sent on to the same page under /api, anchor included.
+ * Anything else is a 404.
+ */
+function LegacyRedirect() {
+  const { pathname, search, hash } = useLocation();
+  const [first] = pathname.replace(/^\//, "").split("/");
+
+  if (first && (LEGACY_PAGES.includes(first) || getResource(first))) {
+    return <Navigate to={`${apiPath(pathname)}${search}${hash}`} replace />;
+  }
+
+  return <NotFound />;
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/api/*" element={<ApiDocs />} />
+      <Route element={<SiteLayout />}>
+        <Route index element={<LandingPage />} />
+        <Route path="blogs" element={<BlogPage />} />
+        <Route path="blogs/:slug" element={<BlogPostPage />} />
+        <Route path="*" element={<LegacyRedirect />} />
+      </Route>
+    </Routes>
   );
 }

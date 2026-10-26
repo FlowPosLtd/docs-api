@@ -1,3 +1,4 @@
+import { RichText } from "../components/RichText";
 import { useState, useCallback, useEffect, useRef, memo } from "react";
 import { EndpointSection } from "../components/EndpointSection";
 import { ParamTable } from "../components/ParamTable";
@@ -120,7 +121,9 @@ export const ResourcePageContent = memo(function ResourcePageContent({
     <div>
       <div className="mb-8">
         <h1 className="t-title mb-2">{resource.name}</h1>
-        <p className="t-body">{resource.description}</p>
+        <p className="t-body">
+          <RichText text={resource.description} />
+        </p>
       </div>
 
       {resource.attributes && resource.attributes.length > 0 && (

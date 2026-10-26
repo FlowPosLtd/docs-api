@@ -1,3 +1,4 @@
+import { RichText } from "./RichText";
 import { memo, useState } from "react";
 import { stripStatus } from "../utils/strip-status";
 
@@ -79,7 +80,11 @@ export const ResponseShape = memo(function ResponseShape({ data, description }: 
   return (
     <div className="mb-6">
       <h4 className="t-caption mb-3">Response</h4>
-      {description && <p className="t-body-sm mb-3">{description}</p>}
+      {description && (
+        <p className="t-body-sm mb-3">
+          <RichText text={description} />
+        </p>
+      )}
       <div className="bg-code rounded-lg overflow-hidden border border-code">
         <div className="flex items-center justify-between gap-2 px-4 py-2 border-b border-code bg-code-head">
           <div className="flex items-center gap-2">
