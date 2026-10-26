@@ -17,7 +17,7 @@ export function useEndpointExplorer(path: string) {
 
   useEffect(() => {
     const segment = path.replace(/^\//, "").split("/")[0];
-    if (["", "authentication", "errors", "constants"].includes(segment)) {
+    if (["", "authentication", "errors", "constants", "articles"].includes(segment)) {
       setActiveEndpoint(null);
       activeEndpointIdRef.current = null;
     }

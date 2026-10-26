@@ -7,6 +7,8 @@ import { ApiKeyBanner } from "./components/ApiKeyBanner";
 import { HomePage } from "./pages/HomePage";
 import { AuthPage } from "./pages/AuthPage";
 import { ErrorsPage } from "./pages/ErrorsPage";
+import { ArticlesPage } from "./pages/ArticlesPage";
+import { ArticlePage } from "./pages/ArticlePage";
 import { RightPanelContent } from "./pages/ResourcePage";
 import { ResourcePageContent } from "./pages/ResourcePageContent";
 import { getResource } from "./data/resources";
@@ -65,6 +67,11 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/authentication" element={<AuthPage />} />
           <Route path="/errors" element={<ErrorsPage />} />
+          <Route path="/articles" element={<ArticlesPage />} />
+          <Route
+            path="/articles/:slug"
+            element={<ArticlePage notFound={<NotFoundPage />} />}
+          />
           <Route
             path="/:resourceId"
             element={<ResourceRoute explorer={explorer} />}

@@ -45,15 +45,23 @@ function List({
   children: React.ReactNode;
 }) {
   if (ordered) {
-    return <ol className="space-y-2 mb-4 ml-1">{children}</ol>;
+    return (
+      <ol className="space-y-2 mb-4 pl-6 list-decimal marker:text-ink-tertiary">
+        {children}
+      </ol>
+    );
   }
   return (
-    <ul className="space-y-2 mb-4 ml-1 list-disc list-inside">{children}</ul>
+    <ul className="space-y-2 mb-4 pl-6 list-disc marker:text-ink-tertiary">
+      {children}
+    </ul>
   );
 }
 
 function ListItem({ children }: { children: React.ReactNode }) {
-  return <li className="flex items-start gap-3 t-body-sm">{children}</li>;
+  // Not a flex row: inline children (bold, code, links) would each become a
+  // separate flex item, losing their spaces, and the list marker would go.
+  return <li className="t-body-sm pl-1">{children}</li>;
 }
 
 function CodePanel({

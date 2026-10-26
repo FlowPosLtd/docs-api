@@ -14,6 +14,7 @@ const topLinks = [
   { href: "/", label: "Introduction" },
   { href: "/authentication", label: "Authentication" },
   { href: "/errors", label: "Errors" },
+  { href: "/articles", label: "Articles" },
 ];
 
 // Sections appear in the order listed here.
@@ -43,7 +44,10 @@ export function Sidebar({ currentPath, onNavigate }: SidebarProps) {
 
   const toggle = (id: string) =>
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
-  const isActive = (href: string) => currentPath === href;
+  // Articles stays highlighted while reading one (/articles/<slug>).
+  const isActive = (href: string) =>
+    currentPath === href ||
+    (href === "/articles" && currentPath.startsWith("/articles/"));
 
   return (
     <nav className="h-full overflow-y-auto py-4">
