@@ -19,11 +19,8 @@ export function PostCard({
         featured ? "p-6 sm:p-8" : "p-5"
       }`}
     >
-      <div className="flex flex-wrap items-center gap-2 mb-3">
+      <div className="mb-3">
         <AudienceBadge audience={post.audience} />
-        {featured && (
-          <span className="text-xs font-medium text-ink-tertiary">Latest</span>
-        )}
       </div>
       <h2
         className={`${featured ? "t-title" : "t-subheading"} mb-2 group-hover:text-accent-ink transition-colors`}

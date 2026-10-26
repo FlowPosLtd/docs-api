@@ -1,9 +1,9 @@
 import { authorLine, formatPostDate, type BlogPost } from "../data/blog";
 
-/** Author, date, reading time and tags, on one line. */
+/** Author, date and reading time, on one line. */
 export function PostMeta({ post }: { post: BlogPost }) {
   return (
-    <p className="t-caption flex flex-wrap items-center gap-x-2 gap-y-1">
+    <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-tertiary">
       <span className="text-ink-secondary">{authorLine(post)}</span>
       {post.date && (
         <>
@@ -13,12 +13,6 @@ export function PostMeta({ post }: { post: BlogPost }) {
       )}
       <span aria-hidden>·</span>
       <span>{post.readingMinutes} min read</span>
-      {post.tags.length > 0 && (
-        <>
-          <span aria-hidden>·</span>
-          <span>{post.tags.map((t) => `#${t}`).join(" ")}</span>
-        </>
-      )}
     </p>
   );
 }

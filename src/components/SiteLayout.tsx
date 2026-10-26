@@ -76,7 +76,7 @@ export function SiteLayout() {
               rel="noreferrer"
               className="hidden sm:inline-flex px-3 py-1.5 rounded-md text-sm font-medium text-ink-secondary hover:text-ink-primary transition-colors"
             >
-              Dashboard ↗
+              Dashboard
             </a>
           </div>
         </div>
@@ -102,7 +102,7 @@ export function SiteLayout() {
               Blog
             </Link>
             <a href={DASHBOARD_URL} target="_blank" rel="noreferrer" className="hover:text-ink-primary">
-              Dashboard ↗
+              Dashboard
             </a>
           </nav>
         </div>

@@ -116,7 +116,7 @@ export function RightPanelContent({
               onClick={() => setShowExplorer(false)}
               className="cursor-pointer text-xs text-code-dim hover:text-code transition-colors"
             >
-              ← Back to code examples
+              Back to code examples
             </button>
           </div>
         </div>

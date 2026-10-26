@@ -7,7 +7,7 @@ export function NotFound() {
       <p className="text-5xl font-bold text-ink-tertiary mb-4">404</p>
       <p className="t-body-sm mb-4">Page not found.</p>
       <Link href="/" className="text-accent-ink hover:underline text-sm">
-        Back to home →
+        Back to home
       </Link>
     </div>
   );

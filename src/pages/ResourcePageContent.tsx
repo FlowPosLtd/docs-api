@@ -22,7 +22,7 @@ const NavButton = memo(function NavButton({
   return (
     <button
       onClick={handleClick}
-      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border transition-colors ${
+      className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs border transition-colors ${
         isActive
           ? "border-accent-muted bg-accent-faint text-accent-ink"
           : "border-line text-ink-tertiary hover:border-line-strong hover:text-ink-secondary"

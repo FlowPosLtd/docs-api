@@ -35,7 +35,6 @@ export function HomePage() {
   return (
     <div>
       <div className="mb-10">
-        <p className="t-caption mb-3 text-accent-ink">API reference</p>
         <h1 className="t-display mb-4">FlowPOS API</h1>
         <p className="t-body max-w-2xl">
           Manage customers, orders, products, payments and every other part of
@@ -47,17 +46,17 @@ export function HomePage() {
 
       <dl className="mb-10 grid grid-cols-1 sm:grid-cols-[1.6fr_1fr_1fr] rounded-xl border border-line overflow-hidden divide-y sm:divide-y-0 sm:divide-x divide-line">
         <div className="p-4">
-          <dt className="t-caption mb-1">Base URL</dt>
+          <dt className="text-xs font-medium text-ink-tertiary mb-1">Base URL</dt>
           <dd className="font-mono text-sm text-ink-primary break-all">{BASE_URL}</dd>
         </div>
         <div className="p-4">
-          <dt className="t-caption mb-1">Authentication</dt>
+          <dt className="text-xs font-medium text-ink-tertiary mb-1">Authentication</dt>
           <dd className="text-sm text-ink-primary">
             <code className="t-code">x-api-key</code> header
           </dd>
         </div>
         <div className="p-4">
-          <dt className="t-caption mb-1">Format</dt>
+          <dt className="text-xs font-medium text-ink-tertiary mb-1">Format</dt>
           <dd className="text-sm text-ink-primary">
             JSON · {resources.length} resources · {endpointCount} endpoints
           </dd>
@@ -93,7 +92,7 @@ export function HomePage() {
               className="group rounded-xl border border-line p-4 hover:border-accent-border hover:bg-accent-faint transition-colors"
             >
               <p className="t-subheading mb-1 group-hover:text-accent-ink transition-colors">
-                {guide.title} →
+                {guide.title}
               </p>
               <p className="t-body-sm">{guide.desc}</p>
             </Link>
@@ -147,7 +146,7 @@ function Step({
 }) {
   return (
     <li className="flex items-start gap-4">
-      <span className="w-7 h-7 rounded-full bg-accent text-white text-xs flex items-center justify-center font-semibold shrink-0">
+      <span className="w-7 h-7 rounded bg-accent text-white text-xs flex items-center justify-center font-semibold shrink-0">
         {n}
       </span>
       <div className="min-w-0 flex-1 pt-0.5">
