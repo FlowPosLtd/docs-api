@@ -22,7 +22,7 @@ Write in plain English, with an example for each idea.
 Callouts work here, the same as in the rest of the docs.
 {% /callout %}
 
-{% code-panel language="curl" label="Example request" %}
+```curl {% label="Example request" %}
 curl -X GET 'https://api.flowpos.co.uk/v1/orders' \
- -H 'x-api-key: your_api_key_here'
-{% /code-panel %}
+  -H 'x-api-key: your_api_key_here'
+```

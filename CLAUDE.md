@@ -36,7 +36,8 @@ When someone asks you to write, draft or add a blog post, do all of this:
 5. Write the body:
    - No `# Title`: the page shows the title. Start sections at `##`.
    - Plain, friendly English with short paragraphs and a concrete example for each idea.
-   - Posts for businesses use no API or code words. Developer posts can use `{% code-panel %}`.
+   - Posts for businesses use no API or code words. Developer posts use fenced code blocks: ```` ```json {% label="200 OK" %} ```` (the label is optional).
+   - Markdown tables and `[links](/api/orders)` work; site links stay in the app.
    - `{% callout type="info|warning|danger|success" title="…" %}…{% /callout %}` is available.
    - Only describe features that exist. Check the API reference in this repo, and ask if unsure.
 6. Run `npm run build`, and preview with `npm run dev` at `/blogs/<slug>`.

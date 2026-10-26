@@ -28,11 +28,13 @@ Anyone can write a post: it's a Markdown file and a pull request.
 3. Write the post below the front matter:
    - Start sections with `##`, because the page shows the title itself.
    - Keep it plain and friendly, with an example for each idea.
-   - Callouts and code panels work:
-     ```
+   - Callouts, tables, links and fenced code blocks work:
+     ````
      {% callout type="info" title="Good to know" %}…{% /callout %}
-     {% code-panel language="curl" label="Example" %}…{% /code-panel %}
+     ```json {% label="200 OK" %}
+     { "status": true }
      ```
+     ````
 4. Preview with `npm run dev` at `/blogs/<url>`, then run `npm run build`.
 5. Commit, push, and **open a pull request to `main`**. The post goes live once it's merged.
 
