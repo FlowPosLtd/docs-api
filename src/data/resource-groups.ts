@@ -9,5 +9,6 @@ export const resourceGroups = [
   { label: "Reports", ids: ["analytics"] },
   { label: "Business Setup", ids: ["locations", "terminal-readers", "employees"] },
   { label: "Online Store", ids: ["online-store", "domains"] },
+  { label: "Marketing", ids: ["affiliates", "tracking-integrations", "trustpilot"] },
   { label: "Developer", ids: ["api-keys", "webhooks", "webhook-events"] },
 ];
