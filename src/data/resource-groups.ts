@@ -3,7 +3,7 @@
 export const resourceGroups = [
   { label: "Catalog", ids: ["products", "categories", "addon-groups", "inventory", "attachments"] },
   { label: "Customers", ids: ["customers", "customer-groups"] },
-  { label: "Sales", ids: ["baskets", "orders", "discounts", "shipping-rates"] },
+  { label: "Sales", ids: ["baskets", "orders", "fulfillment-stages", "fulfillment-pipelines", "discounts", "shipping-rates"] },
   { label: "Payments", ids: ["payments", "payment-links", "subscriptions", "disputes"] },
   { label: "Payouts & Account", ids: ["payouts", "payment-account", "payment-settings"] },
   { label: "Reports", ids: ["analytics"] },
